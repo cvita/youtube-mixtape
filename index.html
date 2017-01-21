@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>MixTape</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css?family=Rock+Salt" rel="stylesheet">
+
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+
+  <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="app">
+
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 class="page-header">MixTape</h1>
+          <h3 class="subheading">Discover new artists based on your old favorites</h3>
+
+          <div class="input-group">
+            <input id="initialSearchInput" type="text" class="form-control" placeholder="Example: Muddy Waters">
+            <span class="input-group-addon">
+          <button type="submit" class="searchBtn">
+            <span class="glyphicon glyphicon-search"></span>
+            </button>
+            </span>
+          </div>
+
+          <!--<button class="vsBtn allConjunctionBtns btn">"vs"</button>
+          <button class="andBtn allConjunctionBtns btn">"and"</button>
+          <button class="withBtn allConjunctionBtns btn">"with"</button>-->
+        </div>
+        <!-- col-md-12-->
+      </div>
+      <!-- row -->
+
+
+      <div class="row">
+
+        <div class="col-xs-8">
+          <ol class="allSearchResults"></ol>
+        </div>
+        <!-- col-md-8 -->
+
+        <div class="col-xs-4">
+          <ol class="searchHistory"></ol>
+          <button class="clearSearchHistoryBtn">clear search history</button>
+        </div>
+
+      </div>
+      <!-- row -->
+
+    </div>
+    <!-- app -->
+  </div>
+  <!-- container -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
+  <script src="js/index.js"></script>
+
+  <script src="auth.js"></script>
+  <script src="search.js"></script>
+  <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
+
+</body>
+
+</html>
