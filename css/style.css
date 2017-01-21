@@ -1,0 +1,146 @@
+/* height × width / margin / padding / display / border / background / text-align / font / color*/
+
+body {
+  background: white;
+  font-size: 16px;
+  font-family: helvetica, arial, sans-serif;
+  color: grey;
+}
+
+.app {
+  max-width: 1000px;
+  min-width: 330px;
+  margin: 0.15em;
+  padding: 0.25em;
+}
+
+.page-header {
+  font-family: "Rock Salt", cursive;
+  font-size: 3.4em;
+  color: #61bbd5;
+}
+
+.btn {
+  margin-top: 0.5em;
+  padding: 0.5em;
+  font-size: 1em;
+}
+
+.btn:focus {
+  outline: 0;
+}
+
+#initialSearchInput {
+  font-size: 1em;
+}
+
+.input-group-addon {
+  margin: 0;
+  padding: 0;
+}
+
+.searchBtn {
+  padding: 0.7em 4em;
+  border: none;
+  background: none;
+  font-size: 0.9em;
+}
+
+.searchBtn:hover {
+  background: #c0c0c0;
+  color: black;
+  transition: 0.2s;
+}
+
+.allConjunctionBtns {
+  visibility: hidden;
+}
+
+.resultsCountInBtn {
+  margin-left: -1.75em;
+  padding: 0 0.5em 0 0.5em;
+  float: right;
+  border-radius: 1em;
+  background: #7ca9be;
+  font-size: 0.7em;
+  color: white;
+}
+
+.resultsCountInSearchHistory {
+  margin: 0 0 0 2em;
+  padding: 0 0.5em;
+  float: right;
+  border-radius: 1em;
+  background: #d9d9d9;
+  font-size: 0.7em;
+  color: grey;
+}
+
+.numberOfResultsFound {
+  padding-top: 1em;
+  font-size: 1.15em;
+}
+
+.allSearchResults {
+  padding: 0;
+  list-style-type: none;
+}
+
+.resultChainHeading {
+  margin: 1.25em 0.25em 0 0.25em;
+  padding: 0.5em 1em 0.5em 1em;
+  border-style: solid;
+  border-width: 0 0 0 0.25em;
+  border-color: #7ca9be;
+  background: #d9d9d9;
+  font-size: 0.85em;
+  font-weight: bold;
+  letter-spacing: .25em;
+  color: #7ca9be;
+}
+
+.individualResult {
+  margin: 0.25em;
+  padding: 1em;
+  display: inline-block;
+  background: #f3f3f3;
+}
+
+
+/* a:hover + a {
+  background: pink;
+} */
+
+.individualResult:hover {
+  background: #c0c0c0;
+  color: #4398e0;
+  text-decoration: underline;
+  transition: 0.2s;
+}
+
+.searchHistory {
+  margin-top: 3.9em;
+  list-style-type: none;
+}
+
+.allSeachHistoryBtn {
+  width: 100%;
+  margin-bottom: 1.5em;
+  padding: 0.25em 1em;
+  border-style: none;
+  border-radius: 5px;
+  background: #96cbe4;
+  color: white;
+}
+
+.clearSearchHistoryBtn {
+  display: none;
+  float: right;
+  width: 10em;
+  margin-top: -1.5em;
+  border-style: none;
+  background: none;
+  text-decoration: underline;
+  font-size: 0.95em;
+  color: #cecece;
+}
