@@ -1,132 +1,47 @@
-//(function () {
+
 "use strict";
 
-var initialArtistGenres = [];
-var listOfArtistsToQuery = [];
 
-function determineInitialArtistGenres(keyword) {
-  $.getJSON("https://api.spotify.com/v1/search?q=" + keyword + "&type=artist", function (spotifyData) {
-    if (spotifyData.artists.items.length > 0) {
-      for (var i = 0; i < spotifyData.artists.items.length; i++) {
-        var returnedArtistName = spotifyData.artists.items[i].name.toLowerCase();
-        if (returnedArtistName === keyword) {
-          initialArtistGenres = spotifyData.artists.items[i].genres;
-          break;
-        }
-      }
-    }
-  });
-}
 
+var initialSearchKeyword;
+var fullGenreList;
+var similarArtists = [];
+
+
+$(".searchBtn").click(function () {
+  var searchThis = document.getElementById("initialSearchInput").value;
+  initialSearchKeyword = searchThis;
+  console.log(initialSearchKeyword);
+  autoSuggestionMethod(initialSearchKeyword);
+  spotifyMethod(initialSearchKeyword);
+});
 
 $("#initialSearchInput").keydown(function (key) {
   if (key.keyCode === 13) {
-    ["vs", "and", "with"].forEach(function (conjunction) {
-      runSearch(conjunction);
-    });
-    $(this).blur();
-    $(".subheading").slideUp("slow");
+    var searchThis = document.getElementById("initialSearchInput").value;
+    initialSearchKeyword = searchThis;
+    console.log(initialSearchKeyword);
+    autoSuggestionMethod(initialSearchKeyword);
+    spotifyMethod(initialSearchKeyword);
   }
 });
 
-$(".searchBtn").click(function () {
-  ["vs", "and", "with"].forEach(function (conjunction) {
-    runSearch(conjunction);
-  });
-  $(this).blur();
-  $(".subheading").slideUp("slow");
-});
 
-var searchHistory = [];
-var conjunctionSearchCount = 0;
-function runSearch(conjunction) {
-  var initialSearchKeyword = initialSearchInput.value.toLowerCase();
-  determineInitialArtistGenres(initialSearchKeyword);
-  suggestQueries(initialSearchKeyword, 0);
-
-  var resultsArray = [initialSearchKeyword];
-  var apiDataIndexCount = 0;
-
-  function suggestQueries(searchKeyword, apiDataIndex) {
-    var apiURL = "https://suggestqueries.google.com/complete/search?client=firefox&callback=?&q=";
-    $.getJSON(apiURL + searchKeyword + " " + conjunction, function (apiData) {
-      var returnedResult = validateResult(apiData[1][apiDataIndex]);
-      resultsArray.push(returnedResult);
-      console.log(returnedResult);
-
-      if (resultsArray.find(duplicateCheck) === undefined) {
-        suggestQueries(returnedResult, 0);
-      } else {
-        removeDuplicateAndLogPosition();
-        if (apiDataIndexCount < apiData[1].length) {
-          apiDataIndexCount++;
-          suggestQueries(initialSearchKeyword, apiDataIndexCount);
-        } else {
-          conjunctionSearchCount++
-          if (conjunctionSearchCount % 3 === 0) {
-            displayResults();
-            displayTotalNumberOfResults(initialSearchKeyword);
-            //displaySearchHistory();
-            if (listOfArtistsToQuery.length > 0) {
-              promptUserToCreateYouTubePlaylist();
-            }
-          }
+function getInitialArtistFullGenreList(initialArtist, callback) {
+  fullGenreList = [];
+  var urlPrefix = "https://api.spotify.com/v1/search?q="
+  $.getJSON(urlPrefix + initialArtist + "&type=artist", function (spotifyData) {
+    if (spotifyData.artists.items.length > 0) { // Need to address case for no results
+      for (var i = 0; i < spotifyData.artists.items.length; i++) {
+        var returnedArtistName = spotifyData.artists.items[i].name.toLowerCase();
+        if (returnedArtistName === initialArtist) {
+          fullGenreList = spotifyData.artists.items[i].genres;
         }
       }
-    });
-  }
-
-  function validateResult(result) {
-    result += ""; // Result must be a string for indexOf to work
-    var conjunctionPosition = result.indexOf(" " + conjunction + " ");
-    if (conjunctionPosition !== -1) {
-      result = result.slice(conjunctionPosition + conjunction.length + 2, result.length);
-      validateAsArtist(result);
-      return result;
-    } else {
-      return initialSearchKeyword; // Creates condition, which starts a new search
     }
-  }
-
-  function validateAsArtist(keyword) {
-    $.getJSON("https://api.spotify.com/v1/search?q=" + keyword + "&type=artist", function (spotifyData) {
-      if (initialArtistGenres.length > 0 && spotifyData.artists.items.length > 0) {
-        spotifyData.artists.items.forEach(function (spotifyArtistResult) {
-          var returnedArtistName = spotifyArtistResult.name.toLowerCase();
-          var artistPopularity = spotifyArtistResult.popularity;
-          if (returnedArtistName === keyword && artistPopularity > 1) {
-            var currentArtistGenres = spotifyArtistResult.genres;
-            var commonGeneres = initialArtistGenres.filter(function (val) {
-              return currentArtistGenres.indexOf(val) !== -1;
-            });
-            if (commonGeneres.length > 0) {
-              if (listOfArtistsToQuery.indexOf(keyword) === -1 && keyword !== initialSearchKeyword) {
-                listOfArtistsToQuery.push(keyword);
-               // console.log(keyword + " looks to be a similar artist! Common generes: " + commonGeneres);
-              }
-            }
-          }
-        });
-      }
-    });
-  }
-
-
-  function duplicateCheck(val, pos) {
-    return resultsArray.indexOf(val) !== pos;
-  }
-
-  function removeDuplicateAndLogPosition() {
-    resultsArray.pop();
-  }
-
-  function CreateResultObject() {
-    this.searchKeyword = initialSearchKeyword;
-    this.conjunction = conjunction;
-    this.results = listOfArtistsToQuery;
-    this.totalResults = resultsArray.length - 1;
-  }
-} // end of runSearch()
+  });
+  setTimeout(callback, 1000);
+}
 
 function displayTotalNumberOfResults(searchedFor) {
   $(".allSearchResults").prepend('<li class="numberOfResultsFound">' +
@@ -134,7 +49,7 @@ function displayTotalNumberOfResults(searchedFor) {
 }
 
 function displayResults() {
-  $(".allSearchResults").append("<h3><i>From " + listOfArtistsToQuery[0] + " to " + listOfArtistsToQuery[listOfArtistsToQuery.length-1] + "</i></h3><br>");
+  $(".allSearchResults").append("<h3><i>From " + listOfArtistsToQuery[0] + " to " + listOfArtistsToQuery[listOfArtistsToQuery.length - 1] + "</i></h3><br>");
   for (var j = 0; j < listOfArtistsToQuery.length; j++) {
     var googleSearchLink = "https://www.google.com/search?q=musical%20artist:%20" + listOfArtistsToQuery[j];
     $(".allSearchResults").append("<a href='" + googleSearchLink + "'target='_blank'>" +
@@ -173,16 +88,16 @@ function promptUserToCreateYouTubePlaylist() {
   $(".createPlaylist").click(function () {
     $(this).addClass("disabled");
     $(this).html("Now creating your playlist...");
-    $(this).blur();
     searchArrayOfArtists(listOfArtistsToQuery);
   });
 }
-
 
 function clearDisplayedResults() {
   initialSearchInput.value = "";
   $(".allSearchResults").html("");
   $(".numberOfResultsFound").html("");
+  similarArtists = [];
+  similarArtistsGoogle = [];
 }
 
 $(".clearSearchHistoryBtn").click(function () {
@@ -192,15 +107,12 @@ $(".clearSearchHistoryBtn").click(function () {
   $(".clearSearchHistoryBtn").hide();
 });
 
-
-
 $("#initialSearchInput").click(function () {
   clearDisplayedResults();
-  listOfArtistsToQuery = [];
-  $(".allConjunctionBtns").css("visibility", "hidden");
 });
 
-//})();
+
+
 
 // BUG: clicking search after results are already displayed, will duplicate displayed results.
 
