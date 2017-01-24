@@ -8,8 +8,7 @@ function spotifyMethod(initialArtist) {
   similarArtists = [];
   determineArtistPrimaryGenres(initialArtist, primaryGenres, function () {
     findSimilarArtistsByGenreSearch(primaryGenres, function () {
-      removeLessRelevantArtists(similarArtists);
-      similarArtists = sortSimilarArtistsByFrequency(similarArtists);
+      similarArtists = removeLessRelevantArtists(similarArtists);
       console.log(similarArtists);
     });
   });
@@ -70,20 +69,24 @@ function findSimilarArtistsByGenreSearch(primaryGenres, callback) {
 }
 
 function removeLessRelevantArtists(array) {
-  similarArtists = array.filter(function (elem, pos) {
-    return array.indexOf(elem) !== pos;
-  });
-}
-
-function sortSimilarArtistsByFrequency(array) {
   var frequency = {};
   array.forEach(function (artist) {
     frequency[artist] = 0;
   });
+
   var instanceOfArtist = array.filter(function (artist) {
     return ++frequency[artist] === 1;
   });
-  return instanceOfArtist.sort(function (a, b) {
+
+  instanceOfArtist = instanceOfArtist.filter(function (val) {
+    return frequency[val] > 3; // Significantly affects number of results
+  });
+
+  return sortSimilarArtistsByFrequency(instanceOfArtist, frequency);
+}
+
+function sortSimilarArtistsByFrequency(array, frequency) {
+  return array.sort(function (a, b) {
     return frequency[b] - frequency[a];
   });
 }
