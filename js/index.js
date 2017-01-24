@@ -11,7 +11,7 @@ var similarArtists = [];
 $(".searchBtn").click(function () {
   var searchThis = document.getElementById("initialSearchInput").value;
   initialSearchKeyword = searchThis;
-  console.log(initialSearchKeyword);
+  console.log("artist: " + initialSearchKeyword);
   autoSuggestionMethod(initialSearchKeyword);
   spotifyMethod(initialSearchKeyword);
 });
@@ -20,7 +20,7 @@ $("#initialSearchInput").keydown(function (key) {
   if (key.keyCode === 13) {
     var searchThis = document.getElementById("initialSearchInput").value;
     initialSearchKeyword = searchThis;
-    console.log(initialSearchKeyword);
+    console.log("artist: " + initialSearchKeyword);
     autoSuggestionMethod(initialSearchKeyword);
     spotifyMethod(initialSearchKeyword);
   }
