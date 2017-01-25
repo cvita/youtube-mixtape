@@ -1,31 +1,18 @@
-
 "use strict";
-
-
 
 var initialSearchKeyword;
 var fullGenreList;
 var similarArtists = [];
 
-
-$(".searchBtn").click(function () {
-  var searchThis = document.getElementById("initialSearchInput").value;
-  initialSearchKeyword = searchThis;
+function runSearch() {
+  initialSearchKeyword = document.getElementById("initialSearchInput").value;
+  initialSearchKeyword = initialSearchKeyword.toLowerCase();
   console.log("artist: " + initialSearchKeyword);
-  autoSuggestionMethod(initialSearchKeyword);
-  spotifyMethod(initialSearchKeyword);
-});
-
-$("#initialSearchInput").keydown(function (key) {
-  if (key.keyCode === 13) {
-    var searchThis = document.getElementById("initialSearchInput").value;
-    initialSearchKeyword = searchThis;
-    console.log("artist: " + initialSearchKeyword);
+  getInitialArtistFullGenreList(initialSearchKeyword, function () {
     autoSuggestionMethod(initialSearchKeyword);
     spotifyMethod(initialSearchKeyword);
-  }
-});
-
+  });
+}
 
 function getInitialArtistFullGenreList(initialArtist, callback) {
   fullGenreList = [];
@@ -40,8 +27,9 @@ function getInitialArtistFullGenreList(initialArtist, callback) {
       }
     }
   });
-  setTimeout(callback, 1000);
+  setTimeout(callback, 800);
 }
+
 
 function displayTotalNumberOfResults(searchedFor) {
   $(".allSearchResults").prepend('<li class="numberOfResultsFound">' +
@@ -100,16 +88,29 @@ function clearDisplayedResults() {
   similarArtistsGoogle = [];
 }
 
-$(".clearSearchHistoryBtn").click(function () {
-  searchHistory = [];
-  clearDisplayedResults();
-  $(".searchHistory").html("");
-  $(".clearSearchHistoryBtn").hide();
+$(".searchBtn").click(function () {
+  runSearch();
+
+});
+
+$("#initialSearchInput").keydown(function (key) {
+  if (key.keyCode === 13) {
+    runSearch();
+  }
 });
 
 $("#initialSearchInput").click(function () {
   clearDisplayedResults();
 });
+
+// $(".clearSearchHistoryBtn").click(function () {
+//   searchHistory = [];
+//   clearDisplayedResults();
+//   $(".searchHistory").html("");
+//   $(".clearSearchHistoryBtn").hide();
+// });
+
+
 
 
 
