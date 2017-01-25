@@ -1,5 +1,5 @@
 "use strict";
-
+// Testing to see if this version makes it into the "applying js promises" branch
 var initialSearchKeyword;
 var fullGenreList;
 var similarArtists = [];
