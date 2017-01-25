@@ -1,6 +1,5 @@
 "use strict";
 
-var similarArtistsGoogle = [];
 var conjunctionSearchList = ["vs", "and", "with"]; // Try adding "sounds like", "was influenced by"
 var resultsArray;
 var conjunctionSearchCount;
