@@ -1,21 +1,17 @@
 "use strict";
 
 function spotifyMethod(initialArtist) {
-  initialArtist = initialArtist.toLowerCase();
   var primaryGenres = [];
   similarArtists = [];
-  getInitialArtistFullGenreList(initialArtist, function () {
-    determineArtistPrimaryGenres(initialArtist, primaryGenres, function () {
-      findSimilarArtistsByGenreSearch(primaryGenres, function () {
-        similarArtists = removeLessRelevantArtists(similarArtists);
-        console.log("Spotify: " + similarArtists);
-      });
+  determineArtistPrimaryGenres(initialArtist, primaryGenres, function () {
+    findSimilarArtistsByGenreSearch(primaryGenres, function () {
+      similarArtists = removeLessRelevantArtists(similarArtists);
+      console.log("Spotify: " + similarArtists);
     });
   });
 }
 
 function determineArtistPrimaryGenres(initialArtist, primaryGenres, callback) {
-  if (fullGenreList.length > 0) {
     var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
     fullGenreList.forEach(function (genre) {
       $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50", function (genreResults) {
@@ -25,7 +21,6 @@ function determineArtistPrimaryGenres(initialArtist, primaryGenres, callback) {
         }
       });
     });
-  }
   setTimeout(callback, 1000);
 }
 
@@ -60,7 +55,7 @@ function removeLessRelevantArtists(array) {
   var instanceOfArtist = array.filter(function (artist) {
     return ++frequency[artist] === 1;
   });
-  // base freq cutoff of length of similar artists
+
   instanceOfArtist = instanceOfArtist.filter(function (val) {
     return frequency[val] > 2; // Significantly affects number of results
   });

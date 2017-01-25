@@ -16,9 +16,7 @@ function autoSuggestionMethod(initialArtist) {
 }
 
 function runGoogleSearch(conjunction) {
-  getInitialArtistFullGenreList(initialSearchKeyword, function () {
-    suggestQueries(initialSearchKeyword, 0);
-  });
+  suggestQueries(initialSearchKeyword, 0);
 
   function suggestQueries(searchKeyword, apiDataIndex) {
     var apiURL = "https://suggestqueries.google.com/complete/search?client=firefox&callback=?&q=";
