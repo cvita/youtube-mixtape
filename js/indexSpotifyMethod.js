@@ -2,7 +2,6 @@
 
 function spotifyMethod(initialArtist) {
   var primaryGenres = [];
-  similarArtists = [];
   determineArtistPrimaryGenres(initialArtist, primaryGenres, function () {
     findSimilarArtistsByGenreSearch(primaryGenres, function () {
       similarArtists = removeLessRelevantArtists(similarArtists);

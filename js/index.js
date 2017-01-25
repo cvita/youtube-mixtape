@@ -1,35 +1,39 @@
 "use strict";
-// Testing to see if this version makes it into the "applying js promises" branch
+
 var initialSearchKeyword;
 var fullGenreList;
-var similarArtists = [];
+var similarArtists;
+var similarArtistsGoogle;
 
 function runSearch() {
-  initialSearchKeyword = document.getElementById("initialSearchInput").value;
-  initialSearchKeyword = initialSearchKeyword.toLowerCase();
-  console.log("artist: " + initialSearchKeyword);
-  getInitialArtistFullGenreList(initialSearchKeyword, function () {
-    autoSuggestionMethod(initialSearchKeyword);
-    spotifyMethod(initialSearchKeyword);
-  });
-}
-
-function getInitialArtistFullGenreList(initialArtist, callback) {
   fullGenreList = [];
-  var urlPrefix = "https://api.spotify.com/v1/search?q="
-  $.getJSON(urlPrefix + initialArtist + "&type=artist", function (spotifyData) {
-    if (spotifyData.artists.items.length > 0) { // Need to address case for no results
-      for (var i = 0; i < spotifyData.artists.items.length; i++) {
-        var returnedArtistName = spotifyData.artists.items[i].name.toLowerCase();
-        if (returnedArtistName === initialArtist) {
-          fullGenreList = spotifyData.artists.items[i].genres;
-        }
-      }
-    }
-  });
-  setTimeout(callback, 800);
+  similarArtists = [];
+  similarArtistsGoogle = [];
+  initialSearchKeyword = document.getElementById("initialSearchInput").value.toLowerCase();
+  getInitialArtistFullGenreList(initialSearchKeyword);
+  console.log("artist: " + initialSearchKeyword);
 }
 
+function getInitialArtistFullGenreList(initialArtist) {
+  var urlPrefix = "https://api.spotify.com/v1/search?q="
+  $.getJSON(urlPrefix + initialArtist + "&type=artist")
+    .done(function (spotifyData) {
+      if (spotifyData.artists.items.length === 0) {
+        console.log("Unable to find " + initialArtist);
+      } else {
+        spotifyData.artists.items.forEach(function (artistResult) {
+          if (artistResult.name.toLowerCase() === initialArtist) {
+            fullGenreList = artistResult.genres;
+            autoSuggestionMethod(initialArtist);
+            spotifyMethod(initialArtist);
+          }
+        });
+      }
+    })
+    .fail(function () {
+      console.log("Request to the Spotify api failed");
+    });
+}
 
 function displayTotalNumberOfResults(searchedFor) {
   $(".allSearchResults").prepend('<li class="numberOfResultsFound">' +
