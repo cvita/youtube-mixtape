@@ -12,6 +12,7 @@ function runSearch() {
   initialSearchKeyword = document.getElementById("initialSearchInput").value.toLowerCase();
   getInitialArtistFullGenreList(initialSearchKeyword);
   console.log("artist: " + initialSearchKeyword);
+  $("body").append("<b>Artist:</b> " + initialSearchKeyword);
 }
 
 function getInitialArtistFullGenreList(initialArtist) {
