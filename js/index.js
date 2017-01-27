@@ -2,17 +2,15 @@
 
 var initialSearchKeyword;
 var fullGenreList;
-var similarArtists;
+var similarArtistsSpotify;
 var similarArtistsGoogle;
 
 function runSearch() {
   fullGenreList = [];
-  similarArtists = [];
+  similarArtistsSpotify = [];
   similarArtistsGoogle = [];
   initialSearchKeyword = document.getElementById("initialSearchInput").value.toLowerCase();
   getInitialArtistFullGenreList(initialSearchKeyword);
-  console.log("artist: " + initialSearchKeyword);
-  $("body").append("<b>Artist:</b> " + initialSearchKeyword);
 }
 
 function getInitialArtistFullGenreList(initialArtist) {
@@ -32,23 +30,72 @@ function getInitialArtistFullGenreList(initialArtist) {
       }
     })
     .fail(function () {
-      console.log("Request to the Spotify api failed");
+      console.log("Initial request for " + initialArtist + " to the Spotify api failed");
     });
 }
 
-function displayTotalNumberOfResults(searchedFor) {
-  $(".allSearchResults").prepend('<li class="numberOfResultsFound">' +
-    listOfArtistsToQuery.length + ' results found for <b></span> <span style="color:#7ca9be;">' + searchedFor + '</span></b></li>');
+function displayResults(resultsArray, limit, methodUsed) {
+  if (resultsArray[0] === initialSearchKeyword) {
+    resultsArray.shift();
+  }
+  if (resultsArray.length > limit) {
+    console.log("sliced to " + limit);
+    resultsArray = resultsArray.slice(0, limit);
+  }
+  $(".allSearchResults").append('<br><span style="color:#7ca9be;">' + methodUsed + '</span><br>');
+
+  resultsArray.forEach(function (result) {
+    $(".allSearchResults").append('<button class="btn-link"><li class="individualResult">' + result + '</li></button>');
+  });
+  $(".individualResult").click(function () {
+    initialSearchInput.value = $(this).html();
+    clearDisplayedResults();
+    runSearch();
+  });
 }
 
-function displayResults() {
-  $(".allSearchResults").append("<h3><i>From " + listOfArtistsToQuery[0] + " to " + listOfArtistsToQuery[listOfArtistsToQuery.length - 1] + "</i></h3><br>");
-  for (var j = 0; j < listOfArtistsToQuery.length; j++) {
-    var googleSearchLink = "https://www.google.com/search?q=musical%20artist:%20" + listOfArtistsToQuery[j];
-    $(".allSearchResults").append("<a href='" + googleSearchLink + "'target='_blank'>" +
-      "<li class='individualResult'>" + listOfArtistsToQuery[j] + "</li></a>");
-  }
+function displayTotalNumberOfResults(searchedFor) {
+  $(".numberOfResults").html(similarArtistsGoogle.length + similarArtistsSpotify.length + ' similar artists found for <b><span style="color:#7ca9be;">' + searchedFor + '</span></b>');
 }
+
+function promptUserToCreateYouTubePlaylist() {
+  $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
+  $(".createPlaylist").click(function () {
+    $(this).addClass("disabled");
+    $(this).html("Now creating your playlist...");
+    searchArrayOfArtists(listOfArtistsToQuery);
+  });
+}
+
+$(".searchBtn").click(function () {
+  runSearch();
+  this.blur();
+});
+
+$("#initialSearchInput").keydown(function (key) {
+  if (key.keyCode === 13) {
+    runSearch();
+    this.blur();
+  }
+});
+
+$("#initialSearchInput").click(function () {
+  initialSearchInput.value = "";
+  clearDisplayedResults();
+});
+
+function clearDisplayedResults() {
+  $(".searchedFor").html("");
+  $(".allSearchResults").html("");
+  $(".numberOfResultsFound").html("");
+}
+
+// $(".clearSearchHistoryBtn").click(function () {
+//   searchHistory = [];
+//   clearDisplayedResults();
+//   $(".searchHistory").html("");
+//   $(".clearSearchHistoryBtn").hide();
+// });
 
 // function displaySearchHistory() {
 //   var resultSet = [];
@@ -75,50 +122,6 @@ function displayResults() {
 //   });
 //   $(".clearSearchHistoryBtn").show();
 // }
-
-function promptUserToCreateYouTubePlaylist() {
-  $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
-  $(".createPlaylist").click(function () {
-    $(this).addClass("disabled");
-    $(this).html("Now creating your playlist...");
-    searchArrayOfArtists(listOfArtistsToQuery);
-  });
-}
-
-function clearDisplayedResults() {
-  initialSearchInput.value = "";
-  $(".allSearchResults").html("");
-  $(".numberOfResultsFound").html("");
-  similarArtists = [];
-  similarArtistsGoogle = [];
-}
-
-$(".searchBtn").click(function () {
-  runSearch();
-
-});
-
-$("#initialSearchInput").keydown(function (key) {
-  if (key.keyCode === 13) {
-    runSearch();
-  }
-});
-
-$("#initialSearchInput").click(function () {
-  clearDisplayedResults();
-});
-
-// $(".clearSearchHistoryBtn").click(function () {
-//   searchHistory = [];
-//   clearDisplayedResults();
-//   $(".searchHistory").html("");
-//   $(".clearSearchHistoryBtn").hide();
-// });
-
-
-
-
-
 
 // BUG: clicking search after results are already displayed, will duplicate displayed results.
 
