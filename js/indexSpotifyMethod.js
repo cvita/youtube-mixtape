@@ -40,13 +40,13 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
       .done(function (genreResults) {
         for (var i = 0; i < genreResults.artists.items.length; i++) {
           var returnedArtistName = genreResults.artists.items[i].name.toLowerCase();
-          similarArtists.push(returnedArtistName);
+          similarArtistsSpotify.push(returnedArtistName);
         }
         forEachCount++;
         if (forEachCount === primaryGenres.length) {
-          similarArtists = removeLessRelevantArtists(similarArtists);
-          console.log("Spotify: " + similarArtists);
-          $("body").append("<br><b>Spotify:</b> " + similarArtists);
+          forEachCount = 0;
+          similarArtistsSpotify = removeLessRelevantArtists(similarArtistsSpotify);
+          displayResults(similarArtistsSpotify, 15, "Spotify genres"); // End of search!
         }
       });
   });
