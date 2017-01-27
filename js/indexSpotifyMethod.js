@@ -2,26 +2,25 @@
 
 function spotifyMethod(initialArtist) {
   var primaryGenres = [];
-  similarArtists = [];
-  determineArtistPrimaryGenres(initialArtist, primaryGenres, function () {
-    findSimilarArtistsByGenreSearch(primaryGenres, function () {
-      similarArtists = removeLessRelevantArtists(similarArtists);
-      console.log("Spotify: " + similarArtists);
-    });
-  });
+  determineArtistPrimaryGenres(initialArtist, primaryGenres);
 }
 
-function determineArtistPrimaryGenres(initialArtist, primaryGenres, callback) {
-    var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
-    fullGenreList.forEach(function (genre) {
-      $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50", function (genreResults) {
+function determineArtistPrimaryGenres(initialArtist, primaryGenres) {
+  var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
+  var forEachCount = 0;
+  fullGenreList.forEach(function (genre) {
+    $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50")
+      .done(function (genreResults) {
         var aPrimaryGenre = searchByGenreToFindInitialArtist(initialArtist, genre, genreResults);
         if (aPrimaryGenre !== undefined) {
           primaryGenres.push(aPrimaryGenre);
         }
+        forEachCount++;
+        if (forEachCount === fullGenreList.length) {
+          findSimilarArtistsByGenreSearch(primaryGenres);
+        }
       });
-    });
-  setTimeout(callback, 1000);
+  });
 }
 
 function searchByGenreToFindInitialArtist(initialArtist, genre, spotifyData) {
@@ -33,17 +32,24 @@ function searchByGenreToFindInitialArtist(initialArtist, genre, spotifyData) {
   }
 }
 
-function findSimilarArtistsByGenreSearch(primaryGenres, callback) {
+function findSimilarArtistsByGenreSearch(primaryGenres) {
   var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
+  var forEachCount = 0;
   primaryGenres.forEach(function (genre) {
-    $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50", function (genreResults) {
-      for (var i = 0; i < genreResults.artists.items.length; i++) {
-        var returnedArtistName = genreResults.artists.items[i].name.toLowerCase();
-        similarArtists.push(returnedArtistName);
-      }
-    });
+    $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50")
+      .done(function (genreResults) {
+        for (var i = 0; i < genreResults.artists.items.length; i++) {
+          var returnedArtistName = genreResults.artists.items[i].name.toLowerCase();
+          similarArtistsSpotify.push(returnedArtistName);
+        }
+        forEachCount++;
+        if (forEachCount === primaryGenres.length) {
+          forEachCount = 0;
+          similarArtistsSpotify = removeLessRelevantArtists(similarArtistsSpotify);
+          displayResults(similarArtistsSpotify, 15, "Spotify genres"); // End of search!
+        }
+      });
   });
-  setTimeout(callback, 500);
 }
 
 function removeLessRelevantArtists(array) {

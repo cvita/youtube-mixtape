@@ -1,93 +1,85 @@
 "use strict";
 
-var similarArtistsGoogle = [];
-var conjunctionSearchList = ["vs", "and", "with"]; // Try adding "sounds like", "was influenced by"
-var resultsArray;
-var conjunctionSearchCount;
-var apiDataIndexCount = 0;
+var conjunctionSearchList = ["vs", "with", "sounds like"]; // Consider adding "and", "influenced by"
+var conjunctionSearchCompletedCount = 0;
+var allGoogleResults;
+var validating;
 
 function autoSuggestionMethod(initialArtist) {
-  conjunctionSearchCount = 0;
   initialSearchKeyword = initialArtist;
-  resultsArray = [initialSearchKeyword];
+  allGoogleResults = [initialSearchKeyword];
+  conjunctionSearchCompletedCount = 0;
   conjunctionSearchList.forEach(function (conjunction) {
-    runGoogleSearch(conjunction);
+    suggestQueries(initialSearchKeyword, 0, conjunction);;
   });
 }
 
-function runGoogleSearch(conjunction) {
-  suggestQueries(initialSearchKeyword, 0);
-
-  function suggestQueries(searchKeyword, apiDataIndex) {
-    var apiURL = "https://suggestqueries.google.com/complete/search?client=firefox&callback=?&q=";
-    $.getJSON(apiURL + searchKeyword + " " + conjunction, function (apiData) {
-      var returnedResult = validateResult(apiData[1][apiDataIndex]);
-      resultsArray.push(returnedResult);
-
-      if (resultsArray.find(duplicateCheck) === undefined) {
-        suggestQueries(returnedResult, 0);
+function suggestQueries(searchKeyword, apiDataIndex, conjunction) {
+  var apiURL = "https://suggestqueries.google.com/complete/search?client=firefox&callback=?&q=";
+  $.getJSON(apiURL + searchKeyword + " " + conjunction)
+    .done(function (apiData) {
+      var returnedResult = validateResult(apiData[1][apiDataIndex], conjunction);
+      allGoogleResults.push(returnedResult);
+      if (allGoogleResults.find(duplicateCheck) === undefined) {
+        suggestQueries(returnedResult, 0, conjunction);
       } else {
-        resultsArray.pop();
-        if (apiDataIndexCount < apiData[1].length) {
-          apiDataIndexCount++;
-          suggestQueries(initialSearchKeyword, apiDataIndexCount);
+        allGoogleResults.pop();
+        if (apiDataIndex < apiData[1].length) {
+          apiDataIndex++;
+          suggestQueries(initialSearchKeyword, apiDataIndex, conjunction);
         } else {
-          conjunctionSearchCount++
-
-          if (conjunctionSearchCount === conjunctionSearchList.length) {
-            var spotifySearch = setInterval(querySpotify, 50); // Allowing for slow response from spotify
-            var resultsArrayIndex = 0;
-
-            function querySpotify() {
-              validateAsArtist(resultsArray[resultsArrayIndex]);
-              resultsArrayIndex++;
-              if (resultsArrayIndex === resultsArray.length) {
-                clearInterval(spotifySearch);
-                orderArtistsByFrequencyOfCommonGenres(similarArtistsGoogle);
-              }
-            }
-
+          conjunctionSearchCompletedCount++;
+          if (conjunctionSearchCompletedCount === conjunctionSearchList.length) {
+            ensureSearchesAreOver();
           }
         }
       }
+    })
+    .fail(function () {
+      console.log("Request for " + searchKeyword + " to the Google's auto-suggestion api failed");
     });
-  }
+}
 
-  function validateResult(result) {
-    result += "";
-    var conjunctionPosition = result.indexOf(" " + conjunction + " ");
-    if (conjunctionPosition !== -1) {
-      result = result.slice(conjunctionPosition + conjunction.length + 2, result.length);
-      return result;
-    } else {
-      return initialSearchKeyword; // Creates condition, which starts a new search
-    }
-  }
-
-  function duplicateCheck(val, pos) {
-    return resultsArray.indexOf(val) !== pos;
+function validateResult(result, conjunction) {
+  result += "";
+  var conjunctionPosition = result.indexOf(" " + conjunction + " ");
+  if (conjunctionPosition !== -1) {
+    result = result.slice(conjunctionPosition + conjunction.length + 2, result.length);
+    validateAsArtist(result);
+    return result;
+  } else {
+    return initialSearchKeyword; // Creates condition, which starts a new search
   }
 }
 
-function validateAsArtist(keyword) { // Try setTimeout or remove callback if this doesn't work
-  $.getJSON("https://api.spotify.com/v1/search?q=" + keyword + "&type=artist&limit=50", function (spotifyData) {
-    if (spotifyData.artists.items.length > 0) {
-      //console.log(keyword);
-      spotifyData.artists.items.forEach(function (spotifyArtistResult) {
-        var artistName = spotifyArtistResult.name.toLowerCase();
-        if (artistName === keyword && spotifyArtistResult.popularity > 1) {
-          var commonGeneres = fullGenreList.filter(function (genre) {
-            return spotifyArtistResult.genres.indexOf(genre) !== -1;
-          });
-          if (commonGeneres.length > 0) {
-            var similarArtist = new Artist(keyword, commonGeneres);
-            similarArtistsGoogle.push(similarArtist);
-           // console.log(similarArtist);
+function duplicateCheck(val, pos) {
+  return allGoogleResults.indexOf(val) !== pos;
+}
+
+function validateAsArtist(keyword) {
+  validating = true;
+  $.getJSON("https://api.spotify.com/v1/search?q=" + keyword + "&type=artist&limit=20") // Changing limit to avoid 429 error
+    .done(function (spotifyData) {
+      if (spotifyData.artists.items.length > 0) {
+        spotifyData.artists.items.forEach(function (spotifyArtistResult) {
+          var artistName = spotifyArtistResult.name.toLowerCase();
+          if (artistName === keyword && spotifyArtistResult.popularity > 1) {
+            var commonGeneres = fullGenreList.filter(function (genre) {
+              return spotifyArtistResult.genres.indexOf(genre) !== -1;
+            });
+            if (commonGeneres.length > 0) {
+              var similarArtist = new Artist(keyword, commonGeneres);
+              similarArtistsGoogle.push(similarArtist);
+            }
           }
-        }
-      });
-    }
-  });
+        });
+      }
+      validating = false;
+    })
+    .fail(function () {
+      console.log("validateAsArtist() for " + keyword + " failed");
+      validating = false;
+    });
 }
 
 function Artist(artist, array) {
@@ -95,17 +87,26 @@ function Artist(artist, array) {
   this.commonGeneres = array.length;
 }
 
+function ensureSearchesAreOver() {
+  if (!validating) {
+    orderArtistsByFrequencyOfCommonGenres(similarArtistsGoogle);
+  } else {
+    console.log("Now delaying ensureSearchesAreOver()");
+    setTimeout(ensureSearchesAreOver, 0);
+  }
+}
+
 function orderArtistsByFrequencyOfCommonGenres(array) {
-  var sortedArray = array.sort(function (a, b) {
+  var sortedTempArray = array.sort(function (a, b) {
     return b.commonGeneres - a.commonGeneres;
   });
+
   similarArtistsGoogle = [];
-  sortedArray.forEach(function (artistObj) {
+
+  sortedTempArray.forEach(function (artistObj) {
     if (similarArtistsGoogle.indexOf(artistObj.artistName) === -1) {
       similarArtistsGoogle.push(artistObj.artistName);
     }
   });
-  console.log("Google: " + similarArtistsGoogle);
+  displayResults(similarArtistsGoogle, 15, "Google autosuggestions"); // End of search!
 }
-
-// BUG: "sonic youth" doesn't return results, but has results in resultsArray
