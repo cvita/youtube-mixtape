@@ -1,7 +1,7 @@
 // After the API loads, call a function to enable the search box.
 function handleAPILoaded() {
   //$('#search-button').attr('disabled', false);
-  console.log("api was loaded, yay!");
+  console.log("YouTube API... is loaded");
 }
 
 function createSearch(artist) {

@@ -6,11 +6,10 @@ var allGoogleResults;
 var validating;
 
 function autoSuggestionMethod(initialArtist) {
-  initialSearchKeyword = initialArtist;
-  allGoogleResults = [initialSearchKeyword];
+  allGoogleResults = [initialArtist];
   conjunctionSearchCompletedCount = 0;
   conjunctionSearchList.forEach(function (conjunction) {
-    suggestQueries(initialSearchKeyword, 0, conjunction);;
+    suggestQueries(initialArtist, 0, conjunction);;
   });
 }
 
@@ -26,7 +25,7 @@ function suggestQueries(searchKeyword, apiDataIndex, conjunction) {
         allGoogleResults.pop();
         if (apiDataIndex < apiData[1].length) {
           apiDataIndex++;
-          suggestQueries(initialSearchKeyword, apiDataIndex, conjunction);
+          suggestQueries(initialArtist, apiDataIndex, conjunction);
         } else {
           conjunctionSearchCompletedCount++;
           if (conjunctionSearchCompletedCount === conjunctionSearchList.length) {
@@ -48,7 +47,7 @@ function validateResult(result, conjunction) {
     validateAsArtist(result);
     return result;
   } else {
-    return initialSearchKeyword; // Creates condition, which starts a new search
+    return initialArtist; // Creates condition, which starts a new search
   }
 }
 
