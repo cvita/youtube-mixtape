@@ -3,9 +3,7 @@
 // If you run this code from a server other than http://localhost,
 // you need to register your own client ID.
 var OAUTH2_CLIENT_ID = '847638938655-sh07q333hjtsbqt3b6t2r264fpepj873.apps.googleusercontent.com';
-var OAUTH2_SCOPES = [
-  'https://www.googleapis.com/auth/youtube'
-];
+var OAUTH2_SCOPES = ['https://www.googleapis.com/auth/youtube'];
 
 // Upon loading, the Google APIs JS client automatically invokes this callback.
 googleApiClientReady = function() {
@@ -23,23 +21,19 @@ function checkAuth() {
   gapi.auth.authorize({
     client_id: OAUTH2_CLIENT_ID,
     scope: OAUTH2_SCOPES,
-    immediate: true // false seems to work when true causes errors
+    immediate: true // Me: false seems to work when true causes errors
   }, handleAuthResult);
-  //console.log("checkAuth() called");
 }
 
 // Handle the result of a gapi.auth.authorize() call.
 function handleAuthResult(authResult) {
-  //console.log(authResult);
   if (authResult && !authResult.error) {
-   // console.log("if case called");
     // Authorization was successful. Hide authorization prompts and show
     // content that should be visible after authorization succeeds.
     $('.pre-auth').hide();
     $('.post-auth').show();
     loadAPIClientInterfaces();
   } else {
-    //console.log("else case called");
     // Make the #login-link clickable. Attempt a non-immediate OAuth 2.0
     // client flow. The current function is called when that flow completes.
     $('#login-link').click(function() {
@@ -59,7 +53,4 @@ function loadAPIClientInterfaces() {
   gapi.client.load('youtube', 'v3', function() {
     handleAPILoaded();
   });
- // console.log("loadAPIClientInterfaces() called");
 }
-
-//console.log("auth.js page just fired");
