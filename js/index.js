@@ -1,16 +1,18 @@
 "use strict";
 
-var initialSearchKeyword;
+var initialArtist;
 var fullGenreList;
 var similarArtistsSpotify;
 var similarArtistsGoogle;
+var currentVideo;
 
 function runSearch() {
   fullGenreList = [];
   similarArtistsSpotify = [];
   similarArtistsGoogle = [];
-  initialSearchKeyword = document.getElementById("initialSearchInput").value.toLowerCase();
-  getInitialArtistFullGenreList(initialSearchKeyword);
+  initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
+  getInitialArtistFullGenreList(initialArtist);
+  $(".subheading").slideUp("fast");
 }
 
 function getInitialArtistFullGenreList(initialArtist) {
@@ -23,7 +25,7 @@ function getInitialArtistFullGenreList(initialArtist) {
         spotifyData.artists.items.forEach(function (artistResult) {
           if (artistResult.name.toLowerCase() === initialArtist) {
             fullGenreList = artistResult.genres;
-            autoSuggestionMethod(initialArtist);
+            //autoSuggestionMethod(initialArtist);
             spotifyMethod(initialArtist);
           }
         });
@@ -35,11 +37,10 @@ function getInitialArtistFullGenreList(initialArtist) {
 }
 
 function displayResults(resultsArray, limit, methodUsed) {
-  if (resultsArray[0] === initialSearchKeyword) {
+  if (resultsArray[0] === initialArtist) {
     resultsArray.shift();
   }
   if (resultsArray.length > limit) {
-    console.log("sliced to " + limit);
     resultsArray = resultsArray.slice(0, limit);
   }
   $(".allSearchResults").append('<br><span style="color:#7ca9be;">' + methodUsed + '</span><br>');
@@ -47,24 +48,50 @@ function displayResults(resultsArray, limit, methodUsed) {
   resultsArray.forEach(function (result) {
     $(".allSearchResults").append('<button class="btn-link"><li class="individualResult">' + result + '</li></button>');
   });
+
   $(".individualResult").click(function () {
     initialSearchInput.value = $(this).html();
     clearDisplayedResults();
     runSearch();
   });
+
+  searchArrayOfArtists(resultsArray);
+  beginPlayingFromResults();
 }
 
-function displayTotalNumberOfResults(searchedFor) {
-  $(".numberOfResults").html(similarArtistsGoogle.length + similarArtistsSpotify.length + ' similar artists found for <b><span style="color:#7ca9be;">' + searchedFor + '</span></b>');
+function beginPlayingFromResults() {
+  if (videosForPlaylist.length === 0) {
+    console.log("waiting for video results...");
+    setTimeout(beginPlayingFromResults, 0);
+  } else {
+    currentVideo = videosForPlaylist[0];
+    if (!player) {
+      prepareYouTubePlayer();
+    } else {
+      player.loadVideoById(currentVideo);
+    }
+  }
 }
 
-function promptUserToCreateYouTubePlaylist() {
-  $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
-  $(".createPlaylist").click(function () {
-    $(this).addClass("disabled");
-    $(this).html("Now creating your playlist...");
-    searchArrayOfArtists(listOfArtistsToQuery);
-  });
+$(".nextVideoBtn").click(function () {
+  queNextVideo();
+});
+
+function queNextVideo() {
+  var nextVideoIndex = videosForPlaylist.indexOf(currentVideo) + 1;
+  if (nextVideoIndex < currentVideo.length) {
+    currentVideo = videosForPlaylist[nextVideoIndex];
+    player.loadVideoById(currentVideo);
+  } else {
+    console.log("End of this playlist");
+  }
+}
+
+
+function clearDisplayedResults() {
+  $(".searchedFor").html("");
+  $(".allSearchResults").html("");
+  $(".numberOfResultsFound").html("");
 }
 
 $(".searchBtn").click(function () {
@@ -84,47 +111,85 @@ $("#initialSearchInput").click(function () {
   clearDisplayedResults();
 });
 
-function clearDisplayedResults() {
-  $(".searchedFor").html("");
-  $(".allSearchResults").html("");
-  $(".numberOfResultsFound").html("");
+
+// 2. This code loads the IFrame Player API code asynchronously.
+function prepareYouTubePlayer() {
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  $(".nextVideoBtn").show().removeClass("disabled");
 }
 
-// $(".clearSearchHistoryBtn").click(function () {
-//   searchHistory = [];
-//   clearDisplayedResults();
-//   $(".searchHistory").html("");
-//   $(".clearSearchHistoryBtn").hide();
-// });
+// 3. This function creates an <iframe> (and YouTube player)
+//    after the API code downloads.
 
-// function displaySearchHistory() {
-//   var resultSet = [];
-//   var resultSetTotal = 0;
-//   for (var k = searchHistory.length - 3; k < searchHistory.length; k++) {
-//     resultSet.push(searchHistory[k]);
-//     resultSetTotal += searchHistory[k].totalResults;
-//   }
-//   var searchHistoryBtnClass = resultSet[0].searchKeyword.replace(/\s+/g, "-") + "ResultsBtn";
-//   $(".searchHistory").prepend("<li><button class='" + searchHistoryBtnClass + " allSeachHistoryBtn'>" +
-//     resultSet[0].searchKeyword + "</button></li>");
-//   $("." + searchHistoryBtnClass).append("<span class='resultsCountInSearchHistory'>" + resultSetTotal + "</span>");
+var player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '390',
+    width: '640',
+    videoId: currentVideo,
+    playerVars: {
+      'enablejsapi': 1, // enables control via the YT embed API
+      'controls': 2, // 0 disables player controls, 2, enables
+      'iv_load_policy': 3,
+      'rel': 0 // disable recommended videos afterplayback
+      //  'origin': // My domain should be specified here
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange,
+      'onError': onPlayerError
+    }
+  });
+}
 
-//   $("." + searchHistoryBtnClass).click(function () {
-//     clearDisplayedResults();
-//     initialSearchInput.value = resultSet[0].searchKeyword;
-//     $(this).blur();
-//     resultSet.forEach(function (result) {
-//       $("." + result.conjunction + "Btn").html('"' + result.conjunction + '"<span class="resultsCountInBtn">' +
-//         result.totalResults + '</span>');
-//       displayTotalNumberOfResults(result);
-//       displayResults(result, function () { }); // How best omit this empty anonymous function so as not cause an error in console?
-//     });
+// 4. The API will call this function when the video player is ready.
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {  // video ended
+    console.log("video is over!");
+    queNextVideo();
+  }
+}
+
+function onPlayerError(errorEvent) {
+  var errorMsg;
+  switch (errorEvent) {
+    case 2:
+      errorMsg = "The request contains an invalid parameter value";
+      break;
+    case 5:
+      errorMsg = "The requested content cannot be played in an HTML5 player...";
+      break;
+    case 100:
+      errorMsg = "The video requested was not found.";
+      break;
+    case 101:
+    case 150:
+      errorMsg = "The owner of the requested video does not allow it to be played in embedded players.";
+      break;
+  }
+  console.log(errorMsg);
+}
+
+
+// function promptUserToCreateYouTubePlaylist(makePlaylistFrom) {
+//   $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
+//   $(".createPlaylist").click(function () {
+//     $(this).addClass("disabled");
+//     $(this).html("Now creating your playlist...");
+//     searchArrayOfArtists(makePlaylistFrom);
 //   });
-//   $(".clearSearchHistoryBtn").show();
 // }
 
+
 // BUG: clicking search after results are already displayed, will duplicate displayed results.
-
 // BUG: Shouldn't be able to search a blank initialSearchKeyord
-
-// BUG: CSS - searchBtn border when highlighted appears to be duplicatedﬁ

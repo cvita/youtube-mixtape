@@ -21,7 +21,7 @@
 
       <div class="row">
         <div class="col-md-12 text-center">
-          <h1 class="page-header">YouTube MixTape</h1>
+          <h1 class="page-header">YouTube <span id="mixTapeTitle">MixTape</span></h1>
           <h3 class="subheading">Discover new artists based on your old favorites</h3>
 
           <div class="input-group">
@@ -42,7 +42,9 @@
 
         <div class="col-xs-8">
           <div class="searchedFor"></div>
-          <div class="numberOfResults"></div> 
+          <div id="player"></div>
+          <script></script> <!-- youTube player API here -->
+          <button class="nextVideoBtn btn btn-default disabled">Next video</button>
           <ol class="allSearchResults"></ol>
         </div>
         <!-- col-md-8 -->
@@ -63,8 +65,8 @@
   <script src="js/index.js"></script>
   <script src="js/indexSpotifyMethod.js"></script>
   <script src="js/indexAutoSuggestionMethod.js"></script>
-  <script src="auth.js"></script>
-  <script src="search.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/search.js"></script>
   <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
 
 </body>
