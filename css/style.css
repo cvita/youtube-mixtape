@@ -15,15 +15,16 @@ body {
 }
 
 .page-header {
-  font-family: "Rock Salt", cursive;
+  font-family: 'Arial Narrow', Arial, sans-serif;
   font-size: 3.4em;
-  color: #61bbd5;
+  font-weight: bold;
+  color: dimgrey;
 }
 
-.btn {
-  margin-top: 0.5em;
-  padding: 0.5em;
-  font-size: 1em;
+#mixTapeTitle {
+  font-family: "Rock Salt", cursive;
+  font-size: 0.85em;
+  color: #5bc0de;
 }
 
 .btn:focus {
@@ -52,30 +53,6 @@ body {
   transition: 0.2s;
 }
 
-.allConjunctionBtns {
-  visibility: hidden;
-}
-
-.resultsCountInBtn {
-  margin-left: -1.75em;
-  padding: 0 0.5em 0 0.5em;
-  float: right;
-  border-radius: 1em;
-  background: #7ca9be;
-  font-size: 0.7em;
-  color: white;
-}
-
-.resultsCountInSearchHistory {
-  margin: 0 0 0 2em;
-  padding: 0 0.5em;
-  float: right;
-  border-radius: 1em;
-  background: #d9d9d9;
-  font-size: 0.7em;
-  color: grey;
-}
-
 .numberOfResultsFound {
   padding-top: 1em;
   font-size: 1.15em;
@@ -86,30 +63,12 @@ body {
   list-style-type: none;
 }
 
-.resultChainHeading {
-  margin: 1.25em 0.25em 0 0.25em;
-  padding: 0.5em 1em 0.5em 1em;
-  border-style: solid;
-  border-width: 0 0 0 0.25em;
-  border-color: #7ca9be;
-  background: #d9d9d9;
-  font-size: 0.85em;
-  font-weight: bold;
-  letter-spacing: .25em;
-  color: #7ca9be;
-}
-
 .individualResult {
   margin: 0.25em;
   padding: 1em;
   display: inline-block;
   background: #f3f3f3;
 }
-
-
-/* a:hover + a {
-  background: pink;
-} */
 
 .individualResult:hover {
   background: #c0c0c0;
@@ -143,4 +102,13 @@ body {
   text-decoration: underline;
   font-size: 0.95em;
   color: #cecece;
+}
+
+iframe {
+  display: none;
+  margin: 1em auto 0;
+}
+
+.nextVideoBtn {
+  display: none;
 }
