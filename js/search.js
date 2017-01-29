@@ -1,14 +1,14 @@
 // After the API loads, call a function to enable the search box.
 function handleAPILoaded() {
   //$('#search-button').attr('disabled', false);
-  console.log("api was loaded, yay!");
+  console.log("YouTube API... is loaded");
 }
 
 function createSearch(artist) {
   var request = gapi.client.youtube.search.list({
     q: artist,
     part: 'snippet',
-    maxResults: 3, // Make a button for user
+    maxResults: 1, // Make a button for user
     type: "video",
     videoCategoryId: 10 // 10 = music, 22 = People & Blogs
     //videoDefinition: "high" // Noticing that insisting on "high" returns some funny results.
@@ -36,8 +36,7 @@ function searchArrayOfArtists(arrayOfArtists) {
     createSearch(artist);
     console.log("Finding videos for " + artist);
   });
-  console.log("Now creating your playlist...");
-  autoCreatePlaylist("From " + arrayOfArtists[0] + " to " + arrayOfArtists[arrayOfArtists.length - 1]);
+ // autoCreatePlaylist("From " + arrayOfArtists[0] + " to " + arrayOfArtists[arrayOfArtists.length - 1]);
 }
 
 
