@@ -4,11 +4,10 @@ function handleAPILoaded() {
   console.log("YouTube API... is loaded");
 }
 
-var videoToPlay;
-var videoTitle;
+var currentVideo;
+var currentVideoTitle;
 var nextPageToken;
 var currentArtist;
-var currentVideo;
 
 // 2. This code loads the IFrame Player API code asynchronously.
 function prepareYouTubePlayer() {
@@ -27,10 +26,10 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
     width: '640',
-    videoId: videoToPlay,
+    videoId: currentVideo,
     playerVars: {
-      'enablejsapi': 1, // enables control via the YT embed API
-      'controls': 2, // 0 disables player controls, 2, enables
+      'enablejsapi': 1,
+      'controls': 2, // 0 disables player controls, 2 enables
       'showinfo': 0,
       'iv_load_policy': 3,
       'rel': 0 // disable recommended videos afterplayback
@@ -59,10 +58,10 @@ function onPlayerStateChange(event) {
     if ($(".lockArtist").hasClass("btn-default")) {
       queNextVideo(allResults);
     } else {
-      addThisVideoToListenHistory(videoTitle);
-      createSearch(allResults[arrayCount]);
+      addThisVideoToListenHistory(currentVideoTitle);
+      createVideoSearch(allResults[arrayCount]);
       setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
-        player.loadVideoById(videoToPlay);
+        player.loadVideoById(currentVideo);
       }, 300);
     }
 
@@ -91,7 +90,7 @@ function onPlayerError(errorEvent) {
 
 
 
-function createSearch(artist) {
+function createVideoSearch(artist) {
   var request = gapi.client.youtube.search.list({
     q: artist,
     part: 'snippet',
@@ -118,17 +117,17 @@ function runVideoSearch(request) {
 function processResponse(response) {
   var index = getRandomInt(0, response.result.items.length);
   var selectedResult = response.result.items[index].snippet;
-  if (selectedResult.title.toLowerCase() === videoTitle) { // Avoiding repeating current video
+  if (selectedResult.title.toLowerCase() === currentVideoTitle) { // Avoiding repeating current video
     processResponse(response);
   } else {
     nextPageToken = response.nextPageToken;
-    videoTitle = selectedResult.title.toLowerCase();
+    currentVideoTitle = selectedResult.title.toLowerCase();
     var description = selectedResult.description;
     var thumbnailURL = selectedResult.thumbnails.default.url;
     var videoID = thumbnailURL.slice(-23, -12);
-    videoToPlay = videoID;
+    currentVideo = videoID;
     $(".nowPlaying").fadeOut("slow", function () {
-      $(this).html("Playing <span>" + videoTitle + "</span>").fadeIn("slow");
+      $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow");
     });
   }
 }
