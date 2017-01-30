@@ -84,6 +84,12 @@ body {
   transition: 0.2s;
 }
 
+
+
+.additionalResults {
+  display: none;
+}
+
 .listenHistory {
   margin-top: 3.9em;
   list-style-type: none;

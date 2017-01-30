@@ -1,12 +1,16 @@
 "use strict";
 
-var conjunctionSearchList = ["vs", "with", "sounds like"]; // Consider adding "and", "influenced by"
-var conjunctionSearchCompletedCount = 0;
+
 var allGoogleResults;
+var similarArtistsGoogle;
+var conjunctionSearchList = ["vs", "with", "sounds like", "and", "influenced by"]; //  "with", "sounds like", "and", "influenced by"
+var conjunctionSearchCompletedCount = 0;
 var validating;
+
 
 function autoSuggestionMethod(initialArtist) {
   allGoogleResults = [initialArtist];
+  similarArtistsGoogle = [];
   conjunctionSearchCompletedCount = 0;
   conjunctionSearchList.forEach(function (conjunction) {
     suggestQueries(initialArtist, 0, conjunction);;
@@ -86,6 +90,7 @@ function Artist(artist, array) {
   this.commonGeneres = array.length;
 }
 
+
 function ensureSearchesAreOver() {
   if (!validating) {
     orderArtistsByFrequencyOfCommonGenres(similarArtistsGoogle);
@@ -101,11 +106,11 @@ function orderArtistsByFrequencyOfCommonGenres(array) {
   });
 
   similarArtistsGoogle = [];
-
   sortedTempArray.forEach(function (artistObj) {
     if (similarArtistsGoogle.indexOf(artistObj.artistName) === -1) {
       similarArtistsGoogle.push(artistObj.artistName);
     }
   });
-  displayResults(similarArtistsGoogle, 15, "Google autosuggestions"); // End of search!
+  console.log(similarArtistsGoogle);
+  combineSpotifyAndAutoSuggestionResults(similarArtistsGoogle); // End of search!
 }

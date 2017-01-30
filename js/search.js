@@ -8,6 +8,88 @@ var videoToPlay;
 var videoTitle;
 var nextPageToken;
 var currentArtist;
+var currentVideo;
+
+// 2. This code loads the IFrame Player API code asynchronously.
+function prepareYouTubePlayer() {
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  $(".btn-group").fadeIn("slow");
+}
+
+// 3. This function creates an <iframe> (and YouTube player)
+//    after the API code downloads.
+
+var player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '390',
+    width: '640',
+    videoId: videoToPlay,
+    playerVars: {
+      'enablejsapi': 1, // enables control via the YT embed API
+      'controls': 2, // 0 disables player controls, 2, enables
+      'showinfo': 0,
+      'iv_load_policy': 3,
+      'rel': 0 // disable recommended videos afterplayback
+      //  'origin': // My domain should be specified here
+    },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange,
+      'onError': onPlayerError
+    }
+  });
+}
+
+// 4. The API will call this function when the video player is ready.
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.ENDED) {  // video ended
+    console.log("video is over!");
+
+    if ($(".lockArtist").hasClass("btn-default")) {
+      queNextVideo(allResults);
+    } else {
+      addThisVideoToListenHistory(videoTitle);
+      createSearch(allResults[arrayCount]);
+      setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
+        player.loadVideoById(videoToPlay);
+      }, 300);
+    }
+
+  }
+}
+
+function onPlayerError(errorEvent) {
+  var errorMsg;
+  switch (errorEvent) {
+    case 2:
+      errorMsg = "The request contains an invalid parameter value";
+      break;
+    case 5:
+      errorMsg = "The requested content cannot be played in an HTML5 player...";
+      break;
+    case 100:
+      errorMsg = "The video requested was not found.";
+      break;
+    case 101:
+    case 150:
+      errorMsg = "The owner of the requested video does not allow it to be played in embedded players.";
+      break;
+  }
+  console.log(errorMsg);
+}
+
+
 
 function createSearch(artist) {
   var request = gapi.client.youtube.search.list({
