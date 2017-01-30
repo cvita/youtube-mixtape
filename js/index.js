@@ -37,9 +37,6 @@ function getInitialArtistFullGenreList(initialArtist) {
 }
 
 function displayResults(resultsArray, limit, methodUsed) {
-  if (resultsArray[0] === initialArtist) {
-    resultsArray.shift();
-  }
   if (resultsArray.length > limit) {
     resultsArray = resultsArray.slice(0, limit);
   }
@@ -50,48 +47,85 @@ function displayResults(resultsArray, limit, methodUsed) {
   });
 
   $(".individualResult").click(function () {
-    initialSearchInput.value = $(this).html();
-    clearDisplayedResults();
-    runSearch();
+    // Skips ahead to this artist in the currently displayed playlist
+    addThisVideoToListenHistory(videoTitle);
+    arrayCount = resultsArray.indexOf($(this).html());
+    createSearch(resultsArray[arrayCount]);
+    setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
+      player.loadVideoById(videoToPlay);
+    }, 300);
   });
 
-  searchArrayOfArtists(resultsArray);
+  createSearch(resultsArray[0]);
   beginPlayingFromResults();
 }
 
 function beginPlayingFromResults() {
-  if (videosForPlaylist.length === 0) {
+  if (!videoToPlay) {
     console.log("waiting for video results...");
     setTimeout(beginPlayingFromResults, 0);
   } else {
-    currentVideo = videosForPlaylist[0];
     if (!player) {
       prepareYouTubePlayer();
     } else {
-      player.loadVideoById(currentVideo);
+      player.loadVideoById(videoToPlay);
     }
   }
 }
 
 $(".nextVideoBtn").click(function () {
-  queNextVideo();
+  if ($(".lockArtist").hasClass("btn-default")) {
+    queNextVideo(similarArtistsSpotify);
+  } else {
+    addThisVideoToListenHistory(videoTitle);
+    createSearch(similarArtistsSpotify[arrayCount]);
+    setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
+      player.loadVideoById(videoToPlay);
+    }, 300);
+  }
 });
 
-function queNextVideo() {
-  var nextVideoIndex = videosForPlaylist.indexOf(currentVideo) + 1;
-  if (nextVideoIndex < currentVideo.length) {
-    currentVideo = videosForPlaylist[nextVideoIndex];
-    player.loadVideoById(currentVideo);
+$(".lockArtist").click(function () {
+  if ($(this).hasClass("btn-default")) {
+    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
   } else {
-    console.log("End of this playlist");
+    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
   }
+});
+
+$(".showHidePlayer").click(function () {
+  if ($(this).html() === "Show player") {
+    $(".videoWrapper").slideDown("slow", function () {
+      $(".showHidePlayer").html("Hide player");
+    });
+  } else {
+    $(".videoWrapper").slideUp("slow", function () {
+      $(".showHidePlayer").html("Show player");
+    });
+  }
+  $(this).blur();
+});
+
+var arrayCount = 0;
+function queNextVideo(arrayToQueueFrom) {
+  addThisVideoToListenHistory(videoTitle);
+  arrayCount++;
+  createSearch(arrayToQueueFrom[arrayCount]);
+  setTimeout(function () {
+    player.loadVideoById(videoToPlay);
+  }, 500);
 }
 
+function addThisVideoToListenHistory(currentVideoTitle) {
+  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
+  $(".clearListenHistoryBtn").show();
+}
 
 function clearDisplayedResults() {
   $(".searchedFor").html("");
   $(".allSearchResults").html("");
   $(".numberOfResultsFound").html("");
+  $(".clearListenHistoryBtn").hide();
 }
 
 $(".searchBtn").click(function () {
@@ -111,6 +145,14 @@ $("#initialSearchInput").click(function () {
   clearDisplayedResults();
 });
 
+$(".clearListenHistoryBtn").click(function () {
+  $(".listenHistory").slideUp("slow", function () {
+    $(".clearListenHistoryBtn").fadeOut("slow", function () {
+      $(".listenHistory").html("").show();
+    });
+  });
+});
+
 
 // 2. This code loads the IFrame Player API code asynchronously.
 function prepareYouTubePlayer() {
@@ -118,7 +160,7 @@ function prepareYouTubePlayer() {
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  $(".nextVideoBtn").show().removeClass("disabled");
+  $(".btn-group").fadeIn("slow");
 }
 
 // 3. This function creates an <iframe> (and YouTube player)
@@ -129,10 +171,11 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
     width: '640',
-    videoId: currentVideo,
+    videoId: videoToPlay,
     playerVars: {
       'enablejsapi': 1, // enables control via the YT embed API
       'controls': 2, // 0 disables player controls, 2, enables
+      'showinfo': 0,
       'iv_load_policy': 3,
       'rel': 0 // disable recommended videos afterplayback
       //  'origin': // My domain should be specified here
@@ -156,7 +199,17 @@ function onPlayerReady(event) {
 function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.ENDED) {  // video ended
     console.log("video is over!");
-    queNextVideo();
+
+    if ($(".lockArtist").hasClass("btn-default")) {
+      queNextVideo(similarArtistsSpotify);
+    } else {
+      addThisVideoToListenHistory(videoTitle);
+      createSearch(similarArtistsSpotify[arrayCount]);
+      setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
+        player.loadVideoById(videoToPlay);
+      }, 300);
+    }
+
   }
 }
 
@@ -179,6 +232,17 @@ function onPlayerError(errorEvent) {
   }
   console.log(errorMsg);
 }
+
+
+// Roughing in an idea for a bootstrap progress bar, which will monitor video playback
+// Plan to use player.getDuration()
+// var time = 0;
+// setInterval(function () {
+//   time++;
+//   $(".progress-bar").css("width", time + "%");
+// }, 1000);
+
+
 
 
 // function promptUserToCreateYouTubePlaylist(makePlaylistFrom) {
