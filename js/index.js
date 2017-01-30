@@ -1,9 +1,5 @@
 "use strict";
 
-var initialArtist;
-var fullGenreList;
-var allResults;
-
 $("#initialSearchInput").keydown(function (key) {
   if (key.keyCode === 13) {
     runSearch();
@@ -15,31 +11,39 @@ $(".searchBtn").click(function () {
   runSearch();
 });
 
+var allResults;
+var fullGenreList;
+var initialArtist;
+
 function runSearch() {
   allResults = [];
   fullGenreList = [];
   initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
-  getInitialArtistFullGenreList(initialArtist);
+  getInitialArtistFullGenreListViaSpotify(initialArtist);
   $(".subheading").slideUp("fast");
 }
 
-var combineSearchMethodsCounter = 0;
+var combineSearchMethodsCount = 0;
 function combineSpotifyAndAutoSuggestionResults(resultsArray) {
-  if (combineSearchMethodsCounter === 0) {
+  combineSearchMethodsCount++;
+  if (combineSearchMethodsCount === 1) {
     allResults = resultsArray;
   }
-  if (combineSearchMethodsCounter === 1) {
+  if (combineSearchMethodsCount === 2) {
+    combineSearchMethodsCount = 0;
     allResults = allResults.concat(resultsArray);
+    if (allResults.length === 0) {
+      allResults.push(initialArtist);
+      $(".lockArtist").removeClass("btn-default").addClass("btn-warning"); // Enables "Lock artist"
+      $(".allSearchResults").append("We were weren't able to find similar artists, but here's a result from your search");
+    }
     displayResults(allResults);
-    combineSearchMethodsCounter = 0;
   }
-  combineSearchMethodsCounter++;
 }
 
 function displayResults(allResults) {
-  createSearch(allResults[0]);
+  createVideoSearch(allResults[0]);
   beginPlayingFromResults();
-
   var forEachCount = 0;
   allResults.forEach(function (result) {
     forEachCount++;
@@ -47,15 +51,24 @@ function displayResults(allResults) {
       $(".allSearchResults").append(
         '<button class="btn-link"><li class="individualResult">' + result + '</li></button>'
       );
-      if (forEachCount === 15) {
-        $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-info">More results</button>');
-        $(".allSearchResults").append('<div class="additionalResults"></div>');
-      }
     } else {
       $(".additionalResults").append(
         '<button class="btn-link "><li class="individualResult">' + result + '</li></button>'
       );
     }
+    if (forEachCount === 15) {
+      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-info">More results</button>');
+      $(".allSearchResults").append('<div class="additionalResults"></div>');
+    }
+  });
+
+  $(".individualResult").click(function () {
+    addThisVideoToListenHistory(currentVideoTitle);
+    artistPosition = allResults.indexOf($(this).html());
+    createVideoSearch(allResults[artistPosition]);
+    setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
+      player.loadVideoById(currentVideo);
+    }, 500);
   });
 
   $(".moreResultsBtn").click(function () {
@@ -67,54 +80,31 @@ function displayResults(allResults) {
       $(".moreResultsBtn").html("More results");
     }
   });
-
-  $(".individualResult").click(function () {
-    addThisVideoToListenHistory(videoTitle);
-    arrayCount = allResults.indexOf($(this).html());
-    createSearch(allResults[arrayCount]);
-    setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
-      player.loadVideoById(videoToPlay);
-    }, 500);
-  });
 }
 
 function beginPlayingFromResults() {
-  if (!videoToPlay) {
-    console.log("waiting for video results...");
+  if (!currentVideo) {
     setTimeout(beginPlayingFromResults, 0);
+    console.log("Waiting for video results...");
   } else {
     if (!player) {
       prepareYouTubePlayer();
     } else {
-      player.loadVideoById(videoToPlay);
+      setTimeout(function () { // Another instance of async causing a race condition
+        player.loadVideoById(currentVideo);
+      }, 500);
     }
   }
-}
-
-var arrayCount = 0;
-function queNextVideo(arrayToQueueFrom) {
-  addThisVideoToListenHistory(videoTitle);
-  arrayCount++;
-  console.log(arrayToQueueFrom[arrayCount]);
-  createSearch(arrayToQueueFrom[arrayCount]);
-  setTimeout(function () {
-    player.loadVideoById(videoToPlay);
-  }, 500);
-}
-
-function addThisVideoToListenHistory(currentVideoTitle) {
-  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
-  $(".clearListenHistoryBtn").show();
 }
 
 $(".nextVideoBtn").click(function () {
   if ($(".lockArtist").hasClass("btn-default")) {
     queNextVideo(allResults);
   } else {
-    addThisVideoToListenHistory(videoTitle);
-    createSearch(allResults[arrayCount]);
+    addThisVideoToListenHistory(currentVideoTitle);
+    createVideoSearch(allResults[artistPosition]);
     setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
-      player.loadVideoById(videoToPlay);
+      player.loadVideoById(currentVideo);
     }, 300);
   }
 });
@@ -126,6 +116,21 @@ $(".lockArtist").click(function () {
     $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
   }
 });
+
+var artistPosition = 0;
+function queNextVideo(allResults) {
+  addThisVideoToListenHistory(currentVideoTitle);
+  artistPosition++;
+  createVideoSearch(allResults[artistPosition]);
+  setTimeout(function () {
+    player.loadVideoById(currentVideo);
+  }, 500);
+}
+
+function addThisVideoToListenHistory(currentVideoTitle) {
+  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
+  $(".clearListenHistoryBtn").show();
+}
 
 $(".showHidePlayer").click(function () {
   if ($(this).html() === "Show player") {
@@ -139,20 +144,19 @@ $(".showHidePlayer").click(function () {
   }
 });
 
-$("button").click(function () {
-  $(this).blur();
-});
-
 $("#initialSearchInput").click(function () {
   initialSearchInput.value = "";
   clearDisplayedResults();
 });
 
 function clearDisplayedResults() {
-  $(".searchedFor").html("");
+  $(".nowPlaying").html("");
   $(".allSearchResults").html("");
-  $(".numberOfResultsFound").html("");
-  $(".clearListenHistoryBtn").hide();
+  $(".lockArtist").removeClass("btn-warning").addClass("btn-default"); // Disable
+  if (currentVideoTitle !== undefined) {
+    addThisVideoToListenHistory(currentVideoTitle);
+    currentVideoTitle = undefined;
+  }
 }
 
 $(".clearListenHistoryBtn").click(function () {
@@ -163,17 +167,9 @@ $(".clearListenHistoryBtn").click(function () {
   });
 });
 
-
-// Roughing in an idea for a bootstrap progress bar, which will monitor video playback
-// Plan to use player.getDuration()
-// var time = 0;
-// setInterval(function () {
-//   time++;
-//   $(".progress-bar").css("width", time + "%");
-// }, 1000);
-
-
-
+$("button").click(function () {
+  $(this).blur();
+});
 
 // function promptUserToCreateYouTubePlaylist(makePlaylistFrom) {
 //   $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
