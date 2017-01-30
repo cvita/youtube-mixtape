@@ -53,10 +53,17 @@ body {
   transition: 0.2s;
 }
 
-.numberOfResultsFound {
-  padding-top: 1em;
-  font-size: 1.15em;
+.nowPlaying {
+  margin: 1em 0 1em 0;
+  font-size: 1.25em;
+  text-transform: capitalize;
 }
+
+.nowPlaying span {
+  color: #337ab7;
+}
+
+
 
 .allSearchResults {
   padding: 0;
@@ -77,38 +84,48 @@ body {
   transition: 0.2s;
 }
 
-.searchHistory {
+.listenHistory {
   margin-top: 3.9em;
   list-style-type: none;
 }
 
-.allSeachHistoryBtn {
+.listenHistory li {
   width: 100%;
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
   padding: 0.25em 1em;
   border-style: none;
   border-radius: 5px;
   background: #96cbe4;
   color: white;
+  text-transform: capitalize;
 }
 
-.clearSearchHistoryBtn {
+.clearListenHistoryBtn {
   display: none;
   float: right;
-  width: 10em;
-  margin-top: -1.5em;
-  border-style: none;
-  background: none;
   text-decoration: underline;
-  font-size: 0.95em;
-  color: #cecece;
 }
 
-iframe {
+.videoWrapper {
   display: none;
-  margin: 1em auto 0;
+	position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 25px;
+	height: 0;
+}
+.videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
-.nextVideoBtn {
+.btn-group {
   display: none;
+  margin: 1em;
+}
+
+.progress-bar {
+  transition: 1s;
 }
