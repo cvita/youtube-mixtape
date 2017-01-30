@@ -2,62 +2,80 @@
 
 var initialArtist;
 var fullGenreList;
-var similarArtistsSpotify;
-var similarArtistsGoogle;
-var currentVideo;
+var allResults;
+
+$("#initialSearchInput").keydown(function (key) {
+  if (key.keyCode === 13) {
+    runSearch();
+    this.blur();
+  }
+});
+
+$(".searchBtn").click(function () {
+  runSearch();
+});
 
 function runSearch() {
+  allResults = [];
   fullGenreList = [];
-  similarArtistsSpotify = [];
-  similarArtistsGoogle = [];
   initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
   getInitialArtistFullGenreList(initialArtist);
   $(".subheading").slideUp("fast");
 }
 
-function getInitialArtistFullGenreList(initialArtist) {
-  var urlPrefix = "https://api.spotify.com/v1/search?q="
-  $.getJSON(urlPrefix + initialArtist + "&type=artist")
-    .done(function (spotifyData) {
-      if (spotifyData.artists.items.length === 0) {
-        console.log("Unable to find " + initialArtist);
-      } else {
-        spotifyData.artists.items.forEach(function (artistResult) {
-          if (artistResult.name.toLowerCase() === initialArtist) {
-            fullGenreList = artistResult.genres;
-            //autoSuggestionMethod(initialArtist);
-            spotifyMethod(initialArtist);
-          }
-        });
-      }
-    })
-    .fail(function () {
-      console.log("Initial request for " + initialArtist + " to the Spotify api failed");
-    });
+var combineSearchMethodsCounter = 0;
+function combineSpotifyAndAutoSuggestionResults(resultsArray) {
+  if (combineSearchMethodsCounter === 0) {
+    allResults = resultsArray;
+  }
+  if (combineSearchMethodsCounter === 1) {
+    allResults = allResults.concat(resultsArray);
+    displayResults(allResults);
+    combineSearchMethodsCounter = 0;
+  }
+  combineSearchMethodsCounter++;
 }
 
-function displayResults(resultsArray, limit, methodUsed) {
-  if (resultsArray.length > limit) {
-    resultsArray = resultsArray.slice(0, limit);
-  }
-  $(".allSearchResults").append('<br><span style="color:#7ca9be;">' + methodUsed + '</span><br>');
+function displayResults(allResults) {
+  createSearch(allResults[0]);
+  beginPlayingFromResults();
 
-  resultsArray.forEach(function (result) {
-    $(".allSearchResults").append('<button class="btn-link"><li class="individualResult">' + result + '</li></button>');
+  var forEachCount = 0;
+  allResults.forEach(function (result) {
+    forEachCount++;
+    if (forEachCount <= 15) {
+      $(".allSearchResults").append(
+        '<button class="btn-link"><li class="individualResult">' + result + '</li></button>'
+      );
+      if (forEachCount === 15) {
+        $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-info">More results</button>');
+        $(".allSearchResults").append('<div class="additionalResults"></div>');
+      }
+    } else {
+      $(".additionalResults").append(
+        '<button class="btn-link "><li class="individualResult">' + result + '</li></button>'
+      );
+    }
+  });
+
+  $(".moreResultsBtn").click(function () {
+    if ($(this).html() === "More results") {
+      $(".additionalResults").slideDown("slow");
+      $(".moreResultsBtn").html("Less results");
+    } else {
+      $(".additionalResults").slideUp("slow");
+      $(".moreResultsBtn").html("More results");
+    }
   });
 
   $(".individualResult").click(function () {
-    // Skips ahead to this artist in the currently displayed playlist
     addThisVideoToListenHistory(videoTitle);
-    arrayCount = resultsArray.indexOf($(this).html());
-    createSearch(resultsArray[arrayCount]);
+    arrayCount = allResults.indexOf($(this).html());
+    createSearch(allResults[arrayCount]);
     setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
       player.loadVideoById(videoToPlay);
-    }, 300);
+    }, 500);
   });
-
-  createSearch(resultsArray[0]);
-  beginPlayingFromResults();
 }
 
 function beginPlayingFromResults() {
@@ -73,12 +91,28 @@ function beginPlayingFromResults() {
   }
 }
 
+var arrayCount = 0;
+function queNextVideo(arrayToQueueFrom) {
+  addThisVideoToListenHistory(videoTitle);
+  arrayCount++;
+  console.log(arrayToQueueFrom[arrayCount]);
+  createSearch(arrayToQueueFrom[arrayCount]);
+  setTimeout(function () {
+    player.loadVideoById(videoToPlay);
+  }, 500);
+}
+
+function addThisVideoToListenHistory(currentVideoTitle) {
+  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
+  $(".clearListenHistoryBtn").show();
+}
+
 $(".nextVideoBtn").click(function () {
   if ($(".lockArtist").hasClass("btn-default")) {
-    queNextVideo(similarArtistsSpotify);
+    queNextVideo(allResults);
   } else {
     addThisVideoToListenHistory(videoTitle);
-    createSearch(similarArtistsSpotify[arrayCount]);
+    createSearch(allResults[arrayCount]);
     setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
       player.loadVideoById(videoToPlay);
     }, 300);
@@ -103,23 +137,16 @@ $(".showHidePlayer").click(function () {
       $(".showHidePlayer").html("Show player");
     });
   }
+});
+
+$("button").click(function () {
   $(this).blur();
 });
 
-var arrayCount = 0;
-function queNextVideo(arrayToQueueFrom) {
-  addThisVideoToListenHistory(videoTitle);
-  arrayCount++;
-  createSearch(arrayToQueueFrom[arrayCount]);
-  setTimeout(function () {
-    player.loadVideoById(videoToPlay);
-  }, 500);
-}
-
-function addThisVideoToListenHistory(currentVideoTitle) {
-  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
-  $(".clearListenHistoryBtn").show();
-}
+$("#initialSearchInput").click(function () {
+  initialSearchInput.value = "";
+  clearDisplayedResults();
+});
 
 function clearDisplayedResults() {
   $(".searchedFor").html("");
@@ -128,23 +155,6 @@ function clearDisplayedResults() {
   $(".clearListenHistoryBtn").hide();
 }
 
-$(".searchBtn").click(function () {
-  runSearch();
-  this.blur();
-});
-
-$("#initialSearchInput").keydown(function (key) {
-  if (key.keyCode === 13) {
-    runSearch();
-    this.blur();
-  }
-});
-
-$("#initialSearchInput").click(function () {
-  initialSearchInput.value = "";
-  clearDisplayedResults();
-});
-
 $(".clearListenHistoryBtn").click(function () {
   $(".listenHistory").slideUp("slow", function () {
     $(".clearListenHistoryBtn").fadeOut("slow", function () {
@@ -152,86 +162,6 @@ $(".clearListenHistoryBtn").click(function () {
     });
   });
 });
-
-
-// 2. This code loads the IFrame Player API code asynchronously.
-function prepareYouTubePlayer() {
-  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  $(".btn-group").fadeIn("slow");
-}
-
-// 3. This function creates an <iframe> (and YouTube player)
-//    after the API code downloads.
-
-var player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height: '390',
-    width: '640',
-    videoId: videoToPlay,
-    playerVars: {
-      'enablejsapi': 1, // enables control via the YT embed API
-      'controls': 2, // 0 disables player controls, 2, enables
-      'showinfo': 0,
-      'iv_load_policy': 3,
-      'rel': 0 // disable recommended videos afterplayback
-      //  'origin': // My domain should be specified here
-    },
-    events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange,
-      'onError': onPlayerError
-    }
-  });
-}
-
-// 4. The API will call this function when the video player is ready.
-function onPlayerReady(event) {
-  event.target.playVideo();
-}
-
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.ENDED) {  // video ended
-    console.log("video is over!");
-
-    if ($(".lockArtist").hasClass("btn-default")) {
-      queNextVideo(similarArtistsSpotify);
-    } else {
-      addThisVideoToListenHistory(videoTitle);
-      createSearch(similarArtistsSpotify[arrayCount]);
-      setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
-        player.loadVideoById(videoToPlay);
-      }, 300);
-    }
-
-  }
-}
-
-function onPlayerError(errorEvent) {
-  var errorMsg;
-  switch (errorEvent) {
-    case 2:
-      errorMsg = "The request contains an invalid parameter value";
-      break;
-    case 5:
-      errorMsg = "The requested content cannot be played in an HTML5 player...";
-      break;
-    case 100:
-      errorMsg = "The video requested was not found.";
-      break;
-    case 101:
-    case 150:
-      errorMsg = "The owner of the requested video does not allow it to be played in embedded players.";
-      break;
-  }
-  console.log(errorMsg);
-}
 
 
 // Roughing in an idea for a bootstrap progress bar, which will monitor video playback
