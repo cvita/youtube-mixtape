@@ -37,16 +37,26 @@ function combineSpotifyAndAutoSuggestionResults(resultsArray) {
       $(".allSearchResults").append("We were weren't able to find similar artists, but here's a result from your search");
       $(".lockArtist").removeClass("btn-default").addClass("btn-warning"); // Enables "Lock artist"
     }
-    displayResults(allResults);
+    beginPlayingFirstVideo(allResults);
   }
 }
 
-function displayResults(allResults) {
-  createAndRunVideoSearch(allResults[0]).then(function (result) {
-    return assignCurrentVideoFromSearchResults(result);
-  }).then(function (result) {
-    prepareYouTubePlayer();
+function beginPlayingFirstVideo(allResults) {
+  Promise.all([
+    createAndRunVideoSearch(allResults[0]).then(function (result) {
+      return assignCurrentVideoFromSearchResults(result);
+    }),
+    onPlayerReady()
+  ]).then(function (values) {
+    playCurrentVideo(values[0]);
+    displayResults(allResults);
+    getDurationOfPlayingVideo();
   });
+}
+
+function displayResults(allResults) {
+  $(".btn-group").show(); // Custom UI for video
+  $(".allSearchResults").html("");
 
   var forEachCount = 0;
   allResults.forEach(function (result) {
@@ -91,8 +101,10 @@ var findAndPlayVideo = function (artist) {
     return playCurrentVideo(result);
   }).then(function (result) {
     console.log(result);
+    getDurationOfPlayingVideo();
   });
 }
+
 
 $(".nextVideoBtn").click(function () {
   queNextVideo(allResults);
@@ -139,8 +151,6 @@ $("#initialSearchInput").click(function () {
 });
 
 function clearDisplayedResults() {
-  $(".nowPlaying").html("");
-  $(".allSearchResults").html("");
   $(".lockArtist").removeClass("btn-warning").addClass("btn-default"); // Disable
   if (currentVideoTitle !== undefined) {
     addThisVideoToListenHistory(currentVideoTitle);

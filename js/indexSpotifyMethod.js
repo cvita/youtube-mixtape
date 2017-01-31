@@ -88,7 +88,7 @@ function removeLessRelevantArtists(resultsArray) {
 
   if (similarArtistsSpotify.length > 15) {
     allResults = similarArtistsSpotify;
-    displayResults(allResults);
+    beginPlayingFirstVideo(allResults);
   } else {
     combineSpotifyAndAutoSuggestionResults(similarArtistsSpotify);
     console.log("Under 15 results from spotify method, so now querying autoSuggestionMethod");

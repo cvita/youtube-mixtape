@@ -54,6 +54,7 @@ body {
 }
 
 .nowPlaying {
+  visibility: hidden;
   margin: 1em 0 1em 0;
   font-size: 1.25em;
   text-transform: capitalize;
@@ -75,6 +76,7 @@ body {
   padding: 1em;
   display: inline-block;
   background: #f3f3f3;
+  text-transform: capitalize;
 }
 
 .individualResult:hover {
