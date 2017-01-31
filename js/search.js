@@ -89,47 +89,70 @@ function onPlayerError(errorEvent) {
 }
 
 
-
-function createVideoSearch(artist) {
-  var request = gapi.client.youtube.search.list({
-    q: artist,
-    part: 'snippet',
-    maxResults: 10,
-    type: "video",
-    videoCategoryId: 10, // 10 = music, 22 = People & Blogs
-    videoEmbeddable: "true"
-  });
-  if (artist !== currentArtist) {
-    currentArtist = artist;
-  } else {
-    request.Zq.k5.params.pageToken = nextPageToken;
-    request.Zq.k5.params.maxResults = 2;
-  }
-  runVideoSearch(request);
-}
-
-function runVideoSearch(request) {
-  request.execute(function (response) {
-    processResponse(response);
-  });
-}
-
-function processResponse(response) {
-  var index = getRandomInt(0, response.result.items.length);
-  var selectedResult = response.result.items[index].snippet;
-  if (selectedResult.title.toLowerCase() === currentVideoTitle) { // Avoiding repeating current video
-    processResponse(response);
-  } else {
-    nextPageToken = response.nextPageToken;
-    currentVideoTitle = selectedResult.title.toLowerCase();
-    var description = selectedResult.description;
-    var thumbnailURL = selectedResult.thumbnails.default.url;
-    var videoID = thumbnailURL.slice(-23, -12);
-    currentVideo = videoID;
-    $(".nowPlaying").fadeOut("slow", function () {
-      $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow");
+var createAndRunVideoSearch = function (artist) {
+  return new Promise(function (resolve, reject) {
+    var request = gapi.client.youtube.search.list({
+      q: artist,
+      part: 'snippet',
+      maxResults: 10,
+      type: "video",
+      videoCategoryId: 10, // 10 = music, 22 = People & Blogs
+      videoEmbeddable: "true"
     });
-  }
+    if (artist !== currentArtist) {
+      currentArtist = artist;
+    } else {
+      request.Zq.k5.params.pageToken = nextPageToken;
+      request.Zq.k5.params.maxResults = 2;
+    }
+
+    if (request) {
+      resolve(request);
+    } else {
+      reject("createVideoSearch reject error");
+    }
+  });
+}
+
+var assignCurrentVideoFromSearchResults = function (response) {
+  return new Promise(function (resolve, reject) {
+    var index = getRandomInt(0, response.result.items.length);
+    var selectedResult = response.result.items[index].snippet;
+    if (selectedResult.title.toLowerCase() === currentVideoTitle) { // Would be easy to compare to array of videoID's to completely avoid any repeats in a session.
+      assignCurrentVideoFromSearchResults(response);
+    } else {
+      nextPageToken = response.nextPageToken;
+      currentVideoTitle = selectedResult.title.toLowerCase();
+      var description = selectedResult.description;
+      var thumbnailURL = selectedResult.thumbnails.default.url;
+      var videoID = thumbnailURL.slice(-23, -12);
+      currentVideo = videoID;
+      console.log(currentVideoTitle);
+      $(".nowPlaying").fadeOut("slow", function () {
+        $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow");
+      });
+    }
+
+    if (currentVideo) {
+      resolve(currentVideo);
+    } else {
+      reject("runVideoSearchAndAssignCurrentVideo reject error");
+    }
+  });
+}
+
+var playCurrentVideo = function (videoID) {
+  return new Promise(function (resolve, reject) {
+    var nowPlaying = false;
+    player.loadVideoById(videoID);
+    nowPlaying = true;
+
+    if (nowPlaying) {
+      resolve("Now playing your video!");
+    } else {
+      reject("Problem with playVideo()");
+    }
+  });
 }
 
 function getRandomInt(min, max) {
@@ -137,11 +160,6 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-
-
-
-
 
 
 
