@@ -10,13 +10,12 @@ var nextPageToken;
 var currentArtist;
 
 // 2. This code loads the IFrame Player API code asynchronously.
-function prepareYouTubePlayer() {
+(function prepareYouTubePlayer() {
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  $(".btn-group").fadeIn("slow");
-}
+})();
 
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
@@ -44,27 +43,17 @@ function onYouTubeIframeAPIReady() {
 }
 
 // 4. The API will call this function when the video player is ready.
-function onPlayerReady(event) {
-  event.target.playVideo();
+var onPlayerReady = function (event) {
+  return new Promise(function (resolve, reject) {
+    resolve();
+  });
 }
 
 // 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
 function onPlayerStateChange(event) {
   if (event.data === YT.PlayerState.ENDED) {  // video ended
     console.log("video is over!");
-
-    if ($(".lockArtist").hasClass("btn-default")) {
-      queNextVideo(allResults);
-    } else {
-      addThisVideoToListenHistory(currentVideoTitle);
-      createVideoSearch(allResults[arrayCount]);
-      setTimeout(function () { // Figure out a better asynch technique (this is a bandaid to fix a race condition)
-        player.loadVideoById(currentVideo);
-      }, 300);
-    }
-
+    queNextVideo(allResults);
   }
 }
 
@@ -127,9 +116,10 @@ var assignCurrentVideoFromSearchResults = function (response) {
       var thumbnailURL = selectedResult.thumbnails.default.url;
       var videoID = thumbnailURL.slice(-23, -12);
       currentVideo = videoID;
-      console.log(currentVideoTitle);
       $(".nowPlaying").fadeOut("slow", function () {
-        $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow");
+        $(this).css("visibility", "visible");
+        $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow", function () {
+        });
       });
     }
 
@@ -153,6 +143,16 @@ var playCurrentVideo = function (videoID) {
       reject("Problem with playVideo()");
     }
   });
+}
+
+function getDurationOfPlayingVideo() {
+  var duration = player.getDuration() / 60;
+  if (duration > 0) {
+    $(".playTime").html(duration);
+  } else {
+    console.log("Waiting to receive duration");
+    setTimeout(getDurationOfPlayingVideo, 0);
+  }
 }
 
 function getRandomInt(min, max) {
