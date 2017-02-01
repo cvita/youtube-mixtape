@@ -51,6 +51,7 @@ function beginPlayingFirstVideo(allResults) {
   ]).then(function (values) {
     playCurrentVideo(values[0]);
     displayResults(allResults);
+    highLightCurrentArtistButton();
   });
 }
 
@@ -80,6 +81,7 @@ function displayResults(allResults) {
     addThisVideoToListenHistory(currentVideoTitle);
     artistPosition = allResults.indexOf($(this).html());
     findAndPlayVideo(allResults[artistPosition]);
+    highLightCurrentArtistButton();
   });
 
   $(".moreResultsBtn").click(function () {
@@ -115,10 +117,20 @@ function queNextVideo(allResults) {
     artistPosition++;
   }
   findAndPlayVideo(allResults[artistPosition]);
+  highLightCurrentArtistButton();
   $(".currentTime").html("0:00");
   $(".trackLength").html(" / 0:00");
   clearInterval(playbackTimer);
   playbackTimer = "Initial playback not started";
+}
+
+function highLightCurrentArtistButton() {
+  var listItems = $(".allSearchResults li");
+  listItems.each(function (li) {
+    if ($(this).html() === allResults[artistPosition]) {
+      $(this).css("background", "pink");
+    }
+  });
 }
 
 $(".lockArtist").click(function () {

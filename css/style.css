@@ -76,6 +76,7 @@ body {
   display: inline-block;
   background: #f3f3f3;
   text-transform: capitalize;
+  transition: 0.5s;
 }
 
 .individualResult:hover {
