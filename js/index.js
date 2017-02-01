@@ -14,6 +14,7 @@ $(".searchBtn").click(function () {
 var allResults;
 var fullGenreList;
 var initialArtist;
+var artistPosition = 0;
 
 function runSearch() {
   allResults = [];
@@ -50,7 +51,6 @@ function beginPlayingFirstVideo(allResults) {
   ]).then(function (values) {
     playCurrentVideo(values[0]);
     displayResults(allResults);
-    getDurationOfPlayingVideo();
   });
 }
 
@@ -101,7 +101,6 @@ var findAndPlayVideo = function (artist) {
     return playCurrentVideo(result);
   }).then(function (result) {
     console.log(result);
-    getDurationOfPlayingVideo();
   });
 }
 
@@ -110,21 +109,33 @@ $(".nextVideoBtn").click(function () {
   queNextVideo(allResults);
 });
 
-var artistPosition = 0;
 function queNextVideo(allResults) {
   addThisVideoToListenHistory(currentVideoTitle);
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
     artistPosition++;
   }
   findAndPlayVideo(allResults[artistPosition]);
+  $(".currentTime").html("0:00");
+  $(".trackLength").html(" / 0:00");
+  clearInterval(playbackTimer);
+  playbackTimer = "Initial playback not started";
 }
-
 
 $(".lockArtist").click(function () {
   if ($(this).hasClass("btn-default")) {
     $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
   } else {
     $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
+  }
+});
+
+$(".pausePlayer").click(function () {
+  if ($(this).hasClass("btn-default")) {
+    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
+    player.pauseVideo();
+  } else {
+    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
+    player.playVideo();
   }
 });
 

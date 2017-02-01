@@ -51,9 +51,26 @@ var onPlayerReady = function (event) {
 
 // 5. The API calls this function when the player's state changes.
 function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.ENDED) {  // video ended
-    console.log("video is over!");
-    queNextVideo(allResults);
+  switch (event.data) {
+    case YT.PlayerState.BUFFERING:
+      if (playbackTimer !== "Initial playback not started") {
+        var playbackbackTimeElapsed = formatMinutesAndSeconds(Math.round(player.getCurrentTime()));
+        $(".currentTime").html(playbackbackTimeElapsed);
+      }
+      break;
+    case YT.PlayerState.PLAYING:
+      getDurationOfPlayingVideo();
+      $(".pausePlayer").removeClass("btn-warning").addClass("btn-default");
+      break;
+    case YT.PlayerState.PAUSED:
+      console.log("Paused");
+      clearInterval(playbackTimer);
+      $(".pausePlayer").removeClass("btn-default").addClass("btn-warning");
+      break;
+    case YT.PlayerState.ENDED:
+      console.log("video is over");
+      queNextVideo(allResults);
+      break;
   }
 }
 
@@ -116,11 +133,6 @@ var assignCurrentVideoFromSearchResults = function (response) {
       var thumbnailURL = selectedResult.thumbnails.default.url;
       var videoID = thumbnailURL.slice(-23, -12);
       currentVideo = videoID;
-      $(".nowPlaying").fadeOut("slow", function () {
-        $(this).css("visibility", "visible");
-        $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow", function () {
-        });
-      });
     }
 
     if (currentVideo) {
@@ -131,12 +143,21 @@ var assignCurrentVideoFromSearchResults = function (response) {
   });
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 var playCurrentVideo = function (videoID) {
   return new Promise(function (resolve, reject) {
     var nowPlaying = false;
     player.loadVideoById(videoID);
+    $(".nowPlaying").fadeOut("slow", function () {
+      $(this).css("visibility", "visible");
+      $(this).html("Playing <span>" + currentVideoTitle + "</span>").fadeIn("slow");
+    });
     nowPlaying = true;
-
     if (nowPlaying) {
       resolve("Now playing your video!");
     } else {
@@ -145,26 +166,40 @@ var playCurrentVideo = function (videoID) {
   });
 }
 
+var playbackTimer = "Initial playback not started";
 function getDurationOfPlayingVideo() {
-  var duration = player.getDuration() / 60;
-  if (duration > 0) {
-    $(".playTime").html(duration);
-  } else {
-    console.log("Waiting to receive duration");
+  var totalDuration = Math.round(player.getDuration());
+  if (!totalDuration > 0) {
+    console.log("Waiting to receive totalDuration");
     setTimeout(getDurationOfPlayingVideo, 0);
+  } else {
+    var trackLength = formatMinutesAndSeconds(totalDuration);
+    $(".trackLength").html(" / " + trackLength);
+    $(".trackCounter").show();
+
+    var currentTime = Math.round(player.getCurrentTime());
+    clearInterval(playbackTimer);
+
+    playbackTimer = setInterval(function () {
+      currentTime++;
+      playbackbackTimeElapsed = formatMinutesAndSeconds(currentTime);
+      $(".currentTime").html(playbackbackTimeElapsed);
+    }, 1000);
   }
 }
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+function formatMinutesAndSeconds(time) {
+  var minutes = parseInt(time / 60);
+  var seconds = time - (minutes * 60);
+  if (time < 59) {
+    minutes = 0;
+    seconds = time;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  return minutes + ":" + seconds;
 }
-
-
-
-
-
 
 
 
