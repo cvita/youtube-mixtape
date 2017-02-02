@@ -9,9 +9,7 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
       if (spotifyData.artists.items.length === 0) {
         $(".nowPlaying").html("Unable to find " + initialArtist);
       } else {
-        var forEachCount = 0;
         spotifyData.artists.items.forEach(function (artistResult) {
-          forEachCount++;
           if (artistResult.name.toLowerCase() === initialArtist) {
             fullGenreList = artistResult.genres;
             determineArtistPrimaryGenres(initialArtist, fullGenreList);
@@ -25,7 +23,7 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
 }
 
 function determineArtistPrimaryGenres(initialArtist, fullGenreList) {
-  similarArtistsSpotify = [];
+  similarArtistsSpotify = [{ "name": initialArtist, "frequency": 1 }];
   var primaryGenres = [];
   var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
   var forEachCount = 0;
@@ -52,6 +50,9 @@ function searchByGenreToFindInitialArtist(initialArtist, genre, spotifyData) {
     }
   }
 }
+//var frequency = {};
+
+
 
 function findSimilarArtistsByGenreSearch(primaryGenres) {
   var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
@@ -61,43 +62,53 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
       .done(function (genreResults) {
         for (var i = 0; i < genreResults.artists.items.length; i++) {
           var aSimilarArtist = genreResults.artists.items[i].name.toLowerCase();
-          similarArtistsSpotify.push(aSimilarArtist);
+
+          for (var j = 0; j < similarArtistsSpotify.length; j++) {
+            if (similarArtistsSpotify[j].name === aSimilarArtist) {
+              similarArtistsSpotify[j].frequency++;
+              break;
+            } else if (j === similarArtistsSpotify.length - 1) {
+              similarArtistsSpotify.push({ "name": aSimilarArtist, "frequency": 1 });
+            }
+          }
         }
+
         forEachCount++;
         if (forEachCount === primaryGenres.length) {
-          removeLessRelevantArtists(similarArtistsSpotify);
+          sortSimilarArtistsByFrequency();
         }
       });
   });
 }
 
-function removeLessRelevantArtists(resultsArray) {
-  var frequency = {};
-  resultsArray.forEach(function (artist) {
-    frequency[artist] = 0;
+function sortSimilarArtistsByFrequency() {
+  similarArtistsSpotify = similarArtistsSpotify.sort(function (a, b) {
+    return b.frequency - a.frequency;
   });
 
-  var instanceOfArtist = resultsArray.filter(function (artist) {
-    return ++frequency[artist] === 1;
-  });
-
-  similarArtistsSpotify = instanceOfArtist.filter(function (val) {
-    return frequency[val] > 3; // Significantly affects number of results
-  });
-  similarArtistsSpotify = sortSimilarArtistsByFrequency(similarArtistsSpotify, frequency);
-
-  if (similarArtistsSpotify.length > 15) {
-    allResults = similarArtistsSpotify;
-    beginPlayingFirstVideo(allResults);
-  } else {
-    combineSpotifyAndAutoSuggestionResults(similarArtistsSpotify);
-    console.log("Under 15 results from spotify method, so now querying autoSuggestionMethod");
-    autoSuggestionMethod(initialArtist);
+  if (similarArtistsSpotify.length >= 100) {
+    similarArtistsSpotify = similarArtistsSpotify.slice(0, 100);
   }
+
+
+  similarArtistsSpotify.forEach(function (artist) {
+    allResults.push(artist.name);
+  });
+
+  beginPlayingFirstVideo(allResults);
 }
 
-function sortSimilarArtistsByFrequency(resultsArray, frequency) {
-  return resultsArray.sort(function (a, b) {
-    return frequency[b] - frequency[a];
-  });
-}
+
+
+
+
+
+
+  //   if (similarArtistsSpotify.length > 15) {
+  //     allResults = similarArtistsSpotify;
+  //     beginPlayingFirstVideo(allResults);
+  //   } else {
+  //     combineSpotifyAndAutoSuggestionResults(similarArtistsSpotify);
+  //     console.log("Under 15 results from spotify method, so now querying autoSuggestionMethod");
+  //     autoSuggestionMethod(initialArtist);
+  //   }

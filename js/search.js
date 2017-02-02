@@ -45,6 +45,7 @@ function onYouTubeIframeAPIReady() {
 // 4. The API will call this function when the video player is ready.
 var onPlayerReady = function (event) {
   return new Promise(function (resolve, reject) {
+    console.log("Player is ready");
     resolve();
   });
 }
@@ -54,21 +55,19 @@ function onPlayerStateChange(event) {
   switch (event.data) {
     case YT.PlayerState.BUFFERING:
       if (playbackTimer !== "Initial playback not started") {
-        var playbackbackTimeElapsed = formatMinutesAndSeconds(Math.round(player.getCurrentTime()));
-        $(".currentTime").html(playbackbackTimeElapsed);
+        var currentTime = formatMinutesAndSeconds(Math.round(player.getCurrentTime()));
+        $(".currentTime").html(currentTime);
       }
       break;
     case YT.PlayerState.PLAYING:
-      getDurationOfPlayingVideo();
+      Promise.resolve(getDurationOfPlayingVideo());
       $(".pausePlayer").removeClass("btn-warning").addClass("btn-default");
       break;
     case YT.PlayerState.PAUSED:
-      console.log("Paused");
       clearInterval(playbackTimer);
       $(".pausePlayer").removeClass("btn-default").addClass("btn-warning");
       break;
     case YT.PlayerState.ENDED:
-      console.log("video is over");
       queNextVideo(allResults);
       break;
   }
@@ -167,25 +166,26 @@ var playCurrentVideo = function (videoID) {
 }
 
 var playbackTimer = "Initial playback not started";
+
 function getDurationOfPlayingVideo() {
-  var totalDuration = Math.round(player.getDuration());
-  if (!totalDuration > 0) {
-    console.log("Waiting to receive totalDuration");
-    setTimeout(getDurationOfPlayingVideo, 0);
-  } else {
+  return new Promise(function (resolve, reject) {
+    var totalDuration = Math.round(player.getDuration());
     var trackLength = formatMinutesAndSeconds(totalDuration);
     $(".trackLength").html(" / " + trackLength);
-    $(".trackCounter").show();
-
+    $(".trackCounter").show(); // Includes both ".currentTime" and ".trackLength"
     var currentTime = Math.round(player.getCurrentTime());
     clearInterval(playbackTimer);
-
     playbackTimer = setInterval(function () {
       currentTime++;
-      playbackbackTimeElapsed = formatMinutesAndSeconds(currentTime);
-      $(".currentTime").html(playbackbackTimeElapsed);
+      $(".currentTime").html(formatMinutesAndSeconds(currentTime));
     }, 1000);
-  }
+
+    if (totalDuration > 0 && currentTime >= 0) {
+      resolve("getDurationOfPlayingVideo resolved");
+    } else {
+      reject("getDurationOfPlayingVideo() rejected");
+    }
+  });
 }
 
 function formatMinutesAndSeconds(time) {

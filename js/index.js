@@ -24,23 +24,23 @@ function runSearch() {
   $(".subheading").slideUp("fast");
 }
 
-var combineSearchMethodsCount = 0;
-function combineSpotifyAndAutoSuggestionResults(resultsArray) {
-  combineSearchMethodsCount++;
-  if (combineSearchMethodsCount === 1) {
-    allResults = resultsArray;
-  }
-  if (combineSearchMethodsCount === 2) {
-    combineSearchMethodsCount = 0;
-    allResults = allResults.concat(resultsArray);
-    if (allResults.length === 0) {
-      allResults.push(initialArtist);
-      $(".allSearchResults").append("We were weren't able to find similar artists, but here's a result from your search");
-      $(".lockArtist").removeClass("btn-default").addClass("btn-warning"); // Enables "Lock artist"
-    }
-    beginPlayingFirstVideo(allResults);
-  }
-}
+// var combineSearchMethodsCount = 0;
+// function combineSpotifyAndAutoSuggestionResults(resultsArray) {
+//   combineSearchMethodsCount++;
+//   if (combineSearchMethodsCount === 1) {
+//     allResults = resultsArray;
+//   }
+//   if (combineSearchMethodsCount === 2) {
+//     combineSearchMethodsCount = 0;
+//     allResults = allResults.concat(resultsArray);
+//     if (allResults.length === 0) {
+//       allResults.push(initialArtist);
+//       $(".allSearchResults").append("We were weren't able to find similar artists, but here's a result from your search");
+//       $(".lockArtist").removeClass("btn-default").addClass("btn-warning"); // Enables "Lock artist"
+//     }
+//     beginPlayingFirstVideo(allResults);
+//   }
+// }
 
 function beginPlayingFirstVideo(allResults) {
   Promise.all([
@@ -57,25 +57,54 @@ function beginPlayingFirstVideo(allResults) {
 
 function displayResults(allResults) {
   $(".btn-group").show(); // Custom UI for video
+  $(".relevanceColorScale").show();
   $(".allSearchResults").html("");
 
   var forEachCount = 0;
-  allResults.forEach(function (result) {
+  similarArtistsSpotify.forEach(function (result) { // Roughed in
     forEachCount++;
+    var relevance;
+    if (result.frequency > 7) {
+      relevance = "relevance5of5";
+    } else if (result.frequency < 3) {
+      relevance = "relevance1of5";
+    }
+
+    switch (result.frequency) {
+      case 7:
+        relevance = "relevance5of5";
+        break;
+      case 6:
+        relevance = "relevance4of5";
+        break;
+      case 5:
+        relevance = "relevance3of5";
+        break;
+      case 4:
+        relevance = "relevance2of5";
+        break;
+      case 3:
+        relevance = "relevance1of5";
+        break;
+    }
+
+
     if (forEachCount <= 15) {
       $(".allSearchResults").append(
-        '<button class="btn-link"><li class="individualResult">' + result + '</li></button>'
+        '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
       );
     } else {
       $(".additionalResults").append(
-        '<button class="btn-link "><li class="individualResult">' + result + '</li></button>'
+        '<button class="btn-link "><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
       );
     }
     if (forEachCount === 15) {
-      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-info">More results</button>');
+      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-default btn-sm">More results</button>');
       $(".allSearchResults").append('<div class="additionalResults"></div>');
     }
   });
+
+
 
   $(".individualResult").click(function () {
     addThisVideoToListenHistory(currentVideoTitle);
@@ -112,23 +141,25 @@ $(".nextVideoBtn").click(function () {
 });
 
 function queNextVideo(allResults) {
-  addThisVideoToListenHistory(currentVideoTitle);
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
     artistPosition++;
   }
+  addThisVideoToListenHistory(currentVideoTitle);
   findAndPlayVideo(allResults[artistPosition]);
   highLightCurrentArtistButton();
-  $(".currentTime").html("0:00");
-  $(".trackLength").html(" / 0:00");
   clearInterval(playbackTimer);
   playbackTimer = "Initial playback not started";
+  $(".currentTime").html("0:00");
+  $(".trackLength").html(" / 0:00");
 }
 
 function highLightCurrentArtistButton() {
   var listItems = $(".allSearchResults li");
   listItems.each(function (li) {
     if ($(this).html() === allResults[artistPosition]) {
-      $(this).css("background", "pink");
+      $(this).css("transform", "scale(1.2)");
+    } else {
+      $(this).css("transform", "none");
     }
   });
 }

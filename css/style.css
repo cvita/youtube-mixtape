@@ -86,7 +86,65 @@ body {
   transition: 0.2s;
 }
 
+.relevance5of5 {
+  border-left: 0.5em solid #08519c;
+}
 
+.relevance4of5 {
+   border-left: 0.5em solid #3182bd;
+}
+
+.relevance3of5 {
+  border-left: 0.5em solid #6baed6;
+}
+
+.relevance2of5 {
+  border-left: 0.5em solid #bdd7e7;
+}
+
+.relevance1of5 {
+  border-left: 0.5em solid #eff3ff;
+}
+
+.rel5of5 {
+  float: left;
+  height: 1.5em;
+  width: 1.5em;
+  background: #08519c;
+}
+
+.rel4of5 {
+  float: left;
+  height: 1.5em;
+  width: 1.5em;
+  background: #3182bd;
+}
+
+.rel3of5 {
+  float: left;
+  height: 1.5em;
+  width: 1.5em;
+  background: #6baed6;
+}
+
+.rel2of5 {
+  float: left;
+  height: 1.5em;
+  width: 1.5em;
+  background: #bdd7e7;
+}
+
+.rel1of5 {
+  float: left;
+  height: 1.5em;
+  width: 1.5em;
+  background: #eff3ff;
+}
+
+.relevanceColorScale {
+  display: none;
+    margin: 1.5em 0 3.5em 0.5em;
+}
 
 .additionalResults {
   display: none;
