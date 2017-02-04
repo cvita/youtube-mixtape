@@ -1,5 +1,15 @@
 "use strict";
 
+var fullGenreList; // Only useful as a global var to auto-complete method
+var initialArtist; // Only useful as a global var to auto-complete method
+var allResults;
+var artistPosition;
+var listenHistory = [];
+
+$(".searchBtn").click(function () {
+  runSearch();
+});
+
 $("#initialSearchInput").keydown(function (key) {
   if (key.keyCode === 13) {
     runSearch();
@@ -7,112 +17,76 @@ $("#initialSearchInput").keydown(function (key) {
   }
 });
 
-$(".searchBtn").click(function () {
-  runSearch();
-});
-
-var allResults;
-var fullGenreList;
-var initialArtist;
-var artistPosition = 0;
-
 function runSearch() {
-  allResults = [];
   fullGenreList = [];
   initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
-  getInitialArtistFullGenreListViaSpotify(initialArtist);
+  getInitialArtistFullGenreListViaSpotify(initialArtist); // See indexSpotifyMethod.js
   $(".subheading").slideUp("fast");
 }
 
-// var combineSearchMethodsCount = 0;
-// function combineSpotifyAndAutoSuggestionResults(resultsArray) {
-//   combineSearchMethodsCount++;
-//   if (combineSearchMethodsCount === 1) {
-//     allResults = resultsArray;
-//   }
-//   if (combineSearchMethodsCount === 2) {
-//     combineSearchMethodsCount = 0;
-//     allResults = allResults.concat(resultsArray);
-//     if (allResults.length === 0) {
-//       allResults.push(initialArtist);
-//       $(".allSearchResults").append("We were weren't able to find similar artists, but here's a result from your search");
-//       $(".lockArtist").removeClass("btn-default").addClass("btn-warning"); // Enables "Lock artist"
-//     }
-//     beginPlayingFirstVideo(allResults);
-//   }
-// }
+function beginPlayingFirstVideo(resultsArray) {
+  if (listenHistory.length > 0) {
+    displayListenHistory();
+  }
+  allResults = resultsArray;
+  artistPosition = 0;
+  findAndPlayVideo(allResults[artistPosition].name);
+  displayResults(allResults);
+  $(".customPlayerUI").css("visibility", "visible");
+  $(".relevanceColorScale").show();
+}
 
-function beginPlayingFirstVideo(allResults) {
-  Promise.all([
-    createAndRunVideoSearch(allResults[0]).then(function (result) {
-      return assignCurrentVideoFromSearchResults(result);
-    }),
-    onPlayerReady()
-  ]).then(function (values) {
-    playCurrentVideo(values[0]);
-    displayResults(allResults);
-    highLightCurrentArtistButton();
+function findAndPlayVideo(artist) {
+  createAndRunVideoSearch(artist).then(function (result) {
+    return assignCurrentVideoFromSearchResults(result);
+  }).then(function (result) {
+    return playCurrentVideo(result);
+  }).then(function (result) {
+    console.log("JS Promise chain complete. Now playing videoID: " + result);
   });
 }
 
 function displayResults(allResults) {
-  $(".btn-group").show(); // Custom UI for video
-  $(".relevanceColorScale").show();
   $(".allSearchResults").html("");
-
   var forEachCount = 0;
-  similarArtistsSpotify.forEach(function (result) { // Roughed in
+  allResults.forEach(function (result) {
     forEachCount++;
-    var relevance;
-    if (result.frequency > 7) {
-      relevance = "relevance5of5";
-    } else if (result.frequency < 3) {
-      relevance = "relevance1of5";
-    }
-
-    switch (result.frequency) {
-      case 7:
-        relevance = "relevance5of5";
-        break;
-      case 6:
-        relevance = "relevance4of5";
-        break;
-      case 5:
-        relevance = "relevance3of5";
-        break;
-      case 4:
-        relevance = "relevance2of5";
-        break;
-      case 3:
-        relevance = "relevance1of5";
-        break;
-    }
-
-
+    var relevance = assignRelevanceClassForColorScale(result.frequency);
     if (forEachCount <= 15) {
       $(".allSearchResults").append(
         '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
       );
-    } else {
+    }
+    if (forEachCount === 15) {
+      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-default btn-sm">More results</button>');
+      assignFunctionalityToMoreResultsBtn();
+      $(".allSearchResults").append('<div class="additionalResults"></div>');
+    }
+    if (forEachCount > 15) {
       $(".additionalResults").append(
         '<button class="btn-link "><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
       );
     }
-    if (forEachCount === 15) {
-      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-default btn-sm">More results</button>');
-      $(".allSearchResults").append('<div class="additionalResults"></div>');
-    }
   });
+  assignFunctionalityToIndividualResultBtns();
+  highLightCurrentArtistButton();
+}
 
+function assignRelevanceClassForColorScale(frequency) {
+  if (frequency >= 5) {
+    return "relevance5of5";
+  } else if (frequency === 4) {
+    return "relevance4of5";
+  } else if (frequency === 3) {
+    return "relevance3of5";
+  } else if (frequency === 2) {
+    return "relevance2of5";
+  } else if (frequency <= 1) {
+    return "relevance1of5";
+  }
+}
 
-
-  $(".individualResult").click(function () {
-    addThisVideoToListenHistory(currentVideoTitle);
-    artistPosition = allResults.indexOf($(this).html());
-    findAndPlayVideo(allResults[artistPosition]);
-    highLightCurrentArtistButton();
-  });
-
+function assignFunctionalityToMoreResultsBtn() {
   $(".moreResultsBtn").click(function () {
     if ($(this).html() === "More results") {
       $(".additionalResults").slideDown("slow");
@@ -124,17 +98,30 @@ function displayResults(allResults) {
   });
 }
 
-// JS Promises!
-var findAndPlayVideo = function (artist) {
-  createAndRunVideoSearch(artist).then(function (result) {
-    return assignCurrentVideoFromSearchResults(result);
-  }).then(function (result) {
-    return playCurrentVideo(result);
-  }).then(function (result) {
-    console.log(result);
+function assignFunctionalityToIndividualResultBtns() {
+  $(".individualResult").click(function () {
+    displayListenHistory();
+    for (var i = 0; i < allResults.length; i++) {
+      if (allResults[i].name === $(this).html()) {
+        artistPosition = i;
+        break;
+      }
+    }
+    findAndPlayVideo(allResults[artistPosition].name);
+    highLightCurrentArtistButton();
   });
 }
 
+function highLightCurrentArtistButton() {
+  var listItems = $(".allSearchResults li");
+  listItems.each(function (li) {
+    if ($(this).html() === allResults[artistPosition]) {
+      $(this).addClass("highlighted");
+    } else {
+      $(this).removeClass("highlighted");
+    }
+  });
+}
 
 $(".nextVideoBtn").click(function () {
   queNextVideo(allResults);
@@ -144,24 +131,13 @@ function queNextVideo(allResults) {
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
     artistPosition++;
   }
-  addThisVideoToListenHistory(currentVideoTitle);
-  findAndPlayVideo(allResults[artistPosition]);
+  displayListenHistory();
+  findAndPlayVideo(allResults[artistPosition].name);
   highLightCurrentArtistButton();
   clearInterval(playbackTimer);
   playbackTimer = "Initial playback not started";
   $(".currentTime").html("0:00");
   $(".trackLength").html(" / 0:00");
-}
-
-function highLightCurrentArtistButton() {
-  var listItems = $(".allSearchResults li");
-  listItems.each(function (li) {
-    if ($(this).html() === allResults[artistPosition]) {
-      $(this).css("transform", "scale(1.2)");
-    } else {
-      $(this).css("transform", "none");
-    }
-  });
 }
 
 $(".lockArtist").click(function () {
@@ -172,19 +148,11 @@ $(".lockArtist").click(function () {
   }
 });
 
-$(".pausePlayer").click(function () {
-  if ($(this).hasClass("btn-default")) {
-    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
-    player.pauseVideo();
-  } else {
-    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
-    player.playVideo();
+function displayListenHistory() {
+  if (currentVideo.title !== undefined) {
+    $(".listenHistory").append("<li>" + currentVideo.title + "</li>");
+    $(".clearListenHistoryBtn").fadeIn("slow");
   }
-});
-
-function addThisVideoToListenHistory(currentVideoTitle) {
-  $(".listenHistory").append("<li>" + currentVideoTitle + "</li>");
-  $(".clearListenHistoryBtn").show();
 }
 
 $(".showHidePlayer").click(function () {
@@ -199,20 +167,22 @@ $(".showHidePlayer").click(function () {
   }
 });
 
-$("#initialSearchInput").click(function () {
-  initialSearchInput.value = "";
-  clearDisplayedResults();
+$(".pausePlayer").click(function () {
+  if ($(this).hasClass("btn-default")) {
+    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
+    player.pauseVideo();
+  } else {
+    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
+    player.playVideo();
+  }
 });
 
-function clearDisplayedResults() {
-  $(".lockArtist").removeClass("btn-warning").addClass("btn-default"); // Disable
-  if (currentVideoTitle !== undefined) {
-    addThisVideoToListenHistory(currentVideoTitle);
-    currentVideoTitle = undefined;
-  }
-}
+$("#initialSearchInput").click(function () {
+  initialSearchInput.value = "";
+});
 
 $(".clearListenHistoryBtn").click(function () {
+  listenHistory = [listenHistory.pop()];
   $(".listenHistory").slideUp("slow", function () {
     $(".clearListenHistoryBtn").fadeOut("slow", function () {
       $(".listenHistory").html("").show();
@@ -220,18 +190,16 @@ $(".clearListenHistoryBtn").click(function () {
   });
 });
 
+$(".createPlaylist").click(function () {
+  autoCreatePlaylist();
+  $(this).addClass("disabled");
+  $(this).html("Now creating your playlist");
+});
+
 $("button").click(function () {
   $(this).blur();
 });
 
-// function promptUserToCreateYouTubePlaylist(makePlaylistFrom) {
-//   $(".allSearchResults").append("<br><button class='createPlaylist btn btn-info'>Create this playlist</button>");
-//   $(".createPlaylist").click(function () {
-//     $(this).addClass("disabled");
-//     $(this).html("Now creating your playlist...");
-//     searchArrayOfArtists(makePlaylistFrom);
-//   });
-// }
 
 
 // BUG: clicking search after results are already displayed, will duplicate displayed results.
