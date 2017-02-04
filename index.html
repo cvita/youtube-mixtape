@@ -25,7 +25,7 @@
           <h3 class="subheading">Discover new artists based on your old favorites</h3>
 
           <div class="input-group">
-            <input id="initialSearchInput" type="text" class="form-control" placeholder="Example: Muddy Waters">
+            <input id="initialSearchInput" type="text" class="form-control" placeholder="Artist name">
             <span class="input-group-addon">
           <button type="submit" class="searchBtn">
             <span class="glyphicon glyphicon-search"></span>
@@ -46,20 +46,27 @@
             <script></script>
             <!-- youTube player API lives here -->
           </div>
-
-          <div class="btn-group">
-            <button class="pausePlayer btn btn-default">Pause</button>
-            <button class="nextVideoBtn btn btn-default">Next video</button>
-            <button class="lockArtist btn btn-default">Lock artist</button>
-            <button class="showHidePlayer btn btn-default">Show player</button>
-          </div>
-          <div class="trackCounter"><span class="currentTime">0:00</span><span class="trackLength"> / 0:00</span></div>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-xs-8">
-          <div class="relevanceColorScale">
+      <div class="customPlayerUI btn-toolbar mb-3" role="toolbar">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" class="pausePlayer btn btn-default">Pause</button>
+          <button type="button" class="nextVideoBtn btn btn-default">Next video</button>
+          <button type="button" class="lockArtist btn btn-default">Lock artist</button>
+          <button type="button" class="showHidePlayer btn btn-default">Show player</button>
+        </div>
+
+        <div class="trackCounter">
+          <span class="currentTime">0:00</span><span class="trackLength"> / 0:00</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8">
+        <div class="relevanceColorScale">
           <div class="rel5of5"></div>
           <div class="rel4of5"></div>
           <div class="rel3of5"></div>
@@ -77,6 +84,8 @@
 
       <div class="col-xs-4">
         <ol class="listenHistory"></ol>
+        <button class="createPlaylist btn btn-default">Create YouTube playlist</button>
+        <button class="viewPlaylist btn btn-default">View playlist on YouTube</button>
         <button class="clearListenHistoryBtn btn btn-link">Clear listen history</button>
       </div>
 
