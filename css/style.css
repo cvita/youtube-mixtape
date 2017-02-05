@@ -37,7 +37,7 @@ body {
 }
 
 .searchBtn {
-  padding: 0.7em 4em;
+  padding: 0.6em 4em;
   border: none;
   background: none;
   font-size: 0.9em;
@@ -196,6 +196,12 @@ body {
   float: right;
 }
 
-.viewPlaylist {
+.createMixtape {
   display: none;
+  float: right;
+}
+
+.viewMixtape {
+  display: none;
+  float: right;
 }
