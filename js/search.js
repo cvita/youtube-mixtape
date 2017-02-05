@@ -222,9 +222,11 @@ function autoCreatePlaylist() {
     addVideosToPlaylistCount++;
     if (addVideosToPlaylistCount === listenHistory.length) {
       clearInterval(addVideosSlowly);
-      $(".createPlaylist").hide();
-      $(".viewPlaylist").show();
-      $(".viewPlaylist").click(function () {
+      $(".createMixtape").fadeOut("slow", function () {
+        $(".viewMixtape").fadeIn("slow");
+      });
+
+      $(".viewMixtape").click(function () {
         window.open("https://www.youtube.com/playlist?list=" + playlistId);
       });
     }
@@ -244,7 +246,7 @@ function createPlaylist(playlistTitle) {
       }
     }
   });
-  request.execute(function(response) {
+  request.execute(function (response) {
     var result = response.result;
     if (result) {
       playlistId = result.id;

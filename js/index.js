@@ -20,8 +20,11 @@ $("#initialSearchInput").keydown(function (key) {
 function runSearch() {
   fullGenreList = [];
   initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
-  getInitialArtistFullGenreListViaSpotify(initialArtist); // See indexSpotifyMethod.js
-  $(".subheading").slideUp("fast");
+  if (initialArtist !== "") {
+    getInitialArtistFullGenreListViaSpotify(initialArtist); // See indexSpotifyMethod.js
+    $(".searchBtn").addClass("disabled");
+    $(".subheading").slideUp("fast");
+  }
 }
 
 function beginPlayingFirstVideo(resultsArray) {
@@ -151,7 +154,8 @@ $(".lockArtist").click(function () {
 function displayListenHistory() {
   if (currentVideo.title !== undefined) {
     $(".listenHistory").append("<li>" + currentVideo.title + "</li>");
-    $(".clearListenHistoryBtn").fadeIn("slow");
+    $(".createMixtape").show();
+    $(".clearListenHistoryBtn").show();
   }
 }
 
@@ -179,28 +183,27 @@ $(".pausePlayer").click(function () {
 
 $("#initialSearchInput").click(function () {
   initialSearchInput.value = "";
+  $(".searchBtn").removeClass("disabled");
 });
 
 $(".clearListenHistoryBtn").click(function () {
   listenHistory = [listenHistory.pop()];
   $(".listenHistory").slideUp("slow", function () {
+    $(".createMixtape").fadeOut("slow");
+    $(".viewMixtape").fadeOut("slow");
     $(".clearListenHistoryBtn").fadeOut("slow", function () {
       $(".listenHistory").html("").show();
+      $(".createMixtape").html("Create this Mixtape").removeClass("disabled");
     });
   });
 });
 
-$(".createPlaylist").click(function () {
+$(".createMixtape").click(function () {
   autoCreatePlaylist();
   $(this).addClass("disabled");
-  $(this).html("Now creating your playlist");
+  $(this).html("Now creating your Mixtape");
 });
 
 $("button").click(function () {
   $(this).blur();
 });
-
-
-
-// BUG: clicking search after results are already displayed, will duplicate displayed results.
-// BUG: Shouldn't be able to search a blank initialSearchKeyord
