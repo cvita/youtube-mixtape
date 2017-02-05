@@ -107,6 +107,7 @@ var createAndRunVideoSearch = function (artist) {
   });
 }
 
+// Todo: Initially attempt to pick from top 5 results, then expand to top 20 results if needed
 var assignCurrentVideoFromSearchResults = function (response) {
   return new Promise(function (resolve, reject) {
     var selectedResult;
@@ -155,7 +156,9 @@ var playCurrentVideo = function (currentVideo) {
     player.loadVideoById(currentVideo.videoID);
     $(".nowPlaying").fadeOut("slow", function () {
       $(this).css("visibility", "visible");
-      $(this).html("Playing <span>" + currentVideo.title + "</span>").fadeIn("slow");
+      $(this).html("Playing <span>" + currentVideo.title + "</span>").fadeIn("slow", function () {
+        displayListenHistory(currentVideo.title);
+      });
     });
     nowPlaying = true;
     if (nowPlaying) {
@@ -166,8 +169,33 @@ var playCurrentVideo = function (currentVideo) {
   });
 }
 
-var playbackTimer = "Initial playback not started";
+function displayListenHistory(title) {
+  if (title !== undefined) {
+    $(".listenHistory").append("<li>" + title + "<button class='deleteVideoFromHistoryBtn btn btn-sm btn-danger'>x</button></li>");
+    $(".createMixtape").show();
+    $(".clearListenHistoryBtn").show();
+    assignDeleteVideoFromHistoryBtnFunctionality();
+  }
+}
 
+function assignDeleteVideoFromHistoryBtnFunctionality() {
+  $(".deleteVideoFromHistoryBtn").click(function () {
+    var videoTitle = $(this).parent(".listenHistory li")[0].innerHTML;
+    $(".listenHistory li").each(function (li) {
+      if ($(this).html() === videoTitle) {
+        $(this).fadeOut("slow");
+        for (var i = 0; i < listenHistory.length; i++) {
+          if ($(this).html().indexOf(listenHistory[i].title) !== -1) {
+            listenHistory.splice(i, 1);
+            break;
+          }
+        }
+      }
+    });
+  });
+}
+
+var playbackTimer = "Initial playback not started";
 function getDurationOfPlayingVideo() {
   return new Promise(function (resolve, reject) {
     var totalDuration = Math.round(player.getDuration());
@@ -203,10 +231,9 @@ function formatMinutesAndSeconds(time) {
 }
 
 
-// ADD TO PLAYLIST SECTION:
+// Create YouTube Playlist Section:
 var playlistId;
 var channelId;
-
 
 function autoCreatePlaylist() {
   var playlistTitle = "From " + listenHistory[0].artist + " to " + listenHistory[listenHistory.length - 1].artist;
@@ -250,11 +277,9 @@ function createPlaylist(playlistTitle) {
     var result = response.result;
     if (result) {
       playlistId = result.id;
-      // $('#playlist-id').val(playlistId);
-      // $('#playlist-title').html(result.snippet.title);
-      // $('#playlist-description').html(result.snippet.description);
+      console.log("Playlist ID: " + playlistId);
     } else {
-      // $('#status').html('Could not create playlist');
+      console.log("Could not create playlist");
     }
   });
 }

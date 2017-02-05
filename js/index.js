@@ -1,7 +1,7 @@
 "use strict";
 
-var fullGenreList; // Only useful as a global var to auto-complete method
 var initialArtist; // Only useful as a global var to auto-complete method
+var fullGenreList; // Only useful as a global var to auto-complete method
 var allResults;
 var artistPosition;
 var listenHistory = [];
@@ -18,20 +18,17 @@ $("#initialSearchInput").keydown(function (key) {
 });
 
 function runSearch() {
-  fullGenreList = [];
-  initialArtist = document.getElementById("initialSearchInput").value.toLowerCase();
-  if (initialArtist !== "") {
-    getInitialArtistFullGenreListViaSpotify(initialArtist); // See indexSpotifyMethod.js
-    $(".searchBtn").addClass("disabled");
+  var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
+  if (searchInput !== initialArtist && searchInput !== "") {
+    initialArtist = searchInput;
+    fullGenreList = [];
+    getInitialArtistFullGenreListViaSpotify(initialArtist); // See spotifyMethod.js
     $(".subheading").slideUp("fast");
   }
 }
 
-function beginPlayingFirstVideo(resultsArray) {
-  if (listenHistory.length > 0) {
-    displayListenHistory();
-  }
-  allResults = resultsArray;
+function beginPlayingFirstVideo(array) {
+  allResults = array;
   artistPosition = 0;
   findAndPlayVideo(allResults[artistPosition].name);
   displayResults(allResults);
@@ -55,10 +52,9 @@ function displayResults(allResults) {
   allResults.forEach(function (result) {
     forEachCount++;
     var relevance = assignRelevanceClassForColorScale(result.frequency);
+    var individualResultBtn = '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>';
     if (forEachCount <= 15) {
-      $(".allSearchResults").append(
-        '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
-      );
+      $(".allSearchResults").append(individualResultBtn);
     }
     if (forEachCount === 15) {
       $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-default btn-sm">More results</button>');
@@ -66,9 +62,7 @@ function displayResults(allResults) {
       $(".allSearchResults").append('<div class="additionalResults"></div>');
     }
     if (forEachCount > 15) {
-      $(".additionalResults").append(
-        '<button class="btn-link "><li class="individualResult ' + relevance + '">' + result.name + '</li></button>'
-      );
+      $(".additionalResults").append(individualResultBtn);
     }
   });
   assignFunctionalityToIndividualResultBtns();
@@ -84,7 +78,7 @@ function assignRelevanceClassForColorScale(frequency) {
     return "relevance3of5";
   } else if (frequency === 2) {
     return "relevance2of5";
-  } else if (frequency <= 1) {
+  } else {
     return "relevance1of5";
   }
 }
@@ -103,7 +97,6 @@ function assignFunctionalityToMoreResultsBtn() {
 
 function assignFunctionalityToIndividualResultBtns() {
   $(".individualResult").click(function () {
-    displayListenHistory();
     for (var i = 0; i < allResults.length; i++) {
       if (allResults[i].name === $(this).html()) {
         artistPosition = i;
@@ -118,7 +111,7 @@ function assignFunctionalityToIndividualResultBtns() {
 function highLightCurrentArtistButton() {
   var listItems = $(".allSearchResults li");
   listItems.each(function (li) {
-    if ($(this).html() === allResults[artistPosition]) {
+    if ($(this).html() === allResults[artistPosition].name) {
       $(this).addClass("highlighted");
     } else {
       $(this).removeClass("highlighted");
@@ -134,7 +127,6 @@ function queNextVideo(allResults) {
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
     artistPosition++;
   }
-  displayListenHistory();
   findAndPlayVideo(allResults[artistPosition].name);
   highLightCurrentArtistButton();
   clearInterval(playbackTimer);
@@ -150,14 +142,6 @@ $(".lockArtist").click(function () {
     $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
   }
 });
-
-function displayListenHistory() {
-  if (currentVideo.title !== undefined) {
-    $(".listenHistory").append("<li>" + currentVideo.title + "</li>");
-    $(".createMixtape").show();
-    $(".clearListenHistoryBtn").show();
-  }
-}
 
 $(".showHidePlayer").click(function () {
   if ($(this).html() === "Show player") {

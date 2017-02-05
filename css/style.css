@@ -181,6 +181,7 @@ body {
 }
 
 .listenHistory li {
+  float: left;
   width: 100%;
   margin-bottom: 1em;
   padding: 0.25em 1em;
@@ -189,6 +190,13 @@ body {
   background: #96cbe4;
   color: white;
   text-transform: capitalize;
+}
+
+.closeMsgBtn {
+  float: right;
+  /*position: relative;
+  top: -2em;
+  left: 1em;*/
 }
 
 .clearListenHistoryBtn {
