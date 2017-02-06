@@ -180,23 +180,26 @@ body {
   list-style-type: none;
 }
 
-.listenHistory li {
-  float: left;
+.listenHistory  li {
   width: 100%;
+  min-height: 2.5em;
   margin-bottom: 1em;
   padding: 0.25em 1em;
   border-style: none;
   border-radius: 5px;
   background: #96cbe4;
+}
+
+li > span {
+  display: inline-block;
+  width: 85%;
   color: white;
   text-transform: capitalize;
 }
 
-.closeMsgBtn {
+.deleteVideoFromHistoryBtn {
   float: right;
-  /*position: relative;
-  top: -2em;
-  left: 1em;*/
+  max-width: 15%;
 }
 
 .clearListenHistoryBtn {

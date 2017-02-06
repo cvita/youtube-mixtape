@@ -171,7 +171,7 @@ var playCurrentVideo = function (currentVideo) {
 
 function displayListenHistory(title) {
   if (title !== undefined) {
-    $(".listenHistory").append("<li>" + title + "<button class='deleteVideoFromHistoryBtn btn btn-sm btn-danger'>x</button></li>");
+    $(".listenHistory").append("<li><span>" + title + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-danger'>x</button></li>");
     $(".createMixtape").show();
     $(".clearListenHistoryBtn").show();
     assignDeleteVideoFromHistoryBtnFunctionality();
