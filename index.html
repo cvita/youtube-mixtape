@@ -21,13 +21,13 @@
 
       <div class="row">
         <div class="col-md-12 text-center">
-          <h1 class="page-header">YouTube <span id="mixTapeTitle">MixTape</span></h1>
+          <h1 class="page-header">YouTube <span id="mixTapeTitle">Mixtape</span></h1>
           <h3 class="subheading">Discover new artists based on your old favorites</h3>
 
           <div class="input-group">
-            <input id="initialSearchInput" type="text" class="form-control" placeholder="Example: Muddy Waters">
+            <input id="initialSearchInput" type="text" class="form-control" placeholder="Artist name">
             <span class="input-group-addon">
-          <button type="submit" class="searchBtn">
+          <button type="submit" class="searchBtn btn">
             <span class="glyphicon glyphicon-search"></span>
             </button>
             </span>
@@ -39,32 +39,67 @@
 
 
       <div class="row">
-
-        <div class="col-xs-8">
-          <div class="searchedFor"></div>
-          <div id="player"></div>
-          <script></script> <!-- youTube player API here -->
-          <button class="nextVideoBtn btn btn-default disabled">Next video</button>
-          <ol class="allSearchResults"></ol>
+        <div class="col-sm-12">
+          <div class="nowPlaying">Playing</div>
+          <div class="videoWrapper">
+            <div id="player"></div>
+            <script></script>
+            <!-- youTube player API lives here -->
+          </div>
         </div>
-        <!-- col-md-8 -->
+      </div>
 
-        <div class="col-xs-4">
-          <ol class="searchHistory"></ol>
-          <button class="clearSearchHistoryBtn">clear search history</button>
+      <div class="customPlayerUI btn-toolbar mb-3" role="toolbar">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" class="pausePlayer btn btn-default">Pause</button>
+          <button type="button" class="nextVideoBtn btn btn-default">Next video</button>
+          <button type="button" class="lockArtist btn btn-default">Lock artist</button>
+          <button type="button" class="showHidePlayer btn btn-default">Show player</button>
+        </div>
+
+        <div class="trackCounter">
+          <span class="currentTime">0:00</span><span class="trackLength"> / 0:00</span>
         </div>
 
       </div>
-      <!-- row -->
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8">
+        <div class="relevanceColorScale">
+          <div class="rel5of5"></div>
+          <div class="rel4of5"></div>
+          <div class="rel3of5"></div>
+          <div class="rel2of5"></div>
+          <div class="rel1of5"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-8">
+        <ol class="allSearchResults"></ol>
+      </div>
+      <!-- col-md-8 -->
+
+      <div class="col-xs-4">
+        <ol class="listenHistory"></ol>
+        <button class="createMixtape btn btn-primary">Create this Mixtape</button>
+        <button class="viewMixtape btn btn-success">View Mixtape on YouTube</button>
+        <button class="clearListenHistoryBtn btn btn-link">Clear listen history</button>
+      </div>
 
     </div>
-    <!-- app -->
+    <!-- row -->
+
+  </div>
+  <!-- app -->
   </div>
   <!-- container -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script>
   <script src="js/index.js"></script>
-  <script src="js/indexSpotifyMethod.js"></script>
-  <script src="js/indexAutoSuggestionMethod.js"></script>
+  <script src="js/spotifyMethod.js"></script>
+  <script src="js/autoSuggestionMethod.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/search.js"></script>
   <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
