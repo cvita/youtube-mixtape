@@ -169,14 +169,37 @@ var playCurrentVideo = function (currentVideo) {
   });
 }
 
+
+$(".listenHistory").sortable();
+$(".listenHistory").disableSelection();
+
 function displayListenHistory(title) {
   if (title !== undefined) {
     $(".listenHistory").append("<li><span>" + title + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-danger'>x</button></li>");
+    assignSortableListenHistoryFunctionality();
     $(".createMixtape").show();
     $(".clearListenHistoryBtn").show();
     assignDeleteVideoFromHistoryBtnFunctionality();
   }
 }
+
+function assignSortableListenHistoryFunctionality() {
+  $(".listenHistory li").mouseup(function () {
+    setTimeout(function () {
+      var tempArray = [];
+      $(".listenHistory li").each(function (li) {
+        var videoTitleFromDOM = $(this).text().slice(0, -1);
+        for (var i = 0; i < listenHistory.length; i++) {
+          if (videoTitleFromDOM.indexOf(listenHistory[i].title) !== -1) {
+            tempArray.push(listenHistory[i]);
+          }
+        }
+      });
+      listenHistory = tempArray;
+    }, 10);
+  });
+}
+
 
 function assignDeleteVideoFromHistoryBtnFunctionality() {
   $(".deleteVideoFromHistoryBtn").click(function () {
