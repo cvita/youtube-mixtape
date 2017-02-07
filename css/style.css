@@ -177,7 +177,7 @@ body {
 }
 
 .listenHistory {
-  list-style-type: none;
+  border-left: 1px solid grey;
 }
 
 .listenHistory  li {
