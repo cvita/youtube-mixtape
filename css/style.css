@@ -192,14 +192,14 @@ body {
 
 li > span {
   display: inline-block;
-  width: 85%;
+  max-width: 75%;
   color: white;
   text-transform: capitalize;
 }
 
 .deleteVideoFromHistoryBtn {
   float: right;
-  max-width: 15%;
+  margin-right: -0.9em;
 }
 
 .clearListenHistoryBtn {

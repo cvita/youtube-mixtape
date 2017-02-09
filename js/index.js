@@ -1,6 +1,5 @@
 "use strict";
 
-var initialArtist; // Only useful as a global var to auto-complete method
 var fullGenreList; // Only useful as a global var to auto-complete method
 var allResults;
 var artistPosition;
@@ -20,7 +19,7 @@ $("#initialSearchInput").keydown(function (key) {
 function runSearch() {
   var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
   if (searchInput !== initialArtist && searchInput !== "") {
-    initialArtist = searchInput;
+    var initialArtist = searchInput;
     fullGenreList = [];
     getInitialArtistFullGenreListViaSpotify(initialArtist); // See spotifyMethod.js
     $(".subheading").slideUp("fast");

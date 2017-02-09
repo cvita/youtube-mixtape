@@ -110,21 +110,8 @@ var createAndRunVideoSearch = function (artist) {
 // Todo: Initially attempt to pick from top 5 results, then expand to top 20 results if needed
 var assignCurrentVideoFromSearchResults = function (response) {
   return new Promise(function (resolve, reject) {
-    var selectedResult;
-    var pickVideoCount = 0;
-    (function pickVideoRandomly() {
-      var index = getRandomInt(0, response.result.items.length);
-      selectedResult = response.result.items[index].snippet;
-      for (var i = 0; i < listenHistory.length; i++) {
-        if (listenHistory[i].title === selectedResult.title.toLowerCase()) {
-          break;
-          if (pickVideoCount < 50) { // Avoid infinite loop
-            pickVideoCount++;
-            pickVideoRandomly();
-          }
-        }
-      }
-    })();
+    var index = getRandomInt(0, response.result.items.length);
+    var selectedResult = response.result.items[index].snippet;
     nextPageToken = response.nextPageToken;
     var description = selectedResult.description;
     var thumbnailURL = selectedResult.thumbnails.default.url;
@@ -132,7 +119,8 @@ var assignCurrentVideoFromSearchResults = function (response) {
     currentVideo = {
       "artist": currentArtist,
       "title": selectedResult.title.toLowerCase(),
-      "videoID": videoID
+      "videoID": videoID,
+      "description": description
     };
     listenHistory.push(currentVideo);
 
