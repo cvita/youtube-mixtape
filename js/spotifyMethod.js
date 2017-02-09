@@ -2,8 +2,7 @@
 var similarArtistsSpotify;
 
 function getInitialArtistFullGenreListViaSpotify(initialArtist) {
-  var urlPrefix = "https://api.spotify.com/v1/search?q="
-  $.getJSON(urlPrefix + initialArtist + "&type=artist")
+  $.getJSON("https://api.spotify.com/v1/search?q=" + initialArtist + "&type=artist")
     .done(function (spotifyData) {
       if (spotifyData.artists.items.length === 0) {
         $(".nowPlaying").html("Unable to find " + initialArtist);
@@ -21,13 +20,13 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
     });
 }
 
+
 function determineArtistPrimaryGenres(initialArtist, fullGenreList) {
   similarArtistsSpotify = [{ "name": initialArtist, "frequency": 100 }]; // Ensures initialArtist will display as first result
   var primaryGenres = [];
-  var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
   var forEachCount = 0;
   fullGenreList.forEach(function (genre) {
-    $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50")
+    $.getJSON("https://api.spotify.com/v1/search?q=%20genre:%22" + genre + "%22&type=artist&limit=50")
       .done(function (genreResults) {
         var aPrimaryGenre = searchByGenreToFindInitialArtist(initialArtist, genre, genreResults);
         if (aPrimaryGenre !== undefined) {
@@ -51,10 +50,9 @@ function searchByGenreToFindInitialArtist(initialArtist, genre, spotifyData) {
 }
 
 function findSimilarArtistsByGenreSearch(primaryGenres) {
-  var urlPrefix = "https://api.spotify.com/v1/search?q=%20genre:%22";
   var forEachCount = 0;
   primaryGenres.forEach(function (genre) {
-    $.getJSON(urlPrefix + genre + "%22&type=artist&limit=50")
+    $.getJSON("https://api.spotify.com/v1/search?q=%20genre:%22" + genre + "%22&type=artist&limit=50")
       .done(function (genreResults) {
         for (var i = 0; i < genreResults.artists.items.length; i++) {
           var aSimilarArtist = genreResults.artists.items[i].name.toLowerCase();
