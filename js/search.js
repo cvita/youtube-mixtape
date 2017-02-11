@@ -6,7 +6,7 @@ var currentArtist;
 
 // After auth.js completes successfully...
 function handleAPILoaded() {
-  console.log("YouTube search/create playlist API loaded");
+  console.log("YouTube search/create playlist API is loaded");
 }
 
 $(document).ready(prepareYouTubePlayer());
@@ -90,7 +90,9 @@ var createAndRunVideoSearch = function (artist) {
       part: 'snippet',
       maxResults: 15,
       type: "video",
+      videoDuration: "short" || "medium", // Doubt this works. Will know if it returns a 20 > minute result
       videoCategoryId: 10, // 10 = music, 22 = People & Blogs
+      regionCode: "US",
       videoEmbeddable: "true"
     });
     if (artist !== currentArtist) {
