@@ -90,7 +90,7 @@ var createAndRunVideoSearch = function (artist) {
       part: 'snippet',
       maxResults: 15,
       type: "video",
-      videoDuration: "short" || "medium", // Doubt this works. Will know if it returns a 20 > minute result
+      videoDuration: "short" || "medium",
       videoCategoryId: 10, // 10 = music, 22 = People & Blogs
       regionCode: "US",
       videoEmbeddable: "true"
@@ -109,11 +109,24 @@ var createAndRunVideoSearch = function (artist) {
   });
 }
 
-// Todo: Initially attempt to pick from top 5 results, then expand to top 20 results if needed
+
 var assignCurrentVideoFromSearchResults = function (response) {
   return new Promise(function (resolve, reject) {
-    var index = getRandomInt(0, response.result.items.length);
-    var selectedResult = response.result.items[index].snippet;
+    var selectedResult;
+    var tempListenHistoryTitles = listenHistory.map(function (song) {
+      return song.title;
+    });
+    for (var i = 0; i < response.result.items.length; i++) {
+      if (tempListenHistoryTitles.indexOf(response.result.items[i].snippet.title.toLowerCase()) === -1) {
+        selectedResult = response.result.items[i].snippet;
+        console.log("case 1", selectedResult);
+        break;
+      }
+    }
+    if (!selectedResult) {
+      selectedResult = response.result.items[Math.floor(Math.random() * response.result.items.length)].snippet;
+      console.log("case 2", selectedResult);
+    }
     nextPageToken = response.nextPageToken;
     var description = selectedResult.description;
     var thumbnailURL = selectedResult.thumbnails.default.url;
@@ -132,12 +145,6 @@ var assignCurrentVideoFromSearchResults = function (response) {
       reject("runVideoSearchAndAssignCurrentVideo reject error");
     }
   });
-}
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 var playCurrentVideo = function (currentVideo) {

@@ -123,6 +123,7 @@ $(".nextVideoBtn").click(function () {
 });
 
 function queNextVideo(allResults) {
+  // BUG: Shouldn't be able to que next video until current video has been added to listenHistory
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
     artistPosition++;
   }
