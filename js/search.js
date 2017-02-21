@@ -1,13 +1,5 @@
 
 var player;
-var currentVideo;
-var nextPageToken;
-var currentArtist;
-
-// After auth.js completes successfully...
-function handleAPILoaded() {
-  console.log("YouTube search/create playlist API is loaded");
-}
 
 $(document).ready(prepareYouTubePlayer());
 
@@ -19,7 +11,7 @@ function prepareYouTubePlayer() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-// Creates an <iframe> (and YouTube player) after the API code downloads.
+// Creates an <iframe> and YouTube player after the API code downloads.
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
@@ -29,11 +21,10 @@ function onYouTubeIframeAPIReady() {
       'controls': 2, // 0 disables player controls, 2 enables
       'showinfo': 0,
       'iv_load_policy': 3,
-      'rel': 0 // disable recommended videos afterplayback
+      'rel': 0
       //  'origin': // My domain should be specified here
     },
     events: {
-      // 'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange,
       'onError': onPlayerError
     }
@@ -44,7 +35,7 @@ function onYouTubeIframeAPIReady() {
 function onPlayerStateChange(event) {
   switch (event.data) {
     case YT.PlayerState.BUFFERING:
-      if (playbackTimer !== "Initial playback not started") {
+      if (currentPlayerInfo.playbackTimer) {
         var currentTime = formatMinutesAndSeconds(Math.round(player.getCurrentTime()));
         $(".currentTime").html(currentTime);
       }
@@ -54,11 +45,11 @@ function onPlayerStateChange(event) {
       $(".pausePlayer").removeClass("btn-warning").addClass("btn-default");
       break;
     case YT.PlayerState.PAUSED:
-      clearInterval(playbackTimer);
+      clearInterval(currentPlayerInfo.playbackTimer);
       $(".pausePlayer").removeClass("btn-default").addClass("btn-warning");
       break;
     case YT.PlayerState.ENDED:
-      queNextVideo(allResults);
+      queNextVideo();
       break;
   }
 }
@@ -83,69 +74,107 @@ function onPlayerError(errorEvent) {
   console.log(errorMsg);
 }
 
-var createAndRunVideoSearch = function (artist) {
-  return new Promise(function (resolve, reject) {
-    var request = gapi.client.youtube.search.list({
-      q: artist,
-      part: 'snippet',
-      maxResults: 15,
-      type: "video",
-      videoDuration: "short" || "medium",
-      videoCategoryId: 10, // 10 = music, 22 = People & Blogs
-      regionCode: "US",
-      videoEmbeddable: "true"
-    });
-    if (artist !== currentArtist) {
-      currentArtist = artist;
-    } else {
-      request.Zq.k5.params.pageToken = nextPageToken;
+var currentPlayerInfo = {
+  artist: function () {
+    if (similarArtists.results.length > 0) {
+      return similarArtists.results[similarArtists.artistPosition].name;
     }
+  },
+  // QUESTION: Should I declare these keys here? Their values are assined in assignCurrentVideoFromSearchResults()
+  playbackTimer: undefined,
+  artistLastSearched: undefined,
+  tempYouTubeVideoResults: undefined,
+  videoTitle: undefined,
+  videoID: undefined,
+  videoDescription: undefined
+};
 
+var listenHistory = {
+  getCurrentPlayerInfo: function () {
+    this.previousVideos.push({
+      artist: currentPlayerInfo.artist(),
+      videoTitle: currentPlayerInfo.videoTitle,
+      videoID: currentPlayerInfo.videoID,
+      videoDescription: currentPlayerInfo.videoDescription
+    });
+    var regex = new RegExp("[^0-9a-z]|" + currentPlayerInfo.artist(), "gi");
+    this.titlesOnly.push(currentPlayerInfo.videoTitle.replace(regex, ''));
+  },
+  previousVideos: [],
+  titlesOnly: []
+};
+
+function findAndPlayVideo() {
+  createVideoSearch().then(function (result) {
+    return confirmVideoSearchResults(result);
+  }).then(function (result) {
+    return assignCurrentVideoFromSearchResults(result);
+  }).then(function (result) {
+    return playCurrentVideo(result);
+  });
+}
+
+var createVideoSearch = function () {
+  return new Promise(function (resolve, reject) {
+    var request;
+    if (currentPlayerInfo.artist() !== currentPlayerInfo.artistLastSearched) {
+      currentPlayerInfo.artistLastSearched = currentPlayerInfo.artist();
+      request = gapi.client.youtube.search.list({
+        q: currentPlayerInfo.artistLastSearched,
+        part: 'snippet',
+        maxResults: 15,
+        type: "video",
+        videoDuration: "short", // "medium" would also be useful. Consider removing this. (Issue is "long" would be valid)
+        videoCategoryId: 10, // 10 = music, 22 = People & Blogs
+        regionCode: "US",
+        videoEmbeddable: "true"
+      });
+      currentPlayerInfo.tempYouTubeVideoResults = request;
+    } else {
+      request = currentPlayerInfo.tempYouTubeVideoResults;
+    }
     if (request) {
       resolve(request);
     } else {
       reject("createVideoSearch reject error");
     }
   });
-}
+};
 
+var confirmVideoSearchResults = function (response) {
+  return new Promise(function (resolve, reject) {
+    if (response.result) {
+      resolve(response);
+    } else {
+      reject("Unable to obtain value from request");
+    }
+  });
+};
 
 var assignCurrentVideoFromSearchResults = function (response) {
   return new Promise(function (resolve, reject) {
     var selectedResult;
-    var tempListenHistoryTitles = listenHistory.map(function (song) {
-      return song.title;
-    });
+    var videosNotYetListenedTo = [];
+    var regex = new RegExp("[^0-9a-z]|" + currentPlayerInfo.artist(), "gi");
     for (var i = 0; i < response.result.items.length; i++) {
-      if (tempListenHistoryTitles.indexOf(response.result.items[i].snippet.title.toLowerCase()) === -1) {
-        selectedResult = response.result.items[i].snippet;
-        console.log("case 1", selectedResult);
-        break;
+      var resultTitle = response.result.items[i].snippet.title.toLowerCase().replace(regex, '');
+      if (listenHistory.titlesOnly.indexOf(resultTitle) === -1) {
+        videosNotYetListenedTo.push(response.result.items[i].snippet);
       }
     }
+    selectedResult = videosNotYetListenedTo[Math.floor(Math.random() * videosNotYetListenedTo.length)];
+    console.log("Selected from videosNotYetListenedTo", selectedResult);
     if (!selectedResult) {
       selectedResult = response.result.items[Math.floor(Math.random() * response.result.items.length)].snippet;
-      console.log("case 2", selectedResult);
+      console.log("Selected from general YouTube results", selectedResult);
     }
-    nextPageToken = response.nextPageToken;
-    var description = selectedResult.description;
-    var thumbnailURL = selectedResult.thumbnails.default.url;
-    var videoID = thumbnailURL.slice(-23, -12);
-    currentVideo = {
-      "artist": currentArtist,
-      "title": selectedResult.title.toLowerCase(),
-      "videoID": videoID,
-      "description": description
-    };
-    listenHistory.push(currentVideo);
-
-    if (currentVideo) {
-      resolve(currentVideo);
-    } else {
-      reject("runVideoSearchAndAssignCurrentVideo reject error");
-    }
+    currentPlayerInfo.videoTitle = selectedResult.title.toLowerCase();
+    currentPlayerInfo.videoID = selectedResult.thumbnails.default.url.slice(-23, -12);
+    currentPlayerInfo.videoDescription = selectedResult.description;
+    listenHistory.getCurrentPlayerInfo();
+    resolve(currentPlayerInfo);
   });
-}
+};
 
 var playCurrentVideo = function (currentVideo) {
   return new Promise(function (resolve, reject) {
@@ -153,8 +182,8 @@ var playCurrentVideo = function (currentVideo) {
     player.loadVideoById(currentVideo.videoID);
     $(".nowPlaying").fadeOut("slow", function () {
       $(this).css("visibility", "visible");
-      $(this).html("Playing <span>" + currentVideo.title + "</span>").fadeIn("slow", function () {
-        displayListenHistory(currentVideo.title);
+      $(this).html("Playing <span>" + currentVideo.videoTitle + "</span>").fadeIn("slow", function () {
+        displayListenHistory(currentVideo.videoTitle);
       });
     });
     nowPlaying = true;
@@ -164,7 +193,7 @@ var playCurrentVideo = function (currentVideo) {
       reject("Problem with playVideo()");
     }
   });
-}
+};
 
 
 $(".listenHistory").sortable();
@@ -186,13 +215,13 @@ function assignSortableListenHistoryFunctionality() {
       var tempArray = [];
       $(".listenHistory li").each(function (li) {
         var videoTitleFromDOM = $(this).text().slice(0, -1);
-        for (var i = 0; i < listenHistory.length; i++) {
-          if (videoTitleFromDOM.indexOf(listenHistory[i].title) !== -1) {
-            tempArray.push(listenHistory[i]);
+        for (var i = 0; i < listenHistory.previousVideos.length; i++) {
+          if (videoTitleFromDOM.indexOf(listenHistory.previousVideos[i].videoTitle) !== -1) {
+            tempArray.push(listenHistory.previousVideos[i]);
           }
         }
       });
-      listenHistory = tempArray;
+      listenHistory.previousVideos = tempArray;
     }, 10);
   });
 }
@@ -204,9 +233,9 @@ function assignDeleteVideoFromHistoryBtnFunctionality() {
     $(".listenHistory li").each(function (li) {
       if ($(this).html() === videoTitle) {
         $(this).fadeOut("slow");
-        for (var i = 0; i < listenHistory.length; i++) {
-          if ($(this).html().indexOf(listenHistory[i].title) !== -1) {
-            listenHistory.splice(i, 1);
+        for (var i = 0; i < listenHistory.previousVideos.length; i++) {
+          if ($(this).html().indexOf(listenHistory.previousVideos[i].videoTitle) !== -1) {
+            listenHistory.previousVideos.splice(i, 1);
             break;
           }
         }
@@ -215,7 +244,6 @@ function assignDeleteVideoFromHistoryBtnFunctionality() {
   });
 }
 
-var playbackTimer = "Initial playback not started";
 function getDurationOfPlayingVideo() {
   return new Promise(function (resolve, reject) {
     var totalDuration = Math.round(player.getDuration());
@@ -223,8 +251,8 @@ function getDurationOfPlayingVideo() {
     $(".trackLength").html(" / " + trackLength);
     $(".trackCounter").show(); // Includes both ".currentTime" and ".trackLength"
     var currentTime = Math.round(player.getCurrentTime());
-    clearInterval(playbackTimer);
-    playbackTimer = setInterval(function () {
+    clearInterval(currentPlayerInfo.playbackTimer);
+    currentPlayerInfo.playbackTimer = setInterval(function () {
       currentTime++;
       $(".currentTime").html(formatMinutesAndSeconds(currentTime));
     }, 1000);
@@ -256,7 +284,7 @@ var playlistId;
 var channelId;
 
 function autoCreatePlaylist() {
-  var playlistTitle = "From " + listenHistory[0].artist + " to " + listenHistory[listenHistory.length - 1].artist;
+  var playlistTitle = "From " + listenHistory.previousVideos[0].artist + " to " + listenHistory.previousVideos[listenHistory.previousVideos.length - 1].artist;
   var addVideosSlowly;
   createPlaylist(playlistTitle);
   setTimeout(function () {   // Todo: Find better async method
@@ -264,10 +292,10 @@ function autoCreatePlaylist() {
   }, 500);
   var addVideosToPlaylistCount = 0;
   function iterateThroughSampleVideoArraySlowly() {
-    addToPlaylist(listenHistory[addVideosToPlaylistCount].videoID);
-    console.log("Now adding: " + listenHistory[addVideosToPlaylistCount].videoID);
+    addToPlaylist(listenHistory.previousVideos[addVideosToPlaylistCount].videoID);
+    console.log("Now adding: " + listenHistory.previousVideos[addVideosToPlaylistCount].videoID);
     addVideosToPlaylistCount++;
-    if (addVideosToPlaylistCount === listenHistory.length) {
+    if (addVideosToPlaylistCount === listenHistory.previousVideos.length) {
       clearInterval(addVideosSlowly);
       $(".createMixtape").fadeOut("slow", function () {
         $(".viewMixtape").fadeIn("slow");
@@ -308,11 +336,11 @@ function addToPlaylist(id, startPos, endPos) {
   var details = {
     videoId: id,
     kind: 'youtube#video'
-  }
-  if (startPos != undefined) {
+  };
+  if (startPos !== undefined) {
     details['startAt'] = startPos;
   }
-  if (endPos != undefined) {
+  if (endPos !== undefined) {
     details['endAt'] = endPos;
   }
   var request = gapi.client.youtube.playlistItems.insert({

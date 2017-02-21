@@ -12,7 +12,7 @@ googleApiClientReady = function () {
   gapi.auth.init(function () {
     window.setTimeout(checkAuth, 1);
   });
-}
+};
 
 // Attempt the immediate OAuth 2.0 client flow as soon as the page loads.
 // If the currently logged-in Google Account has previously authorized
@@ -51,6 +51,6 @@ function handleAuthResult(authResult) {
 // https://developers.google.com/api-client-library/javascript/dev/dev_jscript#loading-the-client-library-and-the-api
 function loadAPIClientInterfaces() {
   gapi.client.load('youtube', 'v3', function () {
-    handleAPILoaded();
+    console.log("YouTube search/create playlist API is loaded");
   });
 }

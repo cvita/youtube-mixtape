@@ -1,54 +1,26 @@
 "use strict";
 
-var fullGenreList; // Only useful as a global var to auto-complete method
-var allResults;
-var artistPosition;
-var listenHistory = [];
-
-$(".searchBtn").click(function () {
-  runSearch();
-});
-
-$("#initialSearchInput").keydown(function (key) {
-  if (key.keyCode === 13) {
-    runSearch();
-    this.blur();
-  }
-});
+var similarArtists = {
+  results: [{ "name": undefined }],
+  artistPosition: 0
+};
 
 function runSearch() {
   var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
-  if (searchInput !== initialArtist && searchInput !== "") {
-    var initialArtist = searchInput;
-    fullGenreList = [];
-    getInitialArtistFullGenreListViaSpotify(initialArtist); // See spotifyMethod.js
+  if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
+    similarArtists.results = [{ "name": searchInput, "frequency": 100 }]; // Ensures searchInput will display as first result
+    similarArtists.artistPosition = 0;
+    getInitialArtistFullGenreListViaSpotify(searchInput); // See spotifyMethod.js
     $(".subheading").slideUp("fast");
   }
 }
 
-function beginPlayingFirstVideo(array) {
-  allResults = array;
-  artistPosition = 0;
-  findAndPlayVideo(allResults[artistPosition].name);
-  displayResults(allResults);
+function displayResults() {
   $(".customPlayerUI").css("visibility", "visible");
   $(".relevanceColorScale").show();
-}
-
-function findAndPlayVideo(artist) {
-  createAndRunVideoSearch(artist).then(function (result) {
-    return assignCurrentVideoFromSearchResults(result);
-  }).then(function (result) {
-    return playCurrentVideo(result);
-  }).then(function (result) {
-    console.log("JS Promise chain complete. Now playing videoID: " + result);
-  });
-}
-
-function displayResults(allResults) {
   $(".allSearchResults").html("");
   var forEachCount = 0;
-  allResults.forEach(function (result) {
+  similarArtists.results.forEach(function (result) {
     forEachCount++;
     var relevance = assignRelevanceClassForColorScale(result.frequency);
     var individualResultBtn = '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>';
@@ -96,13 +68,13 @@ function assignFunctionalityToMoreResultsBtn() {
 
 function assignFunctionalityToIndividualResultBtns() {
   $(".individualResult").click(function () {
-    for (var i = 0; i < allResults.length; i++) {
-      if (allResults[i].name === $(this).html()) {
-        artistPosition = i;
+    for (var i = 0; i < similarArtists.results.length; i++) {
+      if (similarArtists.results[i].name === $(this).html()) {
+        similarArtists.artistPosition = i;
         break;
       }
     }
-    findAndPlayVideo(allResults[artistPosition].name);
+    findAndPlayVideo();
     highLightCurrentArtistButton();
   });
 }
@@ -110,7 +82,7 @@ function assignFunctionalityToIndividualResultBtns() {
 function highLightCurrentArtistButton() {
   var listItems = $(".allSearchResults li");
   listItems.each(function (li) {
-    if ($(this).html() === allResults[artistPosition].name) {
+    if ($(this).html() === similarArtists.results[similarArtists.artistPosition].name) {
       $(this).addClass("highlighted");
     } else {
       $(this).removeClass("highlighted");
@@ -118,22 +90,49 @@ function highLightCurrentArtistButton() {
   });
 }
 
-$(".nextVideoBtn").click(function () {
-  queNextVideo(allResults);
-});
-
-function queNextVideo(allResults) {
-  // BUG: Shouldn't be able to que next video until current video has been added to listenHistory
+// BUG: Shouldn't be able to que next video until current video has been added to listenHistory
+function queNextVideo() {
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
-    artistPosition++;
+    similarArtists.artistPosition++;
   }
-  findAndPlayVideo(allResults[artistPosition].name);
+  findAndPlayVideo();
   highLightCurrentArtistButton();
-  clearInterval(playbackTimer);
-  playbackTimer = "Initial playback not started";
+  clearInterval(currentPlayerInfo.playbackTimer);
+  currentPlayerInfo.playbackTimer = null;
   $(".currentTime").html("0:00");
   $(".trackLength").html(" / 0:00");
 }
+
+
+$("#initialSearchInput").click(function () {
+  initialSearchInput.value = "";
+  $(".searchBtn").removeClass("disabled");
+});
+
+$(".searchBtn").click(function () {
+  runSearch();
+});
+
+$("#initialSearchInput").keydown(function (key) {
+  if (key.keyCode === 13) {
+    runSearch();
+    this.blur();
+  }
+});
+
+$(".pausePlayer").click(function () {
+  if ($(this).hasClass("btn-default")) {
+    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
+    player.pauseVideo();
+  } else {
+    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
+    player.playVideo();
+  }
+});
+
+$(".nextVideoBtn").click(function () {
+  queNextVideo();
+});
 
 $(".lockArtist").click(function () {
   if ($(this).hasClass("btn-default")) {
@@ -155,23 +154,8 @@ $(".showHidePlayer").click(function () {
   }
 });
 
-$(".pausePlayer").click(function () {
-  if ($(this).hasClass("btn-default")) {
-    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
-    player.pauseVideo();
-  } else {
-    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
-    player.playVideo();
-  }
-});
-
-$("#initialSearchInput").click(function () {
-  initialSearchInput.value = "";
-  $(".searchBtn").removeClass("disabled");
-});
-
 $(".clearListenHistoryBtn").click(function () {
-  listenHistory = [listenHistory.pop()];
+  listenHistory.previousVideos = [listenHistory.previousVideos.pop()];
   $(".listenHistory").slideUp("slow", function () {
     $(".createMixtape").fadeOut("slow");
     $(".viewMixtape").fadeOut("slow");
