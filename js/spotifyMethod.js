@@ -1,6 +1,4 @@
 
-var similarArtistsSpotify;
-
 function getInitialArtistFullGenreListViaSpotify(initialArtist) {
   $.getJSON("https://api.spotify.com/v1/search?q=" + initialArtist + "&type=artist")
     .done(function (spotifyData) {
@@ -9,8 +7,8 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
       } else {
         spotifyData.artists.items.forEach(function (artistResult) {
           if (artistResult.name.toLowerCase() === initialArtist) {
-            fullGenreList = artistResult.genres;
-            determineArtistPrimaryGenres(initialArtist, fullGenreList);
+            findAndPlayVideo(); // Begins playing first video while results complete
+            determineArtistPrimaryGenres(initialArtist, artistResult.genres);
           }
         });
       }
@@ -22,7 +20,6 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
 
 
 function determineArtistPrimaryGenres(initialArtist, fullGenreList) {
-  similarArtistsSpotify = [{ "name": initialArtist, "frequency": 100 }]; // Ensures initialArtist will display as first result
   var primaryGenres = [];
   var forEachCount = 0;
   fullGenreList.forEach(function (genre) {
@@ -57,12 +54,12 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
         for (var i = 0; i < genreResults.artists.items.length; i++) {
           var aSimilarArtist = genreResults.artists.items[i].name.toLowerCase();
 
-          for (var j = 0; j < similarArtistsSpotify.length; j++) {
-            if (similarArtistsSpotify[j].name === aSimilarArtist) {
-              similarArtistsSpotify[j].frequency++;
+          for (var j = 0; j < similarArtists.results.length; j++) {
+            if (similarArtists.results[j].name === aSimilarArtist) {
+              similarArtists.results[j].frequency++;
               break;
-            } else if (j === similarArtistsSpotify.length - 1) {
-              similarArtistsSpotify.push({ "name": aSimilarArtist, "frequency": 1 });
+            } else if (j === similarArtists.results.length - 1) {
+              similarArtists.results.push({ "name": aSimilarArtist, "frequency": 1 });
             }
           }
         }
@@ -75,9 +72,9 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
 }
 
 function sortSimilarArtistsByFrequency() {
-  similarArtistsSpotify = similarArtistsSpotify.sort(function (a, b) {
+  similarArtists.results = similarArtists.results.sort(function (a, b) {
     return b.frequency - a.frequency;
   });
-  similarArtistsSpotify = similarArtistsSpotify.slice(0, 100);
-  beginPlayingFirstVideo(similarArtistsSpotify);
+  similarArtists.results = similarArtists.results.slice(0, 100);
+  displayResults();
 }

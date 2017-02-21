@@ -22,7 +22,7 @@ body {
 }
 
 #mixTapeTitle {
-  font-family: "Rock Salt", cursive;
+  font-family: "Rock Salt", helvetica, arial, sans-serif;
   font-size: 0.85em;
   color: #5bc0de;
 }
