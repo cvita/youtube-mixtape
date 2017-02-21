@@ -1,5 +1,6 @@
 
 function getInitialArtistFullGenreListViaSpotify(initialArtist) {
+  var searched = false;
   $.getJSON("https://api.spotify.com/v1/search?q=" + initialArtist + "&type=artist")
     .done(function (spotifyData) {
       if (spotifyData.artists.items.length === 0) {
@@ -7,7 +8,11 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
       } else {
         spotifyData.artists.items.forEach(function (artistResult) {
           if (artistResult.name.toLowerCase() === initialArtist) {
-            findAndPlayVideo(); // Begins playing first video while results complete
+            if (!searched) {
+              searched = true;
+              findAndPlayVideo(); // Begins playing first video while results complete
+              console.log("here");
+            }
             determineArtistPrimaryGenres(initialArtist, artistResult.genres);
           }
         });
