@@ -11,7 +11,6 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
             if (!searched) {
               searched = true;
               findAndPlayVideo(); // Begins playing first video while results complete
-              console.log("here");
             }
             determineArtistPrimaryGenres(initialArtist, artistResult.genres);
           }
