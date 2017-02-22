@@ -216,3 +216,22 @@ li > span {
   display: none;
   float: right;
 }
+
+.pre-auth-message {
+  width: 50%;
+  margin: 1em auto;
+  padding: 1em;
+  box-shadow: 10px 10px 10px 5px grey;
+  text-align: left;
+  line-height: 1.35em;
+  letter-spacing: 0.01em;
+  background: whitesmoke;
+}
+
+.pre-auth {
+  margin: 1em auto;
+}
+
+.post-auth {
+  display: none;
+}
