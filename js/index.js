@@ -23,7 +23,8 @@ function displayResults() {
   similarArtists.results.forEach(function (result) {
     forEachCount++;
     var relevance = assignRelevanceClassForColorScale(result.frequency);
-    var individualResultBtn = '<button class="btn-link"><li class="individualResult ' + relevance + '">' + result.name + '</li></button>';
+    var individualResultBtn = "<li class='individualResult " + relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-danger'>x</button></li>";
+
     if (forEachCount <= 15) {
       $(".allSearchResults").append(individualResultBtn);
     }
@@ -36,6 +37,7 @@ function displayResults() {
       $(".additionalResults").append(individualResultBtn);
     }
   });
+  assignSortableSimilarArtistsFunctionality();
   assignFunctionalityToIndividualResultBtns();
   highLightCurrentArtistButton();
 }
@@ -66,26 +68,75 @@ function assignFunctionalityToMoreResultsBtn() {
   });
 }
 
-function assignFunctionalityToIndividualResultBtns() {
-  $(".individualResult").click(function () {
-    for (var i = 0; i < similarArtists.results.length; i++) {
-      if (similarArtists.results[i].name === $(this).html()) {
-        similarArtists.artistPosition = i;
-        break;
-      }
+$(".allSearchResults").sortable({
+  placeholder: {
+    element: function (currentItem) {
+      return $("<li><em>Move here</em></li>")[0];
+    },
+    update: function (container, p) {
+      return;
     }
-    findAndPlayVideo();
-    highLightCurrentArtistButton();
+  }
+});
+$(".allSearchResults").disableSelection();
+
+function assignSortableSimilarArtistsFunctionality() {
+  var timeoutId = 0;
+  var colorThisElement;
+  $(".allSearchResults li").on('mousedown', function () {
+    colorThisElement = $(this);
+    timeoutId = setTimeout(function () {
+      // Hightlight disableSelection
+      console.log(colorThisElement);
+      colorThisElement.addClass("draggingItem");
+      $(".allSearchResults li").mouseup(function () {
+        var tempArray = [];
+        setTimeout(function () {
+          $(".allSearchResults li").each(function (li) {
+            for (var i = 0; i < similarArtists.results.length; i++) {
+              if ($(this).text().slice(0, -1) === similarArtists.results[i].name) {
+                tempArray.push(similarArtists.results[i]);
+              }
+            }
+          });
+          similarArtists.results = tempArray;
+          $(".allSearchResults").off("mouseup");
+        }, 100);
+      });
+    }, 125);
+
+  }).on('mouseup', function () {
+    clearTimeout(timeoutId);
+    if (colorThisElement) {
+      colorThisElement.removeClass("draggingItem")
+    }
+  });
+}
+
+function assignFunctionalityToIndividualResultBtns() {
+  $("ol").on("click", ":not(#refactorThis)", function (event) { // QUESTION: How to get rid of second argument?
+    event.stopPropagation();
+    if ($(this).html() === "x") {
+      var artistPositionToRemove = $(this).parent(".allSearchResults li").index();
+      $(this).parent().fadeOut("fast", function () {
+        similarArtists.results.splice(artistPositionToRemove, 1);
+        displayResults();
+      });
+    } else {
+      similarArtists.artistPosition = $(this).index();
+      findAndPlayVideo();
+      highLightCurrentArtistButton();
+    }
   });
 }
 
 function highLightCurrentArtistButton() {
-  var listItems = $(".allSearchResults li");
-  listItems.each(function (li) {
+  var listItems = $(".allSearchResults li span");// Check this out
+  listItems.each(function (span) {
     if ($(this).html() === similarArtists.results[similarArtists.artistPosition].name) {
-      $(this).addClass("highlighted");
+      $(this).parent().addClass("highlighted");
     } else {
-      $(this).removeClass("highlighted");
+      $(this).parent().removeClass("highlighted");
     }
   });
 }
@@ -167,9 +218,14 @@ $(".clearListenHistoryBtn").click(function () {
 });
 
 $(".createMixtape").click(function () {
-  autoCreatePlaylist();
-  $(this).addClass("disabled");
-  $(this).html("Now creating your Mixtape");
+  if (currentPlayerInfo.userLoggedIn) {
+    autoCreatePlaylist();
+    $(this).addClass("disabled");
+    $(this).html("Now creating your Mixtape");
+  } else {
+    $('.pre-auth').slideDown("fast");
+    $(this).addClass("disabled").html("Just one quick step...");
+  }
 });
 
 $("button").click(function () {

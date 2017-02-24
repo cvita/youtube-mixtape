@@ -36,14 +36,15 @@ function handleAuthResult(authResult) {
     // Authorization was successful. Hide authorization prompts and show
     // content that should be visible after authorization succeeds.
     $('.pre-auth').hide();
-    $('.pre-auth-message').hide();
-    //$('.post-auth').show();
+    $("createMixTape").removeClass("disabled").html("Create this Mixtape");
+    currentPlayerInfo.userLoggedIn = true;
     console.log("Case 1", "From handleAuthResult()");
     loadAPIClientInterfaces();
   } else {
     // Make the #login-link clickable. Attempt a non-immediate OAuth 2.0
     // client flow. The current function is called when that flow completes.
     console.log("Case 2", "From handleAuthResult()");
+    currentPlayerInfo.userLoggedIn = false;
     $('#login-link').click(function () {
       console.log("login-link clicked");
       gapi.auth.authorize({
@@ -64,17 +65,28 @@ function loadAPIClientInterfaces() {
   });
 }
 
+function renderButton() {
+  gapi.signin2.render('my-signin2', {
+    'scope': 'profile email',
+    'longtitle': true,
+    'theme': 'dark',
+    'onsuccess': onSuccess,
+    'onfailure': onFailure
+  });
+}
+
+function onSuccess(googleUser) {
+  console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+}
+
+function onFailure(error) {
+  console.log(error);
+}
+
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
   console.log('Name: ' + profile.getName());
   console.log('Image URL: ' + profile.getImageUrl());
   console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-}
-
-function signOut() {
-  var auth2 = gapi.auth2.getAuthInstance();
-  auth2.signOut().then(function () {
-    console.log('User signed out.');
-  });
 }
