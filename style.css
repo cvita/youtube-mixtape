@@ -91,19 +91,20 @@ body {
 }
 
 .individualResult {
-  display: inline-block;
-  margin: 0.25em;
+  /*display: inline-block;*/
+z-index: -1;
+  margin: 0.5em;
   padding: 1em;
   background: #f3f3f3;
   text-transform: capitalize;
-  transition: 0.5s;
+  /*transition: 0.5s;*/
 }
 
 .individualResult:hover {
   background: #c0c0c0;
   color: #4398e0;
   text-decoration: underline;
-  transition: 0.2s;
+  /*transition: 0.2s;*/
 }
 
 .additionalResults {
@@ -111,9 +112,18 @@ body {
 }
 
 .highlighted {
-  transform: scale(1.18);
+  transform: scale(1.15);
   background: #d5d5d5;
   color: #4398e0;
+}
+
+.deleteArtistResultBtn {
+  position: relative;
+  top: -10px;
+  left: 10px;
+  z-index: 2;
+  float: right;
+  margin-left: 1em;
 }
 
 .relevance5of5 {
@@ -190,7 +200,7 @@ body {
   background: #96cbe4;
 }
 
-li > span {
+.listenHistory > li > span {
   display: inline-block;
   max-width: 75%;
   color: white;
@@ -210,6 +220,8 @@ li > span {
 .createMixtape {
   display: none;
   float: right;
+  text-align: left;
+  white-space: normal;
 }
 
 .viewMixtape {
@@ -217,21 +229,19 @@ li > span {
   float: right;
 }
 
-.pre-auth-message {
-  width: 50%;
-  margin: 1em auto;
-  padding: 1em;
-  box-shadow: 10px 10px 10px 5px grey;
-  text-align: left;
-  line-height: 1.35em;
-  letter-spacing: 0.01em;
-  background: whitesmoke;
-}
-
 .pre-auth {
-  margin: 1em auto;
+  display: none;
+  width: 100%;
+  height: 2em;
+  float: right;
+  margin-top: 0.5em;
 }
 
-.post-auth {
-  display: none;
+#my-signin2 {
+  float: right;
+}
+
+.draggingItem {
+  opacity: 0.7;
+  /*transform: scale(1.15);*/
 }

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>YouTube MixTape</title>
+  <title>YouTube Mixtape</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-signin-client_id" content="847638938655-sh07q333hjtsbqt3b6t2r264fpepj873.apps.googleusercontent.com">
 
@@ -33,13 +33,6 @@
             </button>
             </span>
           </div>
-          <div class="pre-auth-message">
-            <b>Please sign in to authorize the app.</b>
-            <div class="g-signin2 pre-auth" id="login-link" data-onsuccess="onSignIn"></div>
-            Youtube Mixtape relies on your YouTube account to perform video searches and make playlists for you.
-          </div>
-
-          <!--<div class="post-auth"> <a href="#" onclick="signOut();">Sign out</a></div>-->
         </div>
         <!-- col-md-12-->
       </div>
@@ -95,6 +88,9 @@
         <button class="createMixtape btn btn-primary">Create this Mixtape</button>
         <button class="viewMixtape btn btn-success">View Mixtape on YouTube</button>
         <button class="clearListenHistoryBtn btn btn-link">Clear listen history</button>
+        <div class="pre-auth">
+          <div id="my-signin2"></div>
+        </div>
       </div>
 
     </div>
@@ -111,7 +107,8 @@
   <script src="js/index.js"></script>
   <script src="js/spotifyMethod.js"></script>
   <script src="js/search.js"></script>
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
+  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
   <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
 
 </body>
