@@ -112,9 +112,10 @@ z-index: -1;
 }
 
 .highlighted {
+  margin-right: 8%;
   transform: scale(1.15);
-  background: #d5d5d5;
-  color: #4398e0;
+  background: #5cb85c;
+  color: white;
 }
 
 .deleteArtistResultBtn {

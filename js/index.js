@@ -86,8 +86,6 @@ function assignSortableSimilarArtistsFunctionality() {
   $(".allSearchResults li").on('mousedown', function () {
     colorThisElement = $(this);
     timeoutId = setTimeout(function () {
-      // Hightlight disableSelection
-      console.log(colorThisElement);
       colorThisElement.addClass("draggingItem");
       $(".allSearchResults li").mouseup(function () {
         var tempArray = [];
