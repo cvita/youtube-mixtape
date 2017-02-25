@@ -124,7 +124,7 @@ var createVideoSearch = function () {
     if (currentPlayerInfo.artist() !== currentPlayerInfo.artistLastSearched) {
       currentPlayerInfo.artistLastSearched = currentPlayerInfo.artist();
       var query = currentPlayerInfo.artistLastSearched;
-      $.getJSON("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=" +
+      $.getJSON("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=" +
         query + "&regionCode=US&type=video&videoCategoryId=10&videoDuration=short&videoEmbeddable=true&key=AIzaSyAxXnGEhkkZmEh7zfugJpAsJ7kpSU4GbDc")
         .done(function (data) {
           currentPlayerInfo.tempYouTubeVideoResults = data;
@@ -151,10 +151,8 @@ var assignCurrentVideoFromSearchResults = function (response) {
       }
     }
     selectedResult = videosNotYetListenedTo[Math.floor(Math.random() * videosNotYetListenedTo.length)];
-    //console.log("Selected from videosNotYetListenedTo", selectedResult);
     if (!selectedResult) {
       selectedResult = response.items[Math.floor(Math.random() * response.items.length)].snippet;
-      //console.log("Selected from general YouTube results", selectedResult);
     }
     currentPlayerInfo.videoTitle = selectedResult.title.toLowerCase();
     currentPlayerInfo.videoID = selectedResult.thumbnails.default.url.slice(-23, -12);
@@ -184,14 +182,23 @@ var playCurrentVideo = function (currentVideo) {
 };
 
 function highLightCurrentArtistButton() {
-  var listItems = $(".allSearchResults li span");// Check this out
+  $(".highlighted").css("background-image", "");
+  var listItems = $(".allSearchResults li span");
   listItems.each(function (span) {
-    if ($(this).html() === similarArtists.results[similarArtists.artistPosition].name) {
+    var artistObj = similarArtists.results[similarArtists.artistPosition];
+    if ($(this).html() === artistObj.name) {
       $(this).parent().addClass("highlighted");
+      $(".highlighted").css("background-image", "url(" + artistObj.artistImage.url + ")");
     } else {
       $(this).parent().removeClass("highlighted");
+      $(this).parent().css("background-image", "");
     }
   });
+  if ($(".additionalResults").length > 0) {
+    $(".moreResultsBtn").show();
+  } else {
+    $(".moreResultsBtn").hide();
+  }
 }
 
 function displayListenHistory(title) {
@@ -204,8 +211,10 @@ function displayListenHistory(title) {
   }
   if (!currentPlayerInfo.userLoggedIn) {
     $(".pre-auth").slideDown("fast");
-    console.log("got here");
     $(".createMixtape").addClass("disabled");
+  }
+  if (listenHistory.previousVideos.length > 1) {
+    $(".showPriorResults").removeClass("disabled");
   }
 }
 

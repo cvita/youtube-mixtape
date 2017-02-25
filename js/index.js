@@ -8,16 +8,16 @@ var similarArtists = {
 function runSearch() {
   var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
   if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
-    similarArtists.results = [{ "name": searchInput, "frequency": 100 }]; // Ensures searchInput will display as first result
-    similarArtists.artistPosition = 0;
     getInitialArtistFullGenreListViaSpotify(searchInput); // See spotifyMethod.js
     $(".subheading").slideUp("fast");
+    $(".showPriorResults").addClass("disabled");
   }
 }
 
 function displayResults() {
   $(".customPlayerUI").css("visibility", "visible");
   $(".relevanceColorScale").show();
+  $(".showPriorResults").show();
   $(".allSearchResults").html("");
   var forEachCount = 0;
   similarArtists.results.forEach(function (result) {
@@ -28,13 +28,8 @@ function displayResults() {
     if (forEachCount <= 15) {
       $(".allSearchResults").append(individualResultBtn);
     }
-    if (forEachCount === 15) {
-      $(".allSearchResults").append('<div class="additionalResults"></div>');
-      $(".allSearchResults").append('<br><button class="moreResultsBtn btn btn-block btn-default">Show more results</button>');
-      assignFunctionalityToMoreResultsBtn();
-    }
     if (forEachCount > 15) {
-      $(".additionalResults").append(individualResultBtn);
+      $(".allSearchResults").append("<li class='individualResult " + relevance + " additionalResults'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>");
     }
   });
   assignDragAndDropForSimilarArtistsList();
@@ -53,18 +48,6 @@ function assignRelevanceClassForColorScale(frequency) {
   } else {
     return "relevance1of5";
   }
-}
-
-function assignFunctionalityToMoreResultsBtn() {
-  $(".moreResultsBtn").click(function () {
-    if ($(this).html() === "Show more results") {
-      $(".additionalResults").slideDown("slow");
-      $(".moreResultsBtn").html("Show less results");
-    } else {
-      $(".additionalResults").slideUp("slow");
-      $(".moreResultsBtn").html("Show more results");
-    }
-  });
 }
 
 function assignDragAndDropForSimilarArtistsList() {
@@ -117,6 +100,20 @@ function assignFunctionalityToIndividualResultBtns() {
     if ($(this).html() !== "✖") {
       similarArtists.artistPosition = $(this).index();
       findAndPlayVideo();
+      $(this).removeClass("priorResults");
+      $(".showPriorResults").html("Show previous artists");
+      $(".allSearchResults li").each(function (liIndex) {
+        if (liIndex < similarArtists.artistPosition) {
+          $(this).slideUp("slow");
+          $(this).addClass("priorResults");
+        }
+        if (liIndex > similarArtists.artistPosition && liIndex < similarArtists.artistPosition + 15) {
+          $(this).show();
+          $(".allSearchResults li").eq(liIndex).removeClass("additionalResults");
+        }
+      });
+      var numOfPriorResults = $(".allSearchResults .priorResults").length;
+      var numOfAdditionalResults = $(".additionalResults li").length;
     } else {
       var artistPositionToRemove = $(this).parent(".allSearchResults li").index();
       $(this).parent().fadeOut("fast", function () {
@@ -131,9 +128,14 @@ function assignFunctionalityToIndividualResultBtns() {
   });
 }
 
+
+
 // BUG: Shouldn't be able to que next video until current video has been added to listenHistory
 function queNextVideo() {
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
+    $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("slow", function () {
+      $(this).addClass("priorResults");
+    });
     similarArtists.artistPosition++;
   }
   findAndPlayVideo();
@@ -212,6 +214,32 @@ $(".createMixtape").click(function () {
     $(this).html("Now creating your Mixtape");
   }
 });
+
+$(".showPriorResults").click(function () {
+  if (!$(this).hasClass("disabled")) {
+    if ($(".priorResults").css("display") === "none") {
+      $(".priorResults").slideDown("slow", function () {
+        $(".showPriorResults").html("Hide previous artists");
+      });
+    } else {
+      $(".priorResults").slideUp("slow", function () {
+        $(".showPriorResults").html("Show previous artists");
+      });
+    }
+  }
+});
+
+$(".moreResultsBtn").click(function () {
+  if ($(this).html() === "Show more results") {
+    $(".additionalResults").slideDown("slow");
+    $(".moreResultsBtn").html("Show less results");
+  } else {
+    $(".additionalResults").slideUp("slow");
+    $(".moreResultsBtn").html("Show more results");
+  }
+});
+
+
 
 $("button").click(function () {
   $(this).blur();

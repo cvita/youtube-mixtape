@@ -10,6 +10,14 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
           if (artistResult.name.toLowerCase() === initialArtist) {
             if (!searched) {
               searched = true;
+              similarArtists.results = [{
+                "name": initialArtist,
+                "frequency": 100,
+                "artistImage": artistResult.images.find(function (image) {
+                  return image.width > 500;
+                })
+              }]; // Ensures searchInput will display as first result
+              similarArtists.artistPosition = 0;
               findAndPlayVideo(); // Begins playing first video while results complete
             }
             determineArtistPrimaryGenres(initialArtist, artistResult.genres);
@@ -56,14 +64,20 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
     $.getJSON("https://api.spotify.com/v1/search?q=%20genre:%22" + genre + "%22&type=artist&limit=50")
       .done(function (genreResults) {
         for (var i = 0; i < genreResults.artists.items.length; i++) {
-          var aSimilarArtist = genreResults.artists.items[i].name.toLowerCase();
+          var aSimilarArtist = genreResults.artists.items[i];
 
           for (var j = 0; j < similarArtists.results.length; j++) {
-            if (similarArtists.results[j].name === aSimilarArtist) {
+            if (similarArtists.results[j].name === aSimilarArtist.name.toLowerCase()) {
               similarArtists.results[j].frequency++;
               break;
             } else if (j === similarArtists.results.length - 1) {
-              similarArtists.results.push({ "name": aSimilarArtist, "frequency": 1 });
+              similarArtists.results.push({
+                "name": aSimilarArtist.name.toLowerCase(),
+                "frequency": 1,
+                "artistImage": aSimilarArtist.images.find(function (image) {
+                  return image.height < 600;
+                })
+              });
             }
           }
         }
@@ -79,7 +93,7 @@ function sortSimilarArtistsByFrequency() {
   similarArtists.results = similarArtists.results.sort(function (a, b) {
     return b.frequency - a.frequency;
   });
-  similarArtists.results = similarArtists.results.slice(0, 50);
+  similarArtists.results = similarArtists.results.slice(0, 100);
   displayResults();
   highLightCurrentArtistButton();
 }
