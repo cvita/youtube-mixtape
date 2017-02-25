@@ -79,6 +79,7 @@ function sortSimilarArtistsByFrequency() {
   similarArtists.results = similarArtists.results.sort(function (a, b) {
     return b.frequency - a.frequency;
   });
-  similarArtists.results = similarArtists.results.slice(0, 100);
+  similarArtists.results = similarArtists.results.slice(0, 50);
   displayResults();
+  highLightCurrentArtistButton();
 }

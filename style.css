@@ -1,6 +1,7 @@
 /* height × width / margin / padding / display / border / background / text-align / font / color*/
 
 body {
+  margin: 3%;
   background: white;
   font-size: 16px;
   font-family: helvetica, arial, sans-serif;
@@ -91,30 +92,42 @@ body {
 }
 
 .individualResult {
-  /*display: inline-block;*/
 z-index: -1;
   margin: 0.5em;
   padding: 1em;
   background: #f3f3f3;
   text-transform: capitalize;
-  /*transition: 0.5s;*/
 }
 
 .individualResult:hover {
   background: #c0c0c0;
   color: #4398e0;
   text-decoration: underline;
-  /*transition: 0.2s;*/
 }
 
 .additionalResults {
   display: none;
 }
 
+.draggingItem {
+  opacity: 0.7;
+  box-shadow: 5px 5px 5px 2.5px grey;
+  transform: scale(1.1);
+}
+
+.placeHolderForDrag {
+  width: 97%;
+  margin: 0.5em;
+  padding: 1em;
+  border-radius: 10px;
+  color: white;
+  background: #696969;
+}
+
 .highlighted {
-  margin-right: 8%;
-  transform: scale(1.15);
-  background: #5cb85c;
+	margin-left: -5%;
+  background: #dfbc72;
+  text-decoration: underline;
   color: white;
 }
 
@@ -240,9 +253,4 @@ z-index: -1;
 
 #my-signin2 {
   float: right;
-}
-
-.draggingItem {
-  opacity: 0.7;
-  /*transform: scale(1.15);*/
 }
