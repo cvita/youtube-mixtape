@@ -114,6 +114,8 @@ function findAndPlayVideo() {
     return assignCurrentVideoFromSearchResults(result);
   }).then(function (result) {
     return playCurrentVideo(result);
+  }).then(function () {
+    highLightCurrentArtistButton();
   });
 }
 
@@ -181,17 +183,29 @@ var playCurrentVideo = function (currentVideo) {
   });
 };
 
-
-$(".listenHistory").sortable();
-$(".listenHistory").disableSelection();
+function highLightCurrentArtistButton() {
+  var listItems = $(".allSearchResults li span");// Check this out
+  listItems.each(function (span) {
+    if ($(this).html() === similarArtists.results[similarArtists.artistPosition].name) {
+      $(this).parent().addClass("highlighted");
+    } else {
+      $(this).parent().removeClass("highlighted");
+    }
+  });
+}
 
 function displayListenHistory(title) {
   if (title !== undefined) {
-    $(".listenHistory").append("<li><span>" + title + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-danger'>x</button></li>");
+    $(".listenHistory").append("<li><span>" + title + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>");
     assignSortableListenHistoryFunctionality();
     $(".createMixtape").show();
     $(".clearListenHistoryBtn").show();
     assignDeleteVideoFromHistoryBtnFunctionality();
+  }
+  if (!currentPlayerInfo.userLoggedIn) {
+    $(".pre-auth").slideDown("fast");
+    console.log("got here");
+    $(".createMixtape").addClass("disabled");
   }
 }
 
@@ -210,6 +224,8 @@ function assignSortableListenHistoryFunctionality() {
       listenHistory.previousVideos = tempArray;
     }, 10);
   });
+  $(".listenHistory").sortable();
+  $(".listenHistory").disableSelection();
 }
 
 

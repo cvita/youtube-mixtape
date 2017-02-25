@@ -89,8 +89,10 @@
         <button class="viewMixtape btn btn-success">View Mixtape on YouTube</button>
         <button class="clearListenHistoryBtn btn btn-link">Clear listen history</button>
         <div class="pre-auth">
-          <div id="my-signin2"></div>
+          <div class="g-signin2" id="login-link" data-onsuccess="onSignIn"></div>
         </div>
+      </div>
+        
       </div>
 
     </div>
@@ -107,8 +109,7 @@
   <script src="js/index.js"></script>
   <script src="js/spotifyMethod.js"></script>
   <script src="js/search.js"></script>
-  <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
-  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
 
 </body>
