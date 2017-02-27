@@ -14,7 +14,7 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
                 "name": initialArtist,
                 "frequency": 100,
                 "artistImage": artistResult.images.find(function (image) {
-                  return image.width > 500;
+                  return image.height < 500;
                 })
               }]; // Ensures searchInput will display as first result
               similarArtists.artistPosition = 0;

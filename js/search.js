@@ -1,9 +1,9 @@
 
-var player;
 
-$(document).ready(function () {
+window.onload = function () {
   prepareYouTubePlayer();
-});
+  checkAuth();
+};
 
 // Loads the IFrame Player API code asynchronously.
 function prepareYouTubePlayer() {
@@ -14,6 +14,7 @@ function prepareYouTubePlayer() {
 }
 
 // Creates an <iframe> and YouTube player after the API code downloads.
+var player;
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
@@ -115,7 +116,7 @@ function findAndPlayVideo() {
   }).then(function (result) {
     return playCurrentVideo(result);
   }).then(function () {
-    highLightCurrentArtistButton();
+    displayResults();
   });
 }
 
@@ -201,6 +202,7 @@ function highLightCurrentArtistButton() {
   }
 }
 
+// Todo: Create a timer or check video timer to delay adding the video unless user has let video play for 30 seconds
 function displayListenHistory(title) {
   if (title !== undefined) {
     $(".listenHistory").append("<li><span>" + title + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>");
