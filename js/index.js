@@ -17,23 +17,33 @@ function runSearch() {
 function displayResults() {
   $(".customPlayerUI").css("visibility", "visible");
   $(".relevanceColorScale").show();
-  $(".showPriorResults").show();
   $(".allSearchResults").html("");
   var forEachCount = 0;
   similarArtists.results.forEach(function (result) {
     forEachCount++;
     var relevance = assignRelevanceClassForColorScale(result.frequency);
-    var individualResultBtn = "<li class='individualResult " + relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
-
-    if (forEachCount <= 15) {
-      $(".allSearchResults").append(individualResultBtn);
+    var individualResultBtnHTMLSuffix = relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
+    var individualResultBtnHTML = "<li class='individualResult " + individualResultBtnHTMLSuffix;
+    if (forEachCount <= similarArtists.artistPosition) {
+      individualResultBtnHTML = "<li class='individualResult priorResults " + individualResultBtnHTMLSuffix;
+    } else if (forEachCount > similarArtists.artistPosition + 10) {
+      individualResultBtnHTML = "<li class='individualResult additionalResults " + individualResultBtnHTMLSuffix;
     }
-    if (forEachCount > 15) {
-      $(".allSearchResults").append("<li class='individualResult " + relevance + " additionalResults'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>");
-    }
+    $(".allSearchResults").append(individualResultBtnHTML);
   });
+  highLightCurrentArtistButton();
   assignDragAndDropForSimilarArtistsList();
-  assignFunctionalityToIndividualResultBtns();
+
+  if ($(".priorResults").length > 0) {
+    $(".showPriorResults").html("Show previous artists").show();
+  } else {
+    $(".showPriorResults").hide();
+  }
+  if ($(".additionalResults").length > 0) {
+    $(".moreResultsBtn").html("Show more results").show();
+  } else {
+    $(".moreResultsBtn").hide();
+  }
 }
 
 function assignRelevanceClassForColorScale(frequency) {
@@ -50,33 +60,57 @@ function assignRelevanceClassForColorScale(frequency) {
   }
 }
 
+(function assignFunctionalityToIndividualResultBtns() {
+  $("ol").on("click", ":not(.moreResultsBtn)", function (event) {
+    event.stopPropagation();
+    var artistClicked = ($(this).html().indexOf("<span>") !== -1 ?
+      $(this).index() :
+      $(this).parent(".allSearchResults li").index()
+    );
+    if ($(this).html() !== "✖") {
+      similarArtists.artistPosition = artistClicked;
+      findAndPlayVideo();
+    } else {
+      $(this).parent().fadeOut("fast", function () {
+        similarArtists.results.splice(artistClicked, 1);
+        displayResults();
+        if (artistClicked === similarArtists.artistPosition) {
+          similarArtists.artistPosition--;
+          queNextVideo();
+        }
+      });
+    }
+  });
+})();
+
 function assignDragAndDropForSimilarArtistsList() {
   var delayBeforeEnablingDragAndDrop;
   var itemBeingDragged;
+  var itemBeingDraggedPosition;
   $(".allSearchResults li")
     .on('mousedown', function () {
       itemBeingDragged = $(this);
-      delayBeforeEnablingDragAndDrop = setTimeout(reorderSimilarArtistsToMatchDOM, 125);
+      itemBeingDraggedPosition = $(this).index();
+      console.log(itemBeingDraggedPosition);
+      delayBeforeEnablingDragAndDrop = setTimeout(reorderSimilarArtists, 125);
     })
     .on('mouseup', function () {
       clearTimeout(delayBeforeEnablingDragAndDrop);
     });
 
-  function reorderSimilarArtistsToMatchDOM() {
+  function reorderSimilarArtists() {
+    var removedArtistObj = similarArtists.results.splice(itemBeingDraggedPosition, 1)[0];
     itemBeingDragged.addClass("draggingItem");
-    $(".allSearchResults li").mouseup(function () {
-      var tempArray = [];
+
+    $(".allSearchResults li").one("mouseup", function () {
       setTimeout(function () {
-        $(".allSearchResults li").each(function (li) {
-          for (var i = 0; i < similarArtists.results.length; i++) {
-            if ($(this).text().slice(0, -1) === similarArtists.results[i].name) {
-              tempArray.push(similarArtists.results[i]);
-            }
-          }
-        });
-        similarArtists.results = tempArray;
         itemBeingDragged.removeClass("draggingItem");
-        $(".allSearchResults").off("mouseup");
+        var newPosition = itemBeingDragged.index();
+        similarArtists.results.splice(newPosition, 0, removedArtistObj);
+        if (itemBeingDraggedPosition === similarArtists.artistPosition) {
+          similarArtists.artistPosition = newPosition;
+        }
+        displayResults();
       }, 10);
     });
   }
@@ -94,48 +128,10 @@ function assignDragAndDropForSimilarArtistsList() {
   });
 }
 
-function assignFunctionalityToIndividualResultBtns() {
-  $("ol").on("click", ":not(.moreResultsBtn)", function (event) {
-    event.stopPropagation();
-    if ($(this).html() !== "✖") {
-      similarArtists.artistPosition = $(this).index();
-      findAndPlayVideo();
-      $(this).removeClass("priorResults");
-      $(".showPriorResults").html("Show previous artists");
-      $(".allSearchResults li").each(function (liIndex) {
-        if (liIndex < similarArtists.artistPosition) {
-          $(this).slideUp("slow");
-          $(this).addClass("priorResults");
-        }
-        if (liIndex > similarArtists.artistPosition && liIndex < similarArtists.artistPosition + 15) {
-          $(this).show();
-          $(".allSearchResults li").eq(liIndex).removeClass("additionalResults");
-        }
-      });
-      var numOfPriorResults = $(".allSearchResults .priorResults").length;
-      var numOfAdditionalResults = $(".additionalResults li").length;
-    } else {
-      var artistPositionToRemove = $(this).parent(".allSearchResults li").index();
-      $(this).parent().fadeOut("fast", function () {
-        similarArtists.results.splice(artistPositionToRemove, 1);
-        displayResults();
-        if (artistPositionToRemove === similarArtists.artistPosition) {
-          similarArtists.artistPosition--; // Bug fix. Used to skip very next artist
-          queNextVideo();
-        }
-      });
-    }
-  });
-}
-
-
-
 // BUG: Shouldn't be able to que next video until current video has been added to listenHistory
 function queNextVideo() {
   if ($(".lockArtist").hasClass("btn-default")) { // If "Lock artist" is disabled
-    $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("slow", function () {
-      $(this).addClass("priorResults");
-    });
+    $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
     similarArtists.artistPosition++;
   }
   findAndPlayVideo();
@@ -216,16 +212,14 @@ $(".createMixtape").click(function () {
 });
 
 $(".showPriorResults").click(function () {
-  if (!$(this).hasClass("disabled")) {
-    if ($(".priorResults").css("display") === "none") {
-      $(".priorResults").slideDown("slow", function () {
-        $(".showPriorResults").html("Hide previous artists");
-      });
-    } else {
-      $(".priorResults").slideUp("slow", function () {
-        $(".showPriorResults").html("Show previous artists");
-      });
-    }
+  if ($(".priorResults").css("display") === "none") {
+    $(".priorResults").slideDown("slow", function () {
+      $(".showPriorResults").html("Hide previous artists");
+    });
+  } else {
+    $(".priorResults").slideUp("slow", function () {
+      $(".showPriorResults").html("Show previous artists");
+    });
   }
 });
 
@@ -238,8 +232,6 @@ $(".moreResultsBtn").click(function () {
     $(".moreResultsBtn").html("Show more results");
   }
 });
-
-
 
 $("button").click(function () {
   $(this).blur();

@@ -11,11 +11,11 @@ var OAUTH2_SCOPES = [
 
 
 // Upon loading, the Google APIs JS client automatically invokes this callback.
-googleApiClientReady = function () {
-  gapi.auth.init(function () {
-    window.setTimeout(checkAuth, 1);
-  });
-}
+// googleApiClientReady = function () {
+//   gapi.auth.init(function () {
+//     window.setTimeout(checkAuth, 1);
+//   });
+// }
 
 // Attempt the immediate OAuth 2.0 client flow as soon as the page loads.
 // If the currently logged-in Google Account has previously authorized
