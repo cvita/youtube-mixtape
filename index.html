@@ -42,6 +42,7 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="nowPlaying">Playing</div>
+          <button class="addToMixtapeBtn btn btn-sm btn-primary">Add to Mixtape</button>
           <div class="videoWrapper">
             <div id="player"></div>
             <script></script>
@@ -52,10 +53,10 @@
 
       <div class="customPlayerUI btn-toolbar mb-3" role="toolbar">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-          <button type="button" class="pausePlayer btn btn-default">Pause</button>
+          <button type="button" class="pausePlayerBtn btn btn-default">Pause</button>
           <button type="button" class="nextVideoBtn btn btn-default">Next video</button>
-          <button type="button" class="lockArtist btn btn-default">Lock artist</button>
-          <button type="button" class="showHidePlayer btn btn-default">Show player</button>
+          <button type="button" class="lockArtistBtn btn btn-default">Lock artist</button>
+          <button type="button" class="showPlayerBtn btn btn-default">Show player</button>
         </div>
 
         <div class="trackCounter">
@@ -79,17 +80,19 @@
 
     <div class="row">
       <div class="col-sm-8">
-        <button class="showPriorResults btn btn-block btn-default">Show previous artists</button>
+        <button class="showPreviousResultsBtn btn btn-block btn-default">Show previous artists</button>
         <ol class="allSearchResults"></ol>
-        <button class="moreResultsBtn btn btn-block btn-default">Show more results</button>
+        <button class="showAdditionalResultsBtn btn btn-block btn-default">Show more results</button>
       </div>
       <!-- col-md-8 -->
 
       <div class="col-sm-4">
-        <ol class="listenHistory"></ol>
-        <button class="createMixtape btn btn-primary">Create this Mixtape</button>
-        <button class="viewMixtape btn btn-success">View Mixtape on YouTube</button>
-        <button class="clearListenHistoryBtn btn btn-link">Clear listen history</button>
+        <ol class="mixtapeViewableList">
+          <div class="mixtapePlaceholder">'Add to Mixtape' to begin creating a YouTube video playlist you can listen to, any time.</div>
+        </ol>
+        <button class="createMixtapeBtn btn btn-primary">Create this Mixtape</button>
+        <button class="viewMixtapeBtn btn btn-success">View Mixtape on YouTube</button>
+        <button class="clearMixtapeBtn btn btn-link">Clear Mixtape</button>
         <div class="pre-auth">
           <div class="g-signin2" id="login-link" data-onsuccess="onSignIn"></div>
         </div>
