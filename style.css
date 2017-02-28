@@ -53,13 +53,18 @@ body {
 
 .nowPlaying {
   visibility: hidden;
-  margin: 1em 0 1em 0;
+  margin: 1em 0 0.25em 0;
   font-size: 1.25em;
   text-transform: capitalize;
 }
 
 .nowPlaying span {
   color: #337ab7;
+}
+
+.addToMixtapeBtn {
+  display: none;
+  margin: 0.25em 0 1.5em 0;
 }
 
 .videoWrapper {
@@ -214,11 +219,15 @@ z-index: -1;
   background: #eff3ff;
 }
 
-.listenHistory {
+.mixtapePlaceholder {
+  display: none;
+}
+
+.mixtapeViewableList {
   border-left: 1px solid grey;
 }
 
-.listenHistory  li {
+.mixtapeViewableList  li {
   width: 100%;
   min-height: 2.5em;
   margin-bottom: 1em;
@@ -228,7 +237,7 @@ z-index: -1;
   background: #96cbe4;
 }
 
-.listenHistory > li > span {
+.mixtapeViewableList > li > span {
   display: inline-block;
   max-width: 75%;
   color: white;
@@ -240,19 +249,19 @@ z-index: -1;
   margin-right: -0.9em;
 }
 
-.clearListenHistoryBtn {
+.clearMixtapeBtn {
   display: none;
   float: right;
 }
 
-.createMixtape {
+.createMixtapeBtn {
   display: none;
   float: right;
   text-align: left;
   white-space: normal;
 }
 
-.viewMixtape {
+.viewMixtapeBtn {
   display: none;
   float: right;
 }
@@ -269,16 +278,16 @@ z-index: -1;
   float: right;
 }
 
-.showPriorResults {
+.showPreviousResultsBtn {
   display: none;
 }
 
-.priorResults {
+.previousResults {
   display: none;
   opacity: 0.7;
 }
 
-.moreResultsBtn {
+.showAdditionalResultsBtn {
   display: none;
   margin-bottom: 3em;
 }
