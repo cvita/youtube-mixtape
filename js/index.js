@@ -49,6 +49,7 @@ function displayResults() {
     var relevance = assignRelevanceClassForColorScale(result.frequency);
     var individualResultBtnHTMLSuffix = relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
     var individualResultBtnHTML = "<li class='individualResult " + individualResultBtnHTMLSuffix;
+    
     if (forEachCount <= similarArtists.artistPosition) {
       individualResultBtnHTML = "<li class='individualResult previousResults " + individualResultBtnHTMLSuffix;
     } else if (forEachCount === similarArtists.artistPosition + 1) {
@@ -56,11 +57,10 @@ function displayResults() {
     } else if (forEachCount > similarArtists.artistPosition + 10) {
       individualResultBtnHTML = "<li class='individualResult additionalResults " + individualResultBtnHTMLSuffix;
     }
+
     $(".allSearchResults").append(individualResultBtnHTML);
   });
-
   $(".highlighted").css("background-image", "url(" + similarArtists.results[similarArtists.artistPosition].artistImage.url + ")");
-  assignDragAndDropFunctionalityToIndividualResultBtns();
   adjustPreviousAndAdditionalResultsBtnState();
   displayMixtapeSection();
 }
@@ -78,7 +78,7 @@ function assignRelevanceClassForColorScale(frequency) {
     return "relevance1of5";
   }
 }
-
+// Todo: mixtape section button functionality has been disabled.
 (function assignFunctionalityToIndividualResultBtns() {
   $("ol").on("click", ":not(.showAdditionalResultsBtn .showPreviousResultsBtn)", function (event) {
     event.stopPropagation();
@@ -102,49 +102,53 @@ function assignRelevanceClassForColorScale(frequency) {
   });
 })();
 
-function assignDragAndDropFunctionalityToIndividualResultBtns() {
-  var delayBeforeEnablingDragAndDrop;
-  var itemBeingDragged;
-  var itemBeingDraggedPosition;
-  $(".allSearchResults li")
-    .on('mousedown', function () {
-      itemBeingDragged = $(this);
-      itemBeingDraggedPosition = $(this).index();
-      delayBeforeEnablingDragAndDrop = setTimeout(reorderSimilarArtists, 125);
-    })
-    .on('mouseup', function () {
-      clearTimeout(delayBeforeEnablingDragAndDrop);
-    });
-
-  function reorderSimilarArtists() {
-    var removedArtistObj = similarArtists.results.splice(itemBeingDraggedPosition, 1)[0];
-    itemBeingDragged.addClass("draggingItem");
-
-    $(".allSearchResults li").one("mouseup", function () {
-      setTimeout(function () {
-        itemBeingDragged.removeClass("draggingItem");
-        var newPosition = itemBeingDragged.index();
-        similarArtists.results.splice(newPosition, 0, removedArtistObj);
-        if (itemBeingDraggedPosition === similarArtists.artistPosition) {
-          similarArtists.artistPosition = newPosition;
-        }
-        displayResults();
-      }, 10);
-    });
-  }
-
-  $(".allSearchResults").disableSelection();
-  $(".allSearchResults").sortable({
+(function assignDragAndDropFunctionalityToIndividualResultBtns() {
+  $("ol").sortable({
     placeholder: {
       element: function () {
-        return $("<li><div class='placeHolderForDrag'><span class='glyphicon glyphicon-share-alt'></div></li>")[0];
+        return $("<li class='placeholderForDrag glyphicon glyphicon-share-alt'></li>");
       },
       update: function () {
         return;
       }
     }
   });
-}
+  $("ol").disableSelection();
+
+  var ignoreQuickClicksTimer;
+  $("ol").on("mousedown", "li", function () {
+    var elementClicked = $(this);
+    ignoreQuickClicksTimer = setTimeout(function () {
+      elementClicked.addClass("itemBeingDragged", 100);
+      var originalPosition = elementClicked.index();
+      var artistObjectBeingMoved = similarArtists.results[originalPosition];
+      var newPosition;
+      $("ol").on("mousemove", "li", function () {
+        newPosition = $(".placeholderForDrag").index();
+      });
+      $("ol").on("mouseup", "li", function () {
+        $("ol").off("mousemove");
+        $("ol").off("mouseup");
+        if (newPosition) {
+          similarArtists.results.splice(originalPosition, 1);
+          similarArtists.results.splice(newPosition, 0, artistObjectBeingMoved);
+          if (originalPosition === similarArtists.artistPosition) {
+            similarArtists.artistPosition = newPosition;
+          }
+        }
+        $(document).ready(function () {
+          elementClicked.removeClass("itemBeingDragged", 75, function () {
+            displayResults();
+          });
+        });
+      });
+    }, 200);
+  });
+
+  $("ol").on("click", "li", function () {
+    clearTimeout(ignoreQuickClicksTimer);
+  });
+})();
 
 function adjustPreviousAndAdditionalResultsBtnState() {
   if ($(".previousResults").length > 0) {
@@ -176,7 +180,6 @@ $(".addToMixtapeBtn").click(function () {
     $(".mixtapePlaceholder").hide();
     listenHistory.mixtape.push(currentPlayerInfo.videoTitle);
     $(".mixtapeViewableList").append("<li><span>" + currentPlayerInfo.videoTitle + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>");
-    assignSortableListenHistoryFunctionality();
     assignDeleteVideoFromHistoryBtnFunctionality();
     displayMixtapeSection();
   }
@@ -195,25 +198,6 @@ function displayMixtapeSection() {
     $(".createMixtapeBtn").hide();
     $(".clearMixtapeBtn").hide();
   }
-}
-
-function assignSortableListenHistoryFunctionality() {
-  $(".mixtapeViewableList li").mouseup(function () {
-    setTimeout(function () {
-      var tempArray = [];
-      $(".mixtapeViewableList li").each(function (li) {
-        var videoTitleFromDOM = $(this).text().slice(0, -1);
-        for (var i = 0; i < listenHistory.previousVideos.length; i++) {
-          if (videoTitleFromDOM.indexOf(listenHistory.previousVideos[i].videoTitle) !== -1) {
-            tempArray.push(listenHistory.previousVideos[i]);
-          }
-        }
-      });
-      listenHistory.previousVideos = tempArray;
-    }, 10);
-  });
-  $(".mixtapeViewableList").sortable();
-  $(".mixtapeViewableList").disableSelection();
 }
 
 function assignDeleteVideoFromHistoryBtnFunctionality() {

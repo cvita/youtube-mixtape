@@ -55,14 +55,12 @@ var assignCurrentVideoFromSearchResults = function (response) {
 
 var playCurrentVideo = function (currentVideo) {
   return new Promise(function (resolve, reject) {
-    var nowPlaying = false;
     currentPlayerInfo.player.loadVideoById(currentVideo.videoID);
     $(".nowPlaying").fadeOut("slow", function () {
       $(this).css("visibility", "visible");
       $(this).html("Playing <span>" + currentVideo.videoTitle + "</span>").fadeIn("slow");
     });
-    nowPlaying = true;
-    if (nowPlaying) {
+    if (currentVideo.videoID) {
       resolve(currentVideo.videoID);
     } else {
       reject("Problem with playVideo()");

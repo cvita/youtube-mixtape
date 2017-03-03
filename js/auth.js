@@ -2,8 +2,43 @@
 
 window.onload = function () {
   prepareYouTubePlayer();
-  checkAuth();
+  (function checkAuth() {
+    gapi.auth.authorize({
+      client_id: '847638938655-sh07q333hjtsbqt3b6t2r264fpepj873.apps.googleusercontent.com',
+      scope: ['https://www.googleapis.com/auth/youtube'],
+      immediate: true,
+    }, handleAuthResult);
+  })();
 };
+
+function handleAuthResult(authResult) {
+  if (authResult && !authResult.error) {
+    currentPlayerInfo.userLoggedIn = true;
+    loadAPIClientInterfaces();
+    $(".pre-auth").hide();
+  } else {
+    currentPlayerInfo.userLoggedIn = false;
+    $(".createMixtapeBtn").addClass("disabled");
+  }
+}
+
+function loadAPIClientInterfaces() {
+  gapi.client.load('youtube', 'v3', function () {
+    console.log("YouTube create playlist API is loaded");
+  });
+}
+
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('Name: ' + profile.getName());
+  // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  // console.log('Image URL: ' + profile.getImageUrl());
+  // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+  $(".pre-auth").slideUp("slow", function () {
+    $(".createMixtapeBtn").removeClass("disabled");
+  });
+}
+
 
 function prepareYouTubePlayer() {
   var tag = document.createElement('script');
@@ -115,37 +150,3 @@ function formatMinutesAndSeconds(time) {
   }
   return minutes + ":" + seconds;
 }
-
-
-function checkAuth(OAUTH2_CLIENT_ID) {
-  gapi.auth.authorize({
-    client_id: '847638938655-sh07q333hjtsbqt3b6t2r264fpepj873.apps.googleusercontent.com',
-    scope: ['https://www.googleapis.com/auth/youtube'],
-    immediate: true,
-  }, handleAuthResult);
-}
-
-function handleAuthResult(authResult) {
-  if (authResult && !authResult.error) {
-    currentPlayerInfo.userLoggedIn = true;
-    gapi.client.load('youtube', 'v3', function () {
-      $(".pre-auth").slideUp("slow", function () {
-        $(".createMixtapeBtn").removeClass("disabled");
-      });
-    });
-  } else {
-    currentPlayerInfo.userLoggedIn = false;
-    $(".createMixtapeBtn").addClass("disabled");
-  }
-  console.log("User is logged in:", currentPlayerInfo.userLoggedIn, "This enables the YouTube 'Create Playlist' feature.");
-}
-
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('Name: ' + profile.getName());
-  // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  // console.log('Image URL: ' + profile.getImageUrl());
-  // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-}
-
-
