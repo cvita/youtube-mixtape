@@ -1,9 +1,9 @@
 body {
+  font-family: "Nunito Sans", sans-serif;
   margin: 3%;
   background: white;
   color: grey;
   font-size: 16px;
-  font-family: "Nunito Sans", sans-serif;
 }
 
 .app {
@@ -14,16 +14,16 @@ body {
 }
 
 .page-header {
+  font-family: "Arial Narrow", Arial, sans-serif;
   color: dimgrey;
   font-size: 3.4em;
-  font-family: "Arial Narrow", Arial, sans-serif;
   font-weight: bold;
 }
 
 #mixTapeTitle {
+  font-family: "Pacifico", Arial, sans-serif;
   color: #5bc0de;
   font-size: 0.85em;
-  font-family: "Pacifico", Arial, sans-serif;
 }
 
 #initialSearchInput {
