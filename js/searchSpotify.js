@@ -32,9 +32,8 @@ function getInitialArtistFullGenreListViaSpotify(initialArtist) {
             validArtist = spotifyData.artists.items[0];
             similarArtists.results[0].name = validArtist.name.toLowerCase();
           }
-          similarArtists.results[0].artistImage = validArtist.images.find(image => image.height < 500);
+          similarArtists.results[0].artistImage = validArtist.images[0];
           resolve(validArtist.genres);
-
         }
       });
   });
@@ -73,6 +72,7 @@ function searchByGenreToFindInitialArtist(initialArtist, genre, spotifyData) {
   }
 }
 
+
 function findSimilarArtistsByGenreSearch(primaryGenres) {
   return new Promise(function (resolve, reject) {
     var forEachCount = 0;
@@ -93,9 +93,7 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
                 similarArtists.results.push({
                   "name": aSimilarArtist.name.toLowerCase(),
                   "frequency": 1,
-                  "artistImage": aSimilarArtist.images.find(function (image) {
-                    return image.height < 600;
-                  })
+                  "artistImage": aSimilarArtist.images[0]
                 });
               }
             }
@@ -108,6 +106,7 @@ function findSimilarArtistsByGenreSearch(primaryGenres) {
     });
   });
 }
+
 
 function sortSimilarArtistsByFrequency() {
   return new Promise(function (resolve, reject) {

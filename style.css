@@ -1,31 +1,29 @@
-/* height × width / margin / padding / display / border / background / text-align / font / color*/
-
 body {
   margin: 3%;
   background: white;
-  font-size: 16px;
-  font-family: 'Nunito Sans', sans-serif;
   color: grey;
+  font-size: 16px;
+  font-family: "Nunito Sans", sans-serif;
 }
 
 .app {
-  max-width: 1000px;
+  max-width: 900px;
   min-width: 330px;
   margin: 0.15em;
   padding: 0.25em;
 }
 
 .page-header {
-  font-family: 'Arial Narrow', Arial, sans-serif;
-  font-size: 3.4em;
-  font-weight: bold;
   color: dimgrey;
+  font-size: 3.4em;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  font-weight: bold;
 }
 
 #mixTapeTitle {
-  font-family: 'Pacifico', Arial, sans-serif;
-  font-size: 0.85em;
   color: #5bc0de;
+  font-size: 0.85em;
+  font-family: "Pacifico", Arial, sans-serif;
 }
 
 #initialSearchInput {
@@ -68,17 +66,18 @@ body {
 
 .videoWrapper {
   display: none;
-	position: relative;
-	padding-bottom: 56.25%; /* 16:9 */
-	padding-top: 25px;
-	height: 0;
+  position: relative;
+  height: 0;
+  padding-top: 25px;
+  padding-bottom: 56.25%; /* 16:9 */
 }
+
 .videoWrapper iframe {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
 }
 
 .customPlayerUI {
@@ -97,11 +96,11 @@ body {
 }
 
 .individualResult {
-z-index: -1;
   margin: 0.5em;
   padding: 1em;
   background: #f3f3f3;
   text-transform: capitalize;
+  z-index: -1;
 }
 
 .individualResult:hover {
@@ -115,8 +114,8 @@ z-index: -1;
 }
 
 .itemBeingDragged {
-  line-height: 2em;
   box-shadow: 5px 5px 5px 2.5px grey;
+  line-height: 2em;
   opacity: 0.8;
 }
 
@@ -125,37 +124,37 @@ z-index: -1;
   margin: 0.5em;
   padding: 1em;
   border-radius: 10px;
-  color: white;
   background: #696969;
+  color: white;
 }
 
 .highlighted {
   width: 103%;
-	margin-left: -3%;
+  margin-left: -3%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
   font-size: 1.5em;
   letter-spacing: 0.2em;
-  color: white;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
 }
 
 .highlighted:hover {
-	background-repeat: no-repeat;
-  background-position: center;
   background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   color: white;
 }
 
 .deleteArtistResultBtn {
+  float: right;
   position: relative;
   top: -10px;
   left: 10px;
-  z-index: 2;
-  float: right;
   margin-left: 1em;
+  z-index: 2;
 }
 
 .relevance5of5 {
@@ -163,7 +162,7 @@ z-index: -1;
 }
 
 .relevance4of5 {
-   border-left: 0.5em solid #3182bd;
+  border-left: 0.5em solid #3182bd;
 }
 
 .relevance3of5 {
@@ -226,7 +225,7 @@ z-index: -1;
   border-left: 1px solid grey;
 }
 
-.mixtapeViewableList  li {
+.mixtapeViewableList li {
   width: 100%;
   min-height: 2.5em;
   margin-bottom: 1em;
@@ -267,9 +266,9 @@ z-index: -1;
 
 .pre-auth {
   display: none;
-  width: 100%;
-  height: 2em;
   float: right;
+  height: 2em;
+  width: 100%;
   margin-top: 0.5em;
 }
 
