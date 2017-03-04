@@ -17,12 +17,12 @@ var createVideoSearch = function () {
       var query = currentPlayerInfo.artistLastSearched;
       $.getJSON("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=" +
         query + "&regionCode=US&type=video&videoCategoryId=10&videoDuration=short&videoEmbeddable=true&key=AIzaSyAxXnGEhkkZmEh7zfugJpAsJ7kpSU4GbDc")
+        .fail(function () {
+          reject("createVideoSearch reject error");
+        })
         .done(function (data) {
           currentPlayerInfo.tempYouTubeVideoResults = data;
           resolve(data);
-        })
-        .fail(function () {
-          reject("createVideoSearch reject error");
         });
     } else {
       resolve(currentPlayerInfo.tempYouTubeVideoResults);
