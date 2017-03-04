@@ -28,6 +28,23 @@ var listenHistory = {
   mixtape: []
 };
 
+
+$("#initialSearchInput").click(function () {
+  initialSearchInput.value = "";
+  $(".searchBtn").removeClass("disabled");
+});
+
+$(".searchBtn").click(function () {
+  runSearch();
+});
+
+$("#initialSearchInput").keydown(function (key) {
+  if (key.keyCode === 13) {
+    runSearch();
+    this.blur();
+  }
+});
+
 function runSearch() {
   var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
   if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
@@ -41,6 +58,7 @@ function runSearch() {
     });
   }
 }
+
 
 function displayResults() {
   $(".allSearchResults").html("");
@@ -92,40 +110,63 @@ function adjustPreviousAndAdditionalResultsBtnState() {
   }
 }
 
-function displayMixtapeSection() {
-  $(".mixtapeViewableList").html("");
-  if (listenHistory.mixtape.length > 0) {
-    listenHistory.mixtape.forEach(function (track) {
-      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>"
-      $(".mixtapeViewableList").append(mixtapeTrackHTML);
+$(".showPreviousResultsBtn").click(function () {
+  if ($(".previousResults").css("display") === "none") {
+    $(".previousResults").slideDown("slow", function () {
+      $(".showPreviousResultsBtn").html("Hide previous results");
     });
-    $(".createMixtapeBtn").show();
-    $(".clearMixtapeBtn").show();
-    if (!currentPlayerInfo.userLoggedIn) {
-      $(".pre-auth").show();
-    }
   } else {
-    $(".mixtapePlaceholder").show();
-    $(".createMixtapeBtn").hide();
-    $(".clearMixtapeBtn").hide();
+    $(".previousResults").slideUp("slow", function () {
+      $(".showPreviousResultsBtn").html("Show previous results");
+    });
   }
-}
+});
+
+$(".showAdditionalResultsBtn").click(function () {
+  if ($(this).html() === "Show more results") {
+    $(".additionalResults").slideDown("slow");
+    $(".showAdditionalResultsBtn").html("Show less results");
+  } else {
+    $(".additionalResults").slideUp("slow");
+    $(".showAdditionalResultsBtn").html("Show more results");
+  }
+});
 
 
+(function skipToThisArtist() {
+  $("ol").on("click", "li:not(.mixtapeTitle)", function (event) {
+    event.stopPropagation();
+    if ($(this).html().indexOf("<span>") !== -1) {
+      similarArtists.artistPosition = $(this).index();
+      findAndPlayVideo();
+    }
+  });
+})();
 
-
-
-
-
-
-
+(function deleteThisArtistFromSimilarArtists() {
+  $(".allSearchResults").on("click", "button", function (event) {
+    event.stopPropagation(event);
+    if ($(this).html() === "✖") {
+      var locationOfArtistClicked = $(this).parent().index();
+      similarArtists.results.splice(locationOfArtistClicked, 1);
+      $(this).parent().fadeOut("slow", function () {
+        if (locationOfArtistClicked === similarArtists.artistPosition) {
+          similarArtists.artistPosition--;
+          queNextVideo();
+        } else {
+          $(document).ready(() => displayResults()); // QUESTION: Does this make sense?
+        }
+      });
+    }
+  });
+})();
 
 function queNextVideo() {
   if ($(".lockArtistBtn").hasClass("btn-default")) { // If "Lock artist" is disabled
     $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
     similarArtists.artistPosition++;
   }
-  findAndPlayVideo();
+  findAndPlayVideo(); // Located in search.js
   clearInterval(currentPlayerInfo.playbackTimer);
   currentPlayerInfo.playbackTimer = null;
   $(".currentTime").html("0:00");
@@ -133,31 +174,7 @@ function queNextVideo() {
   $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
 }
 
-
-(function assignFunctionalityToIndividualResultBtns() {
-  $("ol").on("click", "li:not(.mixtapeTitle)", function (event) {
-    event.stopPropagation();
-    var artistClicked = ($(this).html().indexOf("<span>") !== -1 ?
-      $(this).index() :
-      $(this).parent(".allSearchResults li").index()
-    );
-    if ($(this).html() !== "✖") {
-      similarArtists.artistPosition = artistClicked;
-      findAndPlayVideo(); // Located in search.js
-    } else {
-      $(this).parent().fadeOut("fast", function () {
-        similarArtists.results.splice(artistClicked, 1);
-        displayResults();
-        if (artistClicked === similarArtists.artistPosition) {
-          similarArtists.artistPosition--;
-          queNextVideo();
-        }
-      });
-    }
-  });
-})();
-
-(function assignDragAndDropFunctionalityToIndividualResultBtns() {
+(function setupDragAndDropForOrderedLists() {
   $("ol").sortable({
     placeholder: {
       element: function () {
@@ -209,28 +226,40 @@ function queNextVideo() {
     }, 200);
   });
 
-  $("ol").on("click", "li", function () {
+  $("ol").on("mouseup", function () {
     clearTimeout(ignoreQuickClicksTimer);
   });
 })();
 
 
-// Functionality of UI as seen in app from top to bottom
-$("#initialSearchInput").click(function () {
-  initialSearchInput.value = "";
-  $(".searchBtn").removeClass("disabled");
-});
-
-$(".searchBtn").click(function () {
-  runSearch();
-});
-
-$("#initialSearchInput").keydown(function (key) {
-  if (key.keyCode === 13) {
-    runSearch();
-    this.blur();
+function displayMixtapeSection() {
+  $(".mixtapeViewableList").html("");
+  if (listenHistory.mixtape.length > 0) {
+    listenHistory.mixtape.forEach(function (track) {
+      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>"
+      $(".mixtapeViewableList").append(mixtapeTrackHTML);
+    });
+    $(".createMixtapeBtn").show();
+    $(".clearMixtapeBtn").show();
+    if (!currentPlayerInfo.userLoggedIn) {
+      $(".pre-auth").show();
+    }
+  } else {
+    $(".mixtapePlaceholder").show();
+    $(".createMixtapeBtn").hide();
+    $(".clearMixtapeBtn").hide();
   }
-});
+}
+
+(function assignDeleteVideoFromHistoryBtnFunctionality() {
+  $(".mixtapeViewableList").on("click", "button", function () {
+    listenHistory.mixtape.splice($(this).parent("li").index(), 1);
+    $(this).parent("li").fadeOut("fast", function () {
+      displayMixtapeSection();
+      $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
+    });
+  });
+})();
 
 $(".addToMixtapeBtn").click(function () {
   if (!$(this).hasClass("disabled") && currentPlayerInfo.videoTitle !== undefined) {
@@ -240,6 +269,28 @@ $(".addToMixtapeBtn").click(function () {
   }
 });
 
+$(".createMixtapeBtn").click(function () {
+  if (currentPlayerInfo.userLoggedIn) {
+    autoCreatePlaylist();
+    $(this).addClass("disabled");
+    $(this).html("Now creating your Mixtape");
+  }
+});
+
+$(".clearMixtapeBtn").click(function () {
+  listenHistory.mixtape = [];
+  $(".mixtapeViewableList").slideUp("slow", function () {
+    $(".createMixtapeBtn").fadeOut("slow");
+    $(".viewMixtape").fadeOut("slow");
+    $(".clearMixtapeBtn").fadeOut("slow", function () {
+      $(".mixtapeViewableList").html("").show();
+      displayMixtapeSection();
+    });
+  });
+});
+
+
+// Player Controls
 $(".pausePlayerBtn").click(function () {
   if ($(this).hasClass("btn-default")) {
     $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
@@ -271,59 +322,6 @@ $(".showPlayerBtn").click(function () {
     $(".videoWrapper").slideUp("slow", function () {
       $(".showPlayerBtn").html("Show player");
     });
-  }
-});
-
-$(".showPreviousResultsBtn").click(function () {
-  if ($(".previousResults").css("display") === "none") {
-    $(".previousResults").slideDown("slow", function () {
-      $(".showPreviousResultsBtn").html("Hide previous results");
-    });
-  } else {
-    $(".previousResults").slideUp("slow", function () {
-      $(".showPreviousResultsBtn").html("Show previous results");
-    });
-  }
-});
-
-$(".showAdditionalResultsBtn").click(function () {
-  if ($(this).html() === "Show more results") {
-    $(".additionalResults").slideDown("slow");
-    $(".showAdditionalResultsBtn").html("Show less results");
-  } else {
-    $(".additionalResults").slideUp("slow");
-    $(".showAdditionalResultsBtn").html("Show more results");
-  }
-});
-
-
-(function assignDeleteVideoFromHistoryBtnFunctionality() {
-  $(".mixtapeViewableList").on("click", "button", function () {
-    listenHistory.mixtape.splice($(this).parent("li").index(), 1);
-    $(this).parent("li").fadeOut("fast", function () {
-      displayMixtapeSection();
-      $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
-    });
-  });
-})();
-
-$(".clearMixtapeBtn").click(function () {
-  listenHistory.mixtape = [];
-  $(".mixtapeViewableList").slideUp("slow", function () {
-    $(".createMixtapeBtn").fadeOut("slow");
-    $(".viewMixtape").fadeOut("slow");
-    $(".clearMixtapeBtn").fadeOut("slow", function () {
-      $(".mixtapeViewableList").html("").show();
-      displayMixtapeSection();
-    });
-  });
-});
-
-$(".createMixtapeBtn").click(function () {
-  if (currentPlayerInfo.userLoggedIn) {
-    autoCreatePlaylist();
-    $(this).addClass("disabled");
-    $(this).html("Now creating your Mixtape");
   }
 });
 

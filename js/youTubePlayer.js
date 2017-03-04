@@ -49,26 +49,6 @@ function onPlayerStateChange(event) {
   }
 }
 
-function onPlayerError(errorEvent) {
-  var errorMsg;
-  switch (errorEvent) {
-    case 2:
-      errorMsg = "The request contains an invalid parameter value";
-      break;
-    case 5:
-      errorMsg = "The requested content cannot be played in an HTML5 player...";
-      break;
-    case 100:
-      errorMsg = "The video requested was not found.";
-      break;
-    case 101:
-    case 150:
-      errorMsg = "The owner of the requested video does not allow it to be played in embedded players.";
-      break;
-  }
-  console.log(errorMsg);
-}
-
 function getDurationOfPlayingVideo() {
   return new Promise(function (resolve, reject) {
     var totalDuration = Math.round(currentPlayerInfo.player.getDuration());
@@ -112,40 +92,22 @@ function formatMinutesAndSeconds(time) {
 }
 
 
-window.onload = function () {
-  (function checkAuth() {
-    gapi.auth.authorize({
-      client_id: '847638938655-sh07q333hjtsbqt3b6t2r264fpepj873.apps.googleusercontent.com',
-      scope: ['https://www.googleapis.com/auth/youtube'],
-      immediate: true,
-    }, handleAuthResult);
-  })();
-};
-
-function handleAuthResult(authResult) {
-  if (authResult && !authResult.error) {
-    currentPlayerInfo.userLoggedIn = true;
-    loadAPIClientInterfaces();
-    $(".pre-auth").hide();
-  } else {
-    currentPlayerInfo.userLoggedIn = false;
-    $(".createMixtapeBtn").addClass("disabled");
+function onPlayerError(errorEvent) {
+  var errorMsg;
+  switch (errorEvent) {
+    case 2:
+      errorMsg = "The request contains an invalid parameter value";
+      break;
+    case 5:
+      errorMsg = "The requested content cannot be played in an HTML5 player...";
+      break;
+    case 100:
+      errorMsg = "The video requested was not found.";
+      break;
+    case 101:
+    case 150:
+      errorMsg = "The owner of the requested video does not allow it to be played in embedded players.";
+      break;
   }
-}
-
-function loadAPIClientInterfaces() {
-  gapi.client.load('youtube', 'v3', function () {
-    console.log("YouTube create playlist API is loaded");
-  });
-}
-
-function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('Name: ' + profile.getName());
-  // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  // console.log('Image URL: ' + profile.getImageUrl());
-  // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  $(".pre-auth").slideUp("slow", function () {
-    $(".createMixtapeBtn").removeClass("disabled");
-  });
+  console.log(errorMsg);
 }
