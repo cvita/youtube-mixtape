@@ -32,7 +32,8 @@ function runSearch() {
   var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
   if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
     similarArtists.artistPosition = 0;
-    getInitialArtistFullGenreListViaSpotify(searchInput); // See spotifyMethod.js
+    similarArtists.results = [{ "name": searchInput, "frequency": 100, "artistImage": undefined }];
+    runSpotifySearch(searchInput); // Located in spotifyMethod.js
     $(".subheading").slideUp("fast", function () {
       $(".addToMixtapeBtn").show();
       $(".customPlayerUI").css("visibility", "visible");
@@ -49,7 +50,7 @@ function displayResults() {
     var relevance = assignRelevanceClassForColorScale(result.frequency);
     var individualResultBtnHTMLSuffix = relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
     var individualResultBtnHTML = "<li class='individualResult " + individualResultBtnHTMLSuffix;
-    
+
     if (forEachCount <= similarArtists.artistPosition) {
       individualResultBtnHTML = "<li class='individualResult previousResults " + individualResultBtnHTMLSuffix;
     } else if (forEachCount === similarArtists.artistPosition + 1) {
@@ -57,7 +58,6 @@ function displayResults() {
     } else if (forEachCount > similarArtists.artistPosition + 10) {
       individualResultBtnHTML = "<li class='individualResult additionalResults " + individualResultBtnHTMLSuffix;
     }
-
     $(".allSearchResults").append(individualResultBtnHTML);
   });
   $(".highlighted").css("background-image", "url(" + similarArtists.results[similarArtists.artistPosition].artistImage.url + ")");
@@ -78,9 +78,64 @@ function assignRelevanceClassForColorScale(frequency) {
     return "relevance1of5";
   }
 }
-// Todo: mixtape section button functionality has been disabled.
+
+function adjustPreviousAndAdditionalResultsBtnState() {
+  if ($(".previousResults").length > 0) {
+    $(".showPreviousResultsBtn").html("Show previous results").show();
+  } else {
+    $(".showPreviousResultsBtn").hide();
+  }
+  if ($(".additionalResults").length > 0) {
+    $(".showAdditionalResultsBtn").html("Show more results").show();
+  } else {
+    $(".showAdditionalResultsBtn").hide();
+  }
+}
+
+function displayMixtapeSection() {
+  $(".mixtapeViewableList").html("");
+  if (listenHistory.mixtape.length > 0) {
+    listenHistory.mixtape.forEach(function (track) {
+      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>"
+      $(".mixtapeViewableList").append(mixtapeTrackHTML);
+    });
+    $(".createMixtapeBtn").show();
+    $(".clearMixtapeBtn").show();
+    if (!currentPlayerInfo.userLoggedIn) {
+      $(".pre-auth").show();
+    }
+  } else {
+    $(".mixtapePlaceholder").show();
+    $(".createMixtapeBtn").hide();
+    $(".clearMixtapeBtn").hide();
+  }
+}
+
+
+
+
+
+
+
+
+
+
+function queNextVideo() {
+  if ($(".lockArtistBtn").hasClass("btn-default")) { // If "Lock artist" is disabled
+    $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
+    similarArtists.artistPosition++;
+  }
+  findAndPlayVideo();
+  clearInterval(currentPlayerInfo.playbackTimer);
+  currentPlayerInfo.playbackTimer = null;
+  $(".currentTime").html("0:00");
+  $(".trackLength").html(" / 0:00");
+  $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
+}
+
+
 (function assignFunctionalityToIndividualResultBtns() {
-  $("ol").on("click", ":not(.showAdditionalResultsBtn .showPreviousResultsBtn)", function (event) {
+  $("ol").on("click", "li:not(.mixtapeTitle)", function (event) {
     event.stopPropagation();
     var artistClicked = ($(this).html().indexOf("<span>") !== -1 ?
       $(this).index() :
@@ -88,7 +143,7 @@ function assignRelevanceClassForColorScale(frequency) {
     );
     if ($(this).html() !== "✖") {
       similarArtists.artistPosition = artistClicked;
-      findAndPlayVideo(); // See search.js
+      findAndPlayVideo(); // Located in search.js
     } else {
       $(this).parent().fadeOut("fast", function () {
         similarArtists.results.splice(artistClicked, 1);
@@ -127,20 +182,29 @@ function assignRelevanceClassForColorScale(frequency) {
         newPosition = $(".placeholderForDrag").index();
       });
       $("ol").on("mouseup", "li", function () {
-        $("ol").off("mousemove");
-        $("ol").off("mouseup");
-        if (newPosition) {
-          similarArtists.results.splice(originalPosition, 1);
-          similarArtists.results.splice(newPosition, 0, artistObjectBeingMoved);
-          if (originalPosition === similarArtists.artistPosition) {
-            similarArtists.artistPosition = newPosition;
+        if (elementClicked.hasClass("individualResult")) {
+          $("ol").off("mousemove");
+          $("ol").off("mouseup");
+          if (newPosition) {
+            similarArtists.results.splice(originalPosition, 1);
+            similarArtists.results.splice(newPosition, 0, artistObjectBeingMoved);
+            if (originalPosition === similarArtists.artistPosition) {
+              similarArtists.artistPosition = newPosition;
+            }
           }
-        }
-        $(document).ready(function () {
           elementClicked.removeClass("itemBeingDragged", 75, function () {
-            displayResults();
+            $(document).ready(() => displayResults());
           });
-        });
+        } else {
+          if (newPosition === undefined) {
+            newPosition = originalPosition;
+          }
+          var mixtapeTitleBeingMoved = listenHistory.mixtape.splice(originalPosition, 1)[0];
+          listenHistory.mixtape.splice(newPosition, 0, mixtapeTitleBeingMoved);
+          elementClicked.removeClass("itemBeingDragged", 75, function () {
+            $(document).ready(() => displayMixtapeSection());
+          });
+        }
       });
     }, 200);
   });
@@ -150,75 +214,8 @@ function assignRelevanceClassForColorScale(frequency) {
   });
 })();
 
-function adjustPreviousAndAdditionalResultsBtnState() {
-  if ($(".previousResults").length > 0) {
-    $(".showPreviousResultsBtn").html("Show previous results").show();
-  } else {
-    $(".showPreviousResultsBtn").hide();
-  }
-  if ($(".additionalResults").length > 0) {
-    $(".showAdditionalResultsBtn").html("Show more results").show();
-  } else {
-    $(".showAdditionalResultsBtn").hide();
-  }
-}
 
-function queNextVideo() {
-  if ($(".lockArtistBtn").hasClass("btn-default")) { // If "Lock artist" is disabled
-    $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
-    similarArtists.artistPosition++;
-  }
-  findAndPlayVideo();
-  clearInterval(currentPlayerInfo.playbackTimer);
-  currentPlayerInfo.playbackTimer = null;
-  $(".currentTime").html("0:00");
-  $(".trackLength").html(" / 0:00");
-}
-
-$(".addToMixtapeBtn").click(function () {
-  if (currentPlayerInfo.videoTitle !== undefined) {
-    $(".mixtapePlaceholder").hide();
-    listenHistory.mixtape.push(currentPlayerInfo.videoTitle);
-    $(".mixtapeViewableList").append("<li><span>" + currentPlayerInfo.videoTitle + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>");
-    assignDeleteVideoFromHistoryBtnFunctionality();
-    displayMixtapeSection();
-  }
-});
-
-function displayMixtapeSection() {
-  if (listenHistory.mixtape.length > 0) {
-    $(".mixtapePlaceholder").hide();
-    $(".createMixtapeBtn").show();
-    $(".clearMixtapeBtn").show();
-    if (!currentPlayerInfo.userLoggedIn) {
-      $(".pre-auth").show();
-    }
-  } else {
-    $(".mixtapePlaceholder").show();
-    $(".createMixtapeBtn").hide();
-    $(".clearMixtapeBtn").hide();
-  }
-}
-
-function assignDeleteVideoFromHistoryBtnFunctionality() {
-  $(".deleteVideoFromHistoryBtn").click(function () {
-    var videoTitle = $(this).parent(".mixtapeViewableList li")[0].innerHTML;
-    $(".mixtapeViewableList li").each(function (li) {
-      if ($(this).html() === videoTitle) {
-        $(this).fadeOut("slow");
-        for (var i = 0; i < listenHistory.previousVideos.length; i++) {
-          if ($(this).html().indexOf(listenHistory.previousVideos[i].videoTitle) !== -1) {
-            listenHistory.previousVideos.splice(i, 1);
-            break;
-          }
-        }
-      }
-    });
-  });
-}
-
-
-// User Interface Functionality
+// Functionality of UI as seen in app from top to bottom
 $("#initialSearchInput").click(function () {
   initialSearchInput.value = "";
   $(".searchBtn").removeClass("disabled");
@@ -232,6 +229,14 @@ $("#initialSearchInput").keydown(function (key) {
   if (key.keyCode === 13) {
     runSearch();
     this.blur();
+  }
+});
+
+$(".addToMixtapeBtn").click(function () {
+  if (!$(this).hasClass("disabled") && currentPlayerInfo.videoTitle !== undefined) {
+    $(".addToMixtapeBtn").addClass("disabled").html("Added to Mixtape");
+    listenHistory.mixtape.push(currentPlayerInfo.videoTitle);
+    displayMixtapeSection();
   }
 });
 
@@ -269,26 +274,6 @@ $(".showPlayerBtn").click(function () {
   }
 });
 
-$(".clearMixtapeBtn").click(function () {
-  listenHistory.mixtape = [];
-  $(".mixtapeViewableList").slideUp("slow", function () {
-    $(".createMixtapeBtn").fadeOut("slow");
-    $(".viewMixtape").fadeOut("slow");
-    $(".clearMixtapeBtn").fadeOut("slow", function () {
-      $(".mixtapeViewableList").html("").show();
-      displayMixtapeSection(); // Not sure why this isn't displaying placeholder
-    });
-  });
-});
-
-$(".createMixtapeBtn").click(function () {
-  if (currentPlayerInfo.userLoggedIn) {
-    autoCreatePlaylist();
-    $(this).addClass("disabled");
-    $(this).html("Now creating your Mixtape");
-  }
-});
-
 $(".showPreviousResultsBtn").click(function () {
   if ($(".previousResults").css("display") === "none") {
     $(".previousResults").slideDown("slow", function () {
@@ -308,6 +293,37 @@ $(".showAdditionalResultsBtn").click(function () {
   } else {
     $(".additionalResults").slideUp("slow");
     $(".showAdditionalResultsBtn").html("Show more results");
+  }
+});
+
+
+(function assignDeleteVideoFromHistoryBtnFunctionality() {
+  $(".mixtapeViewableList").on("click", "button", function () {
+    listenHistory.mixtape.splice($(this).parent("li").index(), 1);
+    $(this).parent("li").fadeOut("fast", function () {
+      displayMixtapeSection();
+      $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
+    });
+  });
+})();
+
+$(".clearMixtapeBtn").click(function () {
+  listenHistory.mixtape = [];
+  $(".mixtapeViewableList").slideUp("slow", function () {
+    $(".createMixtapeBtn").fadeOut("slow");
+    $(".viewMixtape").fadeOut("slow");
+    $(".clearMixtapeBtn").fadeOut("slow", function () {
+      $(".mixtapeViewableList").html("").show();
+      displayMixtapeSection();
+    });
+  });
+});
+
+$(".createMixtapeBtn").click(function () {
+  if (currentPlayerInfo.userLoggedIn) {
+    autoCreatePlaylist();
+    $(this).addClass("disabled");
+    $(this).html("Now creating your Mixtape");
   }
 });
 
