@@ -57,7 +57,6 @@ var playCurrentVideo = function (currentVideo) {
   return new Promise(function (resolve, reject) {
     currentPlayerInfo.player.loadVideoById(currentVideo.videoID);
     $(".nowPlaying").fadeOut("slow", function () {
-      $(this).css("visibility", "visible");
       $(this).html("Playing <span>" + currentVideo.videoTitle + "</span>").fadeIn("slow");
     });
     if (currentVideo.videoID) {

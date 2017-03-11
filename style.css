@@ -1,3 +1,5 @@
+/* height × width / margin / padding / display / border / background / text-align / font / color*/
+
 body {
   margin: 3%;
   background: white;
@@ -7,13 +9,14 @@ body {
 }
 
 .app {
-  max-width: 900px;
+  max-width: 1000px;
   min-width: 330px;
   margin: 0.15em;
   padding: 0.25em;
 }
 
 .page-header {
+  margin-top: 0;
   color: dimgrey;
   font-size: 3.4em;
   font-family: "Arial Narrow", Arial, sans-serif;
@@ -48,11 +51,15 @@ body {
   transition: 0.2s;
 }
 
-.nowPlaying {
-  visibility: hidden;
-  margin: 1em 0 0.25em 0;
+.nowPlayingSection {
+  display: none;
+  margin: 1em 0 2em 0;
   font-size: 1.25em;
   text-transform: capitalize;
+}
+
+.nowPlaying {
+  margin-right: 1em;
 }
 
 .nowPlaying span {
@@ -60,8 +67,7 @@ body {
 }
 
 .addToMixtapeBtn {
-  display: none;
-  margin: 0.25em 0 1.5em 0;
+  float: right;
 }
 
 .videoWrapper {
@@ -82,6 +88,7 @@ body {
 
 .customPlayerUI {
   visibility: hidden;
+  margin-top: 1em;
 }
 
 .trackCounter {
@@ -225,7 +232,7 @@ body {
   border-left: 1px solid grey;
 }
 
-.mixtapeViewableList li {
+.mixtapeViewableList  li {
   width: 100%;
   min-height: 2.5em;
   margin-bottom: 1em;
@@ -266,13 +273,12 @@ body {
 
 .pre-auth {
   display: none;
-  float: right;
-  height: 2em;
+  height: 4em;
   width: 100%;
-  margin-top: 0.5em;
+  margin-top: 3.5em;
 }
 
-#my-signin2 {
+.abcRioButton {
   float: right;
 }
 

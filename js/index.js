@@ -51,11 +51,10 @@ function runSearch() {
     similarArtists.artistPosition = 0;
     similarArtists.results = [{ "name": searchInput, "frequency": 100, "artistImage": undefined }];
     runSpotifySearch(searchInput); // Located in spotifyMethod.js
-    $(".subheading").slideUp("fast", function () {
-      $(".addToMixtapeBtn").show();
-      $(".customPlayerUI").css("visibility", "visible");
-      $(".relevanceColorScale").show();
-    });
+    $(".subheading").hide();
+    $(".nowPlayingSection").show();
+    $(".customPlayerUI").css("visibility", "visible");
+    $(".relevanceColorScale").show();
   }
 }
 
@@ -226,7 +225,7 @@ function queNextVideo() {
     }, 200);
   });
 
-  $("ol").on("mouseup", function () {
+  $("ol").on("click", "li", function () {
     clearTimeout(ignoreQuickClicksTimer);
   });
 })();
@@ -263,7 +262,7 @@ function displayMixtapeSection() {
 
 $(".addToMixtapeBtn").click(function () {
   if (!$(this).hasClass("disabled") && currentPlayerInfo.videoTitle !== undefined) {
-    $(".addToMixtapeBtn").addClass("disabled").html("Added to Mixtape");
+    $(".addToMixtapeBtn").addClass("disabled");
     listenHistory.mixtape.push(currentPlayerInfo.videoTitle);
     displayMixtapeSection();
   }
@@ -292,11 +291,11 @@ $(".clearMixtapeBtn").click(function () {
 
 // Player Controls
 $(".pausePlayerBtn").click(function () {
-  if ($(this).hasClass("btn-default")) {
-    $(this).removeClass("btn-default").addClass("btn-warning"); // Enable
+  if ($(".pausePlayerBtn span").hasClass("glyphicon-pause")) {
+    $(".pausePlayerBtn span").removeClass("glyphicon-pause").addClass("glyphicon-play");
     currentPlayerInfo.player.pauseVideo();
   } else {
-    $(this).removeClass("btn-warning").addClass("btn-default"); // Disable
+    $(".pausePlayerBtn span").removeClass("glyphicon-play").addClass("glyphicon-pause");
     currentPlayerInfo.player.playVideo();
   }
 });
@@ -314,13 +313,13 @@ $(".lockArtistBtn").click(function () {
 });
 
 $(".showPlayerBtn").click(function () {
-  if ($(this).html() === "Show player") {
+  if ($(".videoWrapper").css("display") === "none") {
     $(".videoWrapper").slideDown("slow", function () {
-      $(".showPlayerBtn").html("Hide player");
+      $(".showPlayerBtn").html("<span class='glyphicon glyphicon-collapse-down'></span> Hide player");
     });
   } else {
     $(".videoWrapper").slideUp("slow", function () {
-      $(".showPlayerBtn").html("Show player");
+      $(".showPlayerBtn").html("<span class='glyphicon glyphicon-collapse-up'></span> Show player");
     });
   }
 });
