@@ -46,7 +46,7 @@ $("#initialSearchInput").keydown(function (key) {
 });
 
 function runSearch() {
-  var searchInput = document.getElementById("initialSearchInput").value.toLowerCase();
+  var searchInput = $("#initialSearchInput").val().toLowerCase();
   if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
     similarArtists.artistPosition = 0;
     similarArtists.results = [{ "name": searchInput, "frequency": 100, "artistImage": undefined }];
@@ -290,12 +290,12 @@ $(".clearMixtapeBtn").click(function () {
 
 
 // Player Controls
-$(".pausePlayerBtn").click(function () {
-  if ($(".pausePlayerBtn span").hasClass("glyphicon-pause")) {
-    $(".pausePlayerBtn span").removeClass("glyphicon-pause").addClass("glyphicon-play");
+$(".pauseVideoBtn").click(function () {
+  if ($(".pauseVideoBtn span").hasClass("glyphicon-pause")) {
+     $(".pauseVideoBtn span").removeClass("glyphicon-pause").addClass("glyphicon-play");
     currentPlayerInfo.player.pauseVideo();
   } else {
-    $(".pausePlayerBtn span").removeClass("glyphicon-play").addClass("glyphicon-pause");
+     $(".pauseVideoBtn span").removeClass("glyphicon-play").addClass("glyphicon-pause");
     currentPlayerInfo.player.playVideo();
   }
 });
