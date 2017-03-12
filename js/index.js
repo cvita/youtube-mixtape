@@ -169,7 +169,7 @@ function queNextVideo() {
   currentPlayerInfo.playbackTimer = null;
   $(".currentTime").html("0:00");
   $(".trackLength").html(" / 0:00");
-  $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
+  $(".addToMixtapeBtn").removeClass("disabled");
 }
 
 (function setupDragAndDropForOrderedLists() {
@@ -230,8 +230,9 @@ function queNextVideo() {
 })();
 
 function displayMixtapeSection() {
-  $(".mixtapeViewableList").html("");
+
   if (listenHistory.mixtape.length > 0) {
+    $(".mixtapeViewableList").html("");
     listenHistory.mixtape.forEach(function (track) {
       var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>"
       $(".mixtapeViewableList").append(mixtapeTrackHTML);
@@ -253,7 +254,7 @@ function displayMixtapeSection() {
     listenHistory.mixtape.splice($(this).parent("li").index(), 1);
     $(this).parent("li").fadeOut("fast", function () {
       displayMixtapeSection();
-      $(".addToMixtapeBtn").removeClass("disabled").html("Add to Mixtape");
+      $(".addToMixtapeBtn").removeClass("disabled");
     });
   });
 })();
@@ -279,7 +280,9 @@ $(".clearMixtapeBtn").click(function () {
   $(".mixtapeViewableList").slideUp("slow", function () {
     $(".createMixtapeBtn").fadeOut("slow");
     $(".viewMixtape").fadeOut("slow");
+    $(".pre-auth").fadeOut("slow");
     $(".clearMixtapeBtn").fadeOut("slow", function () {
+      $(".addToMixtapeBtn").removeClass("disabled");
       $(".mixtapeViewableList").html("").show();
       displayMixtapeSection();
     });
