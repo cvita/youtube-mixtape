@@ -234,7 +234,7 @@ function displayMixtapeSection() {
   if (listenHistory.mixtape.length > 0) {
     $(".mixtapeViewableList").html("");
     listenHistory.mixtape.forEach(function (track) {
-      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>"
+      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>";
       $(".mixtapeViewableList").append(mixtapeTrackHTML);
     });
     $(".createMixtapeBtn").show();
