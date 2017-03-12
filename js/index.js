@@ -122,7 +122,7 @@ $(".showPreviousResultsBtn").click(function () {
 });
 
 $(".showAdditionalResultsBtn").click(function () {
-  if ($(this).html() === "Show more results") {
+  if ($(".additionalResults").css("display") === "none") {
     $(".additionalResults").slideDown("slow");
     $(".showAdditionalResultsBtn").html("Show less results");
   } else {
@@ -131,13 +131,12 @@ $(".showAdditionalResultsBtn").click(function () {
   }
 });
 
-
 (function skipToThisArtist() {
   $("ol").on("click", "li:not(.mixtapeTitle)", function (event) {
     event.stopPropagation();
     if ($(this).html().indexOf("<span>") !== -1) {
       similarArtists.artistPosition = $(this).index();
-      findAndPlayVideo();
+      findAndPlayVideo(); // Located in search.js
     }
   });
 })();
@@ -161,11 +160,11 @@ $(".showAdditionalResultsBtn").click(function () {
 })();
 
 function queNextVideo() {
-  if ($(".lockArtistBtn").hasClass("btn-default")) { // If "Lock artist" is disabled
+  if ($(".lockArtistBtn").hasClass("btn-default")) { // "Lock artist" is disabled
     $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
     similarArtists.artistPosition++;
   }
-  findAndPlayVideo(); // Located in search.js
+  findAndPlayVideo();
   clearInterval(currentPlayerInfo.playbackTimer);
   currentPlayerInfo.playbackTimer = null;
   $(".currentTime").html("0:00");
@@ -187,49 +186,48 @@ function queNextVideo() {
   $("ol").disableSelection();
 
   var ignoreQuickClicksTimer;
-  $("ol").on("mousedown", "li", function () {
-    var elementClicked = $(this);
-    ignoreQuickClicksTimer = setTimeout(function () {
-      elementClicked.addClass("itemBeingDragged", 100);
-      var originalPosition = elementClicked.index();
-      var artistObjectBeingMoved = similarArtists.results[originalPosition];
-      var newPosition;
-      $("ol").on("mousemove", "li", function () {
-        newPosition = $(".placeholderForDrag").index();
-      });
-      $("ol").on("mouseup", "li", function () {
-        if (elementClicked.hasClass("individualResult")) {
-          $("ol").off("mousemove");
-          $("ol").off("mouseup");
-          if (newPosition) {
-            similarArtists.results.splice(originalPosition, 1);
-            similarArtists.results.splice(newPosition, 0, artistObjectBeingMoved);
-            if (originalPosition === similarArtists.artistPosition) {
-              similarArtists.artistPosition = newPosition;
-            }
-          }
-          elementClicked.removeClass("itemBeingDragged", 75, function () {
-            $(document).ready(() => displayResults());
-          });
-        } else {
-          if (newPosition === undefined) {
-            newPosition = originalPosition;
-          }
-          var mixtapeTitleBeingMoved = listenHistory.mixtape.splice(originalPosition, 1)[0];
-          listenHistory.mixtape.splice(newPosition, 0, mixtapeTitleBeingMoved);
-          elementClicked.removeClass("itemBeingDragged", 75, function () {
-            $(document).ready(() => displayMixtapeSection());
-          });
-        }
-      });
-    }, 200);
-  });
 
   $("ol").on("click", "li", function () {
     clearTimeout(ignoreQuickClicksTimer);
   });
-})();
 
+  $("ol").on("mousedown", "li", function () {
+    var elementClicked = $(this);
+    ignoreQuickClicksTimer = setTimeout(function () {
+      elementClicked.addClass("itemBeingDragged", 100); // jQuery UI feature, animates CSS class style differences
+      var originalPosition = elementClicked.index();
+      var newPosition;
+
+      $("ol").on("mousemove", "li", function () {
+        newPosition = $(".placeholderForDrag").index();
+      });
+
+      $("ol").on("mouseup", "li", function () {
+        $("ol").off("mousemove");
+        $("ol").off("mouseup");
+        if (newPosition === undefined) {
+          newPosition = originalPosition;
+        }
+        // similarArtists <ol>
+        if (elementClicked.hasClass("individualResult")) {
+          var artistObjectBeingMoved = similarArtists.results.splice(originalPosition, 1)[0];
+          similarArtists.results.splice(newPosition, 0, artistObjectBeingMoved);
+          if (originalPosition === similarArtists.artistPosition) {
+            similarArtists.artistPosition = newPosition;
+          }
+        }
+        // mixtape <ol>
+        if (!elementClicked.hasClass("individualResult")) {
+          var mixtapeTitleBeingMoved = listenHistory.mixtape.splice(originalPosition, 1)[0];
+          listenHistory.mixtape.splice(newPosition, 0, mixtapeTitleBeingMoved);
+        }
+        elementClicked.removeClass("itemBeingDragged", 75, function () {
+          $(document).ready(() => displayResults());
+        });
+      });
+    }, 200);
+  });
+})();
 
 function displayMixtapeSection() {
   $(".mixtapeViewableList").html("");
@@ -292,10 +290,10 @@ $(".clearMixtapeBtn").click(function () {
 // Player Controls
 $(".pauseVideoBtn").click(function () {
   if ($(".pauseVideoBtn span").hasClass("glyphicon-pause")) {
-     $(".pauseVideoBtn span").removeClass("glyphicon-pause").addClass("glyphicon-play");
+    $(".pauseVideoBtn span").removeClass("glyphicon-pause").addClass("glyphicon-play");
     currentPlayerInfo.player.pauseVideo();
   } else {
-     $(".pauseVideoBtn span").removeClass("glyphicon-play").addClass("glyphicon-pause");
+    $(".pauseVideoBtn span").removeClass("glyphicon-play").addClass("glyphicon-pause");
     currentPlayerInfo.player.playVideo();
   }
 });
