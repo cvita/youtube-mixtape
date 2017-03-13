@@ -20,8 +20,8 @@ var listenHistory = {
       videoID: currentPlayerInfo.videoID,
       videoDescription: currentPlayerInfo.videoDescription
     });
-    var regex = new RegExp("[^0-9a-z]|" + currentPlayerInfo.artist(), "gi");
-    this.titlesOnly.push(currentPlayerInfo.videoTitle.replace(regex, ''));
+    var videoTitleEdited = currentPlayerInfo.videoTitle.replace(currentPlayerInfo.artist(), "");
+    this.titlesOnly.push(videoTitleEdited.replace(/[^0-9a-z]/gi, ""));
   },
   previousVideos: [],
   titlesOnly: [],
