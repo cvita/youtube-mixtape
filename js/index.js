@@ -196,6 +196,15 @@ function cueNextVideo() {
       var newPosition;
       $("ol").on("mousemove", "li", function () {
         newPosition = $(".placeholderForDrag").index();
+        if (originalPosition === similarArtists.artistPosition) {
+          $(".individualResult").each(function () {
+            if ($(this).index() < newPosition) {
+              $(this).css("opacity", "0.7");
+            } else {
+              $(this).css("opacity", "1");
+            }
+          });
+        }
       });
 
       $("ol").on("mouseup", "li", function () {
