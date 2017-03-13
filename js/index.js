@@ -50,7 +50,9 @@ function runSearch() {
   if (searchInput !== similarArtists.results[0].name && searchInput !== "") {
     similarArtists.artistPosition = 0;
     similarArtists.results = [{ "name": searchInput, "frequency": 100, "artistImage": undefined }];
-    runSpotifySearch(searchInput); // Located in spotifyMethod.js
+    runSpotifySearch(searchInput).then(function () { // runSpotifySearch located in spotifyMethod.js
+      displayResults();
+    });
     $(".subheading").hide();
     $(".nowPlayingSection").show();
     $(".customPlayerUI").css("visibility", "visible");
