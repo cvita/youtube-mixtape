@@ -152,7 +152,7 @@ $(".showAdditionalResultsBtn").click(function () {
           similarArtists.artistPosition--;
           cueNextVideo();
         } else {
-          $(document).ready(() => displayResults()); // QUESTION: Does this make sense?
+          displayResults();
         }
       });
     }
@@ -218,7 +218,7 @@ function cueNextVideo() {
           listenHistory.mixtape.splice(newPosition, 0, mixtapeTitleBeingMoved);
         }
         elementClicked.removeClass("itemBeingDragged", 75, function () {
-          $(document).ready(() => displayResults());
+          displayResults();
         });
       });
     }, 200);
