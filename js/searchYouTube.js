@@ -34,9 +34,9 @@ var assignCurrentVideoFromSearchResults = function (response) {
   return new Promise(function (resolve, reject) {
     var selectedResult;
     var videosNotYetListenedTo = [];
-    var regex = new RegExp("[^0-9a-z]|" + currentPlayerInfo.artist(), "gi");
     for (var i = 0; i < response.items.length; i++) {
-      var resultTitle = response.items[i].snippet.title.toLowerCase().replace(regex, '');
+      var resultTitle = response.items[i].snippet.title.toLowerCase().replace(currentPlayerInfo.artist(), "");
+      resultTitle = resultTitle.replace(/[^0-9a-z]/gi, "");
       if (listenHistory.titlesOnly.indexOf(resultTitle) === -1) {
         videosNotYetListenedTo.push(response.items[i].snippet);
       }
