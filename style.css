@@ -107,7 +107,6 @@ body {
   padding: 1em;
   background: #f3f3f3;
   text-transform: capitalize;
-  z-index: -1;
 }
 
 .individualResult:hover {
@@ -162,7 +161,6 @@ body {
   top: -10px;
   left: 10px;
   margin-left: 1em;
-  z-index: 2;
 }
 
 .relevance5of5 {
