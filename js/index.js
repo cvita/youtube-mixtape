@@ -150,7 +150,7 @@ $(".showAdditionalResultsBtn").click(function () {
       $(this).parent().fadeOut("slow", function () {
         if (locationOfArtistClicked === similarArtists.artistPosition) {
           similarArtists.artistPosition--;
-          queNextVideo();
+          cueNextVideo();
         } else {
           $(document).ready(() => displayResults()); // QUESTION: Does this make sense?
         }
@@ -159,7 +159,7 @@ $(".showAdditionalResultsBtn").click(function () {
   });
 })();
 
-function queNextVideo() {
+function cueNextVideo() {
   if ($(".lockArtistBtn").hasClass("btn-default")) { // "Lock artist" is disabled
     $(".allSearchResults li").eq(similarArtists.artistPosition).slideUp("fast");
     similarArtists.artistPosition++;
@@ -302,7 +302,7 @@ $(".pauseVideoBtn").click(function () {
 });
 
 $(".nextVideoBtn").click(function () {
-  queNextVideo();
+  cueNextVideo();
 });
 
 $(".lockArtistBtn").click(function () {
