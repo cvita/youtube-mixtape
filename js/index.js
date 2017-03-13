@@ -65,7 +65,7 @@ function displayResults() {
   similarArtists.results.forEach(function (result) {
     forEachCount++;
     var relevance = assignRelevanceClassForColorScale(result.frequency);
-    var individualResultBtnHTMLSuffix = relevance + "'><span>" + result.name + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
+    var individualResultBtnHTMLSuffix = relevance + "'><span>" + result.name.replace(/"/g, "") + "</span><button class='deleteArtistResultBtn btn btn-sm btn-default'>✖</span></button></li>";
     var individualResultBtnHTML = "<li class='individualResult " + individualResultBtnHTMLSuffix;
 
     if (forEachCount <= similarArtists.artistPosition) {
