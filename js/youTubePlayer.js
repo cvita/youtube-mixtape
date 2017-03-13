@@ -44,7 +44,7 @@ function onPlayerStateChange(event) {
       $(".pausePlayerBtn").removeClass("btn-default").addClass("btn-warning");
       break;
     case YT.PlayerState.ENDED:
-      queNextVideo();
+      cueNextVideo();
       break;
   }
 }
