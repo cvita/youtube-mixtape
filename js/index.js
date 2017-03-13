@@ -185,19 +185,15 @@ function cueNextVideo() {
   });
   $("ol").disableSelection();
 
-  var ignoreQuickClicksTimer;
-
-  $("ol").on("click", "li", function () {
-    clearTimeout(ignoreQuickClicksTimer);
-  });
-
   $("ol").on("mousedown", "li", function () {
     var elementClicked = $(this);
+    var ignoreQuickClicksTimer;
+    elementClicked.mouseup(() => clearTimeout(ignoreQuickClicksTimer));
     ignoreQuickClicksTimer = setTimeout(function () {
+      elementClicked.off("mouseup");
       elementClicked.addClass("itemBeingDragged", 100); // jQuery UI feature, animates CSS class style differences
       var originalPosition = elementClicked.index();
       var newPosition;
-
       $("ol").on("mousemove", "li", function () {
         newPosition = $(".placeholderForDrag").index();
       });
