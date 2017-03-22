@@ -253,12 +253,18 @@ body {
   margin-right: -0.9em;
 }
 
+.mixtapeStatusMessage {
+  display: none;
+  margin: 1em auto;
+  text-align: right;
+}
+
 .clearMixtapeBtn {
   display: none;
   float: right;
 }
 
-.createMixtapeBtn {
+.createEditMixtapeBtn {
   display: none;
   float: right;
   text-align: left;
@@ -268,6 +274,13 @@ body {
 .viewMixtapeBtn {
   display: none;
   float: right;
+  margin: 1em 0 0.5em 0;
+}
+
+@media (max-width: 767px) {
+  .viewMixtapeBtn {
+    margin: auto 1em;
+  }
 }
 
 .pre-auth {

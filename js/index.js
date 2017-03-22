@@ -171,7 +171,6 @@ function cueNextVideo() {
   currentPlayerInfo.playbackTimer = null;
   $(".currentTime").html("0:00");
   $(".trackLength").html(" / 0:00");
-  $(".addToMixtapeBtn").removeClass("disabled");
 }
 
 (function setupDragAndDropForOrderedLists() {
@@ -237,21 +236,22 @@ function cueNextVideo() {
 })();
 
 function displayMixtapeSection() {
-
   if (listenHistory.mixtape.length > 0) {
+    $(".mixtapePlaceholder").hide();
     $(".mixtapeViewableList").html("");
     listenHistory.mixtape.forEach(function (track) {
-      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track.replace(/"/g, "") + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>";
+      var mixtapeTrackHTML = "<li class='mixtapeTitle'><span>" + track.title.replace(/"/g, "") + "</span><button class='deleteVideoFromHistoryBtn btn btn-sm btn-info'>✖</button></li>";
       $(".mixtapeViewableList").append(mixtapeTrackHTML);
     });
-    $(".createMixtapeBtn").show();
+    $(".addToMixtapeBtn").removeClass("disabled");
+    $(".createEditMixtapeBtn").show();
     $(".clearMixtapeBtn").show();
     if (!currentPlayerInfo.userLoggedIn) {
       $(".pre-auth").show();
     }
   } else {
     $(".mixtapePlaceholder").show();
-    $(".createMixtapeBtn").hide();
+    $(".createEditMixtapeBtn").hide();
     $(".clearMixtapeBtn").hide();
   }
 }
@@ -261,37 +261,53 @@ function displayMixtapeSection() {
     listenHistory.mixtape.splice($(this).parent("li").index(), 1);
     $(this).parent("li").fadeOut("fast", function () {
       displayMixtapeSection();
-      $(".addToMixtapeBtn").removeClass("disabled");
     });
   });
 })();
 
 $(".addToMixtapeBtn").click(function () {
   if (!$(this).hasClass("disabled") && currentPlayerInfo.videoTitle !== undefined) {
-    $(".addToMixtapeBtn").addClass("disabled");
-    listenHistory.mixtape.push(currentPlayerInfo.videoTitle);
+    listenHistory.mixtape.push({
+      artist: currentPlayerInfo.artist(),
+      title: currentPlayerInfo.videoTitle,
+      videoID: currentPlayerInfo.videoID
+    });
     displayMixtapeSection();
+    $(".addToMixtapeBtn").addClass("disabled");
   }
 });
 
-$(".createMixtapeBtn").click(function () {
+$(".createEditMixtapeBtn").click(function () {
   if (currentPlayerInfo.userLoggedIn) {
-    autoCreatePlaylist();
-    $(this).addClass("disabled");
-    $(this).html("Now creating your Mixtape");
+    if (!playlistId) { // Create
+      autoCreatePlaylist();
+      $(".mixtapeStatusMessage").text("Now creating your Mixtape").slideDown("slow");
+      $(this).text("Edit this Mixtape")
+    } else { // Edit
+      $(".mixtapeStatusMessage").text("Now editing your Mixtape").slideDown("slow");
+      $(".viewMixtapeBtn").addClass("disabled");
+      deletePlaylist().then(function () {
+        autoCreatePlaylist();
+      });
+    }
   }
+});
+
+$(".viewMixtapeBtn").click(function () {
+  window.open("https://www.youtube.com/playlist?list=" + playlistId);
 });
 
 $(".clearMixtapeBtn").click(function () {
   listenHistory.mixtape = [];
   $(".mixtapeViewableList").slideUp("slow", function () {
-    $(".createMixtapeBtn").fadeOut("slow");
-    $(".viewMixtape").fadeOut("slow");
+    $(".createEditMixtapeBtn").fadeOut("slow").text("Create this Mixtape");
+    $(".viewMixtapeBtn").fadeOut("slow");
     $(".pre-auth").fadeOut("slow");
     $(".clearMixtapeBtn").fadeOut("slow", function () {
       $(".addToMixtapeBtn").removeClass("disabled");
       $(".mixtapeViewableList").html("").show();
       displayMixtapeSection();
+      playlistId = null;
     });
   });
 });
