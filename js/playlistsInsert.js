@@ -17,7 +17,7 @@ function handleAuthResult(authResult) {
     $(".pre-auth").hide();
   } else {
     currentPlayerInfo.userLoggedIn = false;
-    $(".createMixtapeBtn").addClass("disabled");
+    $(".createEditMixtapeBtn").addClass("disabled");
   }
 }
 
@@ -34,84 +34,102 @@ function onSignIn(googleUser) {
   // console.log('Image URL: ' + profile.getImageUrl());
   // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   $(".pre-auth").slideUp("slow", function () {
-    $(".createMixtapeBtn").removeClass("disabled");
+    $(".createEditMixtapeBtn").removeClass("disabled");
   });
 }
 
 // Create YouTube Playlist
 var playlistId;
-var channelId;
 
 function autoCreatePlaylist() {
-  var playlistTitle = "From " + listenHistory.previousVideos[0].artist + " to " + listenHistory.previousVideos[listenHistory.previousVideos.length - 1].artist;
-  var addVideosSlowly;
-  createPlaylist(playlistTitle);
-  setTimeout(function () {   // Todo: Find better async method
-    addVideosSlowly = setInterval(iterateThroughSampleVideoArraySlowly, 250);
-  }, 500);
-  var addVideosToPlaylistCount = 0;
-  function iterateThroughSampleVideoArraySlowly() {
-    addToPlaylist(listenHistory.previousVideos[addVideosToPlaylistCount].videoID);
-    console.log("Now adding: " + listenHistory.previousVideos[addVideosToPlaylistCount].videoID);
-    addVideosToPlaylistCount++;
-    if (addVideosToPlaylistCount === listenHistory.previousVideos.length) {
-      clearInterval(addVideosSlowly);
-      $(".createMixtapeBtn").fadeOut("slow", function () {
-        $(".viewMixtape").fadeIn("slow");
-      });
-
-      $(".viewMixtape").click(function () {
-        window.open("https://www.youtube.com/playlist?list=" + playlistId);
-      });
-    }
-  }
+  var playlistTitle = "From " + listenHistory.mixtape[0].artist + " to " +
+    listenHistory.mixtape[listenHistory.mixtape.length - 1].artist;
+  createPlaylist(playlistTitle).then(function () {
+    addVideoToPlaylistWhenPromiseResolves();
+  });
 }
 
 function createPlaylist(playlistTitle) {
-  var request = gapi.client.youtube.playlists.insert({
-    part: 'snippet,status',
-    resource: {
-      snippet: {
-        title: playlistTitle,
-        description: 'A programmatically generated playlist from YouTube MixTape'
-      },
-      status: {
-        privacyStatus: 'private'
+  return new Promise(function (resolve, reject) {
+    var request = gapi.client.youtube.playlists.insert({
+      part: 'snippet,status',
+      resource: {
+        snippet: {
+          title: playlistTitle,
+          description: 'A programmatically generated playlist from YouTube MixTape'
+        },
+        status: {
+          privacyStatus: 'private'
+        }
       }
-    }
+    });
+    request.execute(function (response) {
+      var result = response.result;
+      if (result) {
+        playlistId = result.id;
+        resolve(response);
+      } else {
+        reject("Could not create playlist");
+      }
+    });
   });
-  request.execute(function (response) {
-    var result = response.result;
-    if (result) {
-      playlistId = result.id;
-      console.log("Playlist ID: " + playlistId);
+}
+
+var addVideosToPlaylistCount = 0;
+function addVideoToPlaylistWhenPromiseResolves() {
+  var videoToAdd = listenHistory.mixtape[addVideosToPlaylistCount].videoID;
+  addToPlaylist(videoToAdd).then(function () {
+    if (addVideosToPlaylistCount < listenHistory.mixtape.length - 1) {
+      addVideosToPlaylistCount++;
+      addVideoToPlaylistWhenPromiseResolves()
     } else {
-      console.log("Could not create playlist");
+      addVideosToPlaylistCount = 0;
+      $(".mixtapeStatusMessage").slideUp("slow", function () {
+        $(".editMixtapeBtn").fadeIn("slow");
+        $(".viewMixtapeBtn").fadeIn("slow").removeClass("disabled");
+      });
     }
   });
 }
 
-function addToPlaylist(id, startPos, endPos) {
-  var details = {
-    videoId: id,
-    kind: 'youtube#video'
-  };
-  if (startPos !== undefined) {
-    details['startAt'] = startPos;
-  }
-  if (endPos !== undefined) {
-    details['endAt'] = endPos;
-  }
-  var request = gapi.client.youtube.playlistItems.insert({
-    part: 'snippet',
-    resource: {
-      snippet: {
-        playlistId: playlistId,
-        resourceId: details
+function addToPlaylist(id) {
+  return new Promise(function (resolve, reject) {
+    var details = {
+      videoId: id,
+      kind: 'youtube#video'
+    };
+    var request = gapi.client.youtube.playlistItems.insert({
+      part: 'snippet',
+      resource: {
+        snippet: {
+          playlistId: playlistId,
+          resourceId: details
+        }
       }
-    }
+    });
+    request.execute(function (response) {
+      if (response) {
+        resolve(response);
+      } else {
+        reject("Did not receive response from addToPlaylist()");
+      }
+    });
   });
-  request.execute(function (response) {
-    // $('#status').html('<pre>' + JSON.stringify(response.result) + '</pre>');
+}
+
+function deletePlaylist() {
+  return new Promise(function (resolve, reject) {
+    if (playlistId) {
+      var request = gapi.client.youtube.playlists.delete({
+        id: playlistId
+      });
+      request.execute(function (response) {
+        if (response) {
+          resolve(response);
+        } else {
+          reject("Did not receive response from deletePlaylist()");
+        }
+      });
+    }
   });
 }
