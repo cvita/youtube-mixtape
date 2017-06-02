@@ -8,12 +8,11 @@ The app also gives you the ability to create and edit a YouTube playlist. Note t
 
 ## View the app
 Deployed [here](https://gentle-mountain-68973.herokuapp.com/) on Heroku for demonstration purposes.
-
+### Desktop
 ![homepage screenshot](./screenshots/homePage6_2_17.png)
 
-### On Mobile
-Although it's not yet optimized for mobile use, the responsive design allows usable functionality.
-![android mobile screenshot](./screenshots/android6_2_17.jpg)
+### Mobile
+![android mobile screenshot](./screenshots/android6_2_17.jpg) Although it's not yet optimized for mobile use, the responsive design allows usable functionality.
 
 ## To install locally
 1. Clone this repo    
