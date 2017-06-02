@@ -13,7 +13,7 @@ Deployed [here](https://gentle-mountain-68973.herokuapp.com/) on Heroku for demo
 
 ### On Mobile
 Although it's not yet optimized for mobile use, the responsive design allows usable functionality.
-![android mobile screenshot](./screenshots/android6_2_17.png)
+![android mobile screenshot](./screenshots/android6_2_17.jpg)
 
 ## To install locally
 1. Clone this repo    
