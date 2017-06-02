@@ -1,0 +1,33 @@
+{
+  "name": "youtube-mixtape",
+  "version": "1.0.0",
+  "description": "Combining Spotify's genre search with YouTube video results",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.15.3",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitaC123/YouTube-Mixtape.git"
+  },
+  "keywords": [
+    "youtube",
+    "spotify",
+    "api",
+    "node",
+    "express"
+  ],
+  "author": "chris vita <chris.vita@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VitaC123/YouTube-Mixtape/issues"
+  },
+  "homepage": "https://github.com/VitaC123/YouTube-Mixtape#readme"
+}
