@@ -10,7 +10,7 @@ Note that it takes a moment for Heroku's services to initially activate.
 ### Detailed description
 The app first uses Spotify's API to validate your search as a known artist. Immediately after this validation, the app uses YouTube's API to search for a short, music category video result, and begins playing.
 
-Now that music is playing, the app continues to make calls to Spotify's API with a *search algorithm to generate a list of similar artists based on one or more common genres. Currently, the results are presented by the number of common genres. *Find this code in ````'./views/js/searchSpotify.js'````
+Now that music is playing, the app continues to make calls to Spotify's API with a search algorithm to generate a list of similar artists based on one or more common genres. Currently, the results are presented by the number of common genres. Find this code in ````'./views/js/searchSpotify.js'````
 
 As each video finishes playing, the app advances to the next artist result, and retrieves a new video result from YouTube.
 
