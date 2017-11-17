@@ -13,6 +13,8 @@ deploy:
   provider: heroku
   skip_cleanup: true
   api_key: $heroku_api_key
+  on:
+    all_branches: true
   app: youtube-mixtape-v2
   run:
     - restart
