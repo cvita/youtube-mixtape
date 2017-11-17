@@ -1,3 +1,18 @@
 language: node_js
 node_js:
   - 'stable'
+script:
+  - npm test
+  - npm run build-server
+  - cd ./frontend
+  - npm install
+  - npm run test-ci
+  - npm run build-client
+  - cd ..
+deploy:
+  provider: heroku
+  skip_cleanup: true
+  api_key: $heroku_api_key
+  app: youtube-mixtape-v2
+  run:
+    - restart
