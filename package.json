@@ -1,0 +1,61 @@
+{
+  "name": "youtube-mixtape",
+  "version": "2.0.0",
+  "description": "Combining Spotify's genre search with YouTube video results.",
+  "main": "server.js",
+  "scripts": {
+    "start": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon --exec npm run babel-node -- ./backend/server.js",
+    "dev:client": "cd frontend && npm start",
+    "babel-node": "babel-node --presets env",
+    "server": "node ./build/server.js",
+    "build-server": "babel backend/ -d build --ignore '**/*.test.js'",
+    "flow": "flow",
+    "flow:deps": "flow-typed install",
+    "flow:check": "npm run flow check ./backend/",
+    "lint": "eslint ./backend/",
+    "test-dev": "jest --watch --config=jestconfig.json",
+    "test": "jest --config=jestconfig.json --runInBand --forceExit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VitaC123/youtube-mixtape.git"
+  },
+  "keywords": [
+    "youtube",
+    "spotify",
+    "api",
+    "music",
+    "player"
+  ],
+  "author": "Chris Vita",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VitaC123/youtube-mixtape/issues"
+  },
+  "homepage": "https://github.com/VitaC123/youtube-mixtape#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "request": "^2.82.0",
+    "request-promise": "^4.2.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
+    "concurrently": "^3.5.0",
+    "eslint": "^4.7.1",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-plugin-flowtype": "^2.35.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.3.0",
+    "flow-bin": "^0.54.1",
+    "flow-typed": "^2.1.5",
+    "jest": "^21.1.0",
+    "lighthouse-ci": "https://github.com/ebidel/lighthouse-ci",
+    "nodemon": "^1.12.1",
+    "supertest": "^3.0.0"
+  }
+}
