@@ -1,14 +1,28 @@
-import React, { Component } from 'react';
+import React from 'react';
+
+import { ConnectedRouter } from 'react-router-redux';
+import { history } from './redux/store';
+
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as actionCreators from './redux/actionCreators';
+
+import Main from './components/Main/Main';
 
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <h1>I am the App component!</h1>
-      </div>
-    );
-  }
-}
+const App = props => (
+  <ConnectedRouter history={history}>
+    <Main {...props} />
+  </ConnectedRouter>
+);
 
-export default App;
+const mapStateToProps = state => ({
+  styleSheetLoaded: state.styleSheetLoaded,
+  videos: state.videos,
+  errors: state.errors,
+  routing: state.routing
+});
+
+const mapDispatchToProps = dispatch => (bindActionCreators(actionCreators, dispatch));
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
