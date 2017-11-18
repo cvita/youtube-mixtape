@@ -6,8 +6,7 @@ export const refreshStyleSheetStatus = () => ({
   payload: null
 });
 
-// Placeholder to set up sagas. Not actually usable
-export const fetchVideos = input => ({
+export const fetchVideos = (artist, maxResults = 10) => ({
   type: types.FETCH_VIDEOS_REQUESTED,
-  payload: input
+  payload: [artist, maxResults]
 });

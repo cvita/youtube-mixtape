@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import Home from '../Home/Home';
+
+import { Container } from 'reactstrap';
 import './Main.css';
 
 
@@ -16,17 +18,19 @@ class Main extends Component {
 
         <div className='mainContent'>
           <header>
-            <h1>Nav</h1>
+            <h1 className='text-center'>YouTube Mixtape</h1>
           </header>
           <main>
-            <Switch>
-              <Route path='/' exact={true} render={() => <Home {...this.props} />} />
-            </Switch>
+            <Container>
+              <Switch>
+                <Route path='/' exact={true} render={() => <Home {...this.props} />} />
+              </Switch>
+            </Container>
           </main>
         </div>
 
         <footer className='mainFooter'>
-          <h1>Footer</h1>
+          <p className='text-center'><a href='https://github.com/VitaC123/youtube-mixtape'>View source</a></p>
         </footer>
       </div>
     );

@@ -14,8 +14,8 @@ describe('action creators', () => {
   it('should create an action to fetch videos', () => {
     const expectedAction = {
       type: types.FETCH_VIDEOS_REQUESTED,
-      payload: 'example'
+      payload: ['myArtist', 10]
     };
-    expect(actions.fetchVideos('example')).toEqual(expectedAction);
+    expect(actions.fetchVideos('myArtist')).toEqual(expectedAction);
   });
 });
