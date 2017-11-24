@@ -18,6 +18,9 @@ const App = props => (
 
 const mapStateToProps = state => ({
   styleSheetLoaded: state.styleSheetLoaded,
+  spotifyAccess: state.spotifyAccess,
+  initialArtist: state.initialArtist,
+  artists: state.artists,
   videos: state.videos,
   errors: state.errors,
   routing: state.routing

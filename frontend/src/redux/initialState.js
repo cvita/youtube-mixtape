@@ -1,6 +1,9 @@
 const initialState = {
-  videos: [],
   styleSheetLoaded: false,
+  spotifyAccess: null,
+  initialArtist: null,
+  artists: [],
+  videos: [],
   errors: []
 };
 

@@ -14,6 +14,33 @@ export const styleSheetLoaded = (state = initialState.styleSheetLoaded) => {
   }
 };
 
+export const spotifyAccess = (state = initialState.spotifyAccess, action) => {
+  switch (action.type) {
+    case types.FETCH_SPOTIFY_TOKEN_SUCCEEDED:
+      return action.payload;
+    default:
+      return state;
+  }
+}
+
+export const initialArtist = (state = initialState.initialArtist, action) => {
+  switch (action.type) {
+    case types.FETCH_INITIAL_ARTIST_SUCCEEDED:
+      return action.payload;
+    default:
+      return state;
+  }
+}
+
+export const artists = (state = initialState.artists, action) => {
+  switch (action.type) {
+    case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
+      return action.payload;
+    default:
+      return state;
+  }
+}
+
 export const videos = (state = initialState.videos, action) => {
   switch (action.type) {
     case types.FETCH_VIDEOS_SUCCEEDED:
@@ -34,6 +61,9 @@ export const errors = (state = initialState.errors, action) => {
 
 const rootReducer = combineReducers({
   styleSheetLoaded,
+  spotifyAccess,
+  initialArtist,
+  artists,
   videos,
   errors,
   routing: routerReducer
