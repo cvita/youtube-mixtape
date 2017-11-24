@@ -11,6 +11,22 @@ describe('action creators', () => {
     expect(actions.refreshStyleSheetStatus()).toEqual(expectedAction);
   });
 
+  it('should create an action to fetch a Spotify access token', () => {
+    const expectedAction = {
+      type: types.FETCH_SPOTIFY_TOKEN_REQUESTED,
+      payload: null
+    };
+    expect(actions.fetchSpotifyAccessToken()).toEqual(expectedAction);
+  });
+
+  it('should create an action to determine similar artists', () => {
+    const expectedAction = {
+      type: types.DETERMINE_SIMILAR_ARTISTS_REQUESTED,
+      payload: ['myArtist', 'stubAccessToken1234', true]
+    };
+    expect(actions.determineSimilarArtists('myArtist', 'stubAccessToken1234')).toEqual(expectedAction);
+  });
+
   it('should create an action to fetch videos', () => {
     const expectedAction = {
       type: types.FETCH_VIDEOS_REQUESTED,
