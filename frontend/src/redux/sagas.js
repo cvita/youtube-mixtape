@@ -22,7 +22,7 @@ export function* determineSimilarArtists(action) {
     const similarArtists = yield call(spotify.determineSimilarArtists, ...action.payload);
     yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED, payload: similarArtists });
 
-  } catch (e) { // figure out this part
+  } catch (e) {
     yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_FAILED, message: e.message });
   }
 }

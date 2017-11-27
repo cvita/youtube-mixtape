@@ -38,7 +38,7 @@ const determineSimilarArtists = (initialArtist, token, applyFilter) => (
       }))
     );
     Promise.all(fetchRequests)
-      .then(() => resolve(sortByFrequency(similarArtists)))
+      .then(() => resolve(determineRelevance(similarArtists)))
       .catch(e => reject(e));
   })
 );
@@ -68,18 +68,16 @@ const filterByPrimaryGenres = (initialArtist, genreResults, applyFilter) => {
   }
 };
 
-const sortByFrequency = artists => {
-  const relevance = {};
+const determineRelevance = artists => {
+  const unique = {};
   artists.forEach(artist => {
-    if (!relevance[artist.name]) { // Filter out duplicate `artist` objects
-      artist.count = 0;
-      relevance[artist.name] = artist;
+    if (!unique[artist.name]) { // Filter out duplicate `artist` objects
+      unique[artist.name] = artist;
+      unique[artist.name].relevance = 0;
     }
-    relevance[artist.name].count++; // Counts frequency of `artist` object
+    unique[artist.name].relevance++; // Counts frequency of duplicate `artist` object
   });
-
-  const topArtists = Object.keys(relevance).map(name => ({ ...relevance[name] }));
-  return topArtists.sort((a, b) => b.count - a.count);
+  return unique;
 };
 
 
