@@ -16,7 +16,12 @@ export const determineSimilarArtists = (initialArtistName, accessToken, applyFil
   payload: [initialArtistName, accessToken, applyFilter]
 });
 
-export const fetchVideos = (artist, maxResults = 10) => ({
+export const fetchVideos = (artist, played, maxResults = 10) => ({
   type: types.FETCH_VIDEOS_REQUESTED,
-  payload: [artist, maxResults]
+  payload: [artist, played, maxResults]
+});
+
+export const selectVideo = artist => ({
+  type: types.SELECT_VIDEO_REQUESTED,
+  payload: artist
 });

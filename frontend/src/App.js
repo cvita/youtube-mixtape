@@ -20,6 +20,9 @@ const mapStateToProps = state => ({
   styleSheetLoaded: state.styleSheetLoaded,
   spotifyAccess: state.spotifyAccess,
   artists: state.artists,
+  sortedArtists: state.sortedArtists,
+  selectedArtist: state.selectedArtist,
+  played: state.played,
   errors: state.errors,
   routing: state.routing
 });

@@ -21,7 +21,7 @@ export const spotifyAccess = (state = initialState.spotifyAccess, action) => {
     default:
       return state;
   }
-}
+};
 
 export const artists = (state = initialState.artists, action) => {
   switch (action.type) {
@@ -30,12 +30,51 @@ export const artists = (state = initialState.artists, action) => {
     case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
       return action.payload;
     case types.FETCH_VIDEOS_SUCCEEDED:
-      state[action.payload.artist].videos = action.payload.videos;
+      const { artist, videos } = action.payload;
+      state[artist].videos = videos;
       return state;
     default:
       return state;
   }
-}
+};
+
+export const sortedArtists = (state = initialState.sortedArtists, action) => {
+  switch (action.type) {
+    case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
+      const artists = action.payload;
+      const preSort = Object.keys(artists).map(artist => ({ ...artists[artist] }));
+      const sorted = preSort.sort((a, b) => b.relevance - a.relevance);
+      return sorted.map(artist => artist.name);
+    default:
+      return state;
+  }
+};
+
+export const played = (state = initialState.played, action) => {
+  switch (action.type) {
+    case types.FETCH_VIDEOS_REQUESTED:
+      const artistName = action.payload[0].name;
+      if (!state[artistName]) {
+        state[artistName] = [];
+      }
+      return state;
+    case types.SELECT_VIDEO_SUCCEEDED:
+      const { artist, video } = action.payload;
+      state[artist].push(video);
+      return state;
+    default:
+      return state;
+  }
+};
+
+export const selectedArtist = (state = initialState.selectedArtist, action) => {
+  switch (action.type) {
+    case types.SELECT_VIDEO_SUCCEEDED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
 
 export const errors = (state = initialState.errors, action) => {
   if (action.type && action.type.indexOf('FAILED') !== -1) {
@@ -50,6 +89,9 @@ const rootReducer = combineReducers({
   styleSheetLoaded,
   spotifyAccess,
   artists,
+  sortedArtists,
+  selectedArtist,
+  played,
   errors,
   routing: routerReducer
 });
