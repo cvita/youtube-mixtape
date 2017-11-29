@@ -5,7 +5,7 @@ import './Artists.css';
 
 
 const Artist = props => {
-  const { name, images, handleClick } = props;
+  const { name, images, handleClick, featured } = props;
   const size = window.innerWidth > 500 ? 1 : 2; // Request appropriate image size
   const imageStyle = {
     background: `url(${images[size].url})`,
@@ -21,7 +21,9 @@ const Artist = props => {
         </div>
         <CardBody>
           <CardText>
-            <small className='text-muted'>{name}</small>
+            <small className='text-muted'>
+              {featured && (<i className='fa fa-volume-up' aria-hidden='true' />)} {name}
+            </small>
           </CardText>
         </CardBody>
       </Card>
@@ -35,13 +37,11 @@ class Artists extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
   handleClick(name) {
-    const { artists } = this.props;
-    if (!artists[name].videos) { // Prevent redundant searches
-      this.props.fetchVideos(name);
-    }
+    const { artists, played } = this.props;
+    this.props.fetchVideos(artists[name], played);
   }
   render() {
-    const { artists } = this.props;
+    const { artists, selectedArtist } = this.props;
 
     if (Object.keys(artists).length > 0) {
       const preSort = Object.keys(artists).map(artist => ({ ...artists[artist] }));
@@ -49,7 +49,11 @@ class Artists extends Component {
       const myArtists = sorted.map((artist, i) => {
         return (
           <Col lg='3' md='4' sm='6' xs='12' key={artist.name + i}>
-            <Artist handleClick={() => this.handleClick(artist.name)} {...artist} />
+            <Artist
+              handleClick={() => this.handleClick(artist.name)}
+              featured={selectedArtist && selectedArtist.artist === artist.name}
+              {...artist}
+            />
           </Col>
         );
       });
