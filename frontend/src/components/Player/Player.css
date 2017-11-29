@@ -1,0 +1,61 @@
+.player {
+  width: 100%;
+  padding: 0.5em;
+  /* Next line as a fallback for sticky */
+  position: fixed;
+  position: sticky;
+  bottom: -1px;
+  z-index: 1;
+  background: #333333;
+}
+
+.youTubeIframe {
+  margin-bottom: 2em;
+}
+
+.playerRight {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.infoAlert {
+  margin: 0 1em;
+}
+
+.showHideButton {
+  height: 100%;
+}
+
+.playerVideoTitle {
+  padding-top: 1em;
+  font-size: 1.5em;
+  color: white;
+}
+
+.playerVideoTitle span {
+  color: grey;
+}
+
+/* .tapeIcon {
+  width: 4.5em;
+  padding: 0.5em;
+  border-radius: 50%;
+  background: #008DF5;
+}
+
+.cassetteCog1 {
+  position: absolute;
+  top: 12.55em;
+  left: 3.5em;
+  font-size: 0.39em;
+  color: white;
+}
+
+.cassetteCog2 {
+  position: absolute;
+  top: 12.55em;
+  left: 7.17em;
+  font-size: 0.39em;
+  color: white;
+} */
