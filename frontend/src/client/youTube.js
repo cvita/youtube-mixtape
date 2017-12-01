@@ -12,7 +12,7 @@ const fetchVideos = (artist, played, maxResults) => (
       .then(res => res.json())
       .then(res => {
         const videos = removeDuplicateSongs(artist.name, res.items);
-        resolve({ artist: artist.name, videos });
+        resolve({ artist, videos });
       })
       .catch(e => reject(e));
   })
@@ -21,7 +21,7 @@ const fetchVideos = (artist, played, maxResults) => (
 // helper functions
 const handleDuplicateSearches = (artist, resolve) => {
   console.log(`Returning previously fetched video results for ${artist.name}`);
-  resolve({ artist: artist.name, videos: artist.videos });
+  resolve({ artist, videos: artist.videos });
 };
 
 const removeDuplicateSongs = (artistName, videos, similarityThreshold = 0.32) => {

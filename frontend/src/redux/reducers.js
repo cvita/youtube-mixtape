@@ -31,7 +31,7 @@ export const artists = (state = initialState.artists, action) => {
       return action.payload;
     case types.FETCH_VIDEOS_SUCCEEDED:
       const { artist, videos } = action.payload;
-      state[artist].videos = videos;
+      state[artist.name].videos = videos;
       return state;
     default:
       return state;
@@ -60,7 +60,7 @@ export const played = (state = initialState.played, action) => {
       return state;
     case types.SELECT_VIDEO_SUCCEEDED:
       const { artist, video } = action.payload;
-      state[artist].push(video);
+      state[artist.name].push(video);
       return state;
     default:
       return state;
@@ -70,6 +70,7 @@ export const played = (state = initialState.played, action) => {
 export const selectedArtist = (state = initialState.selectedArtist, action) => {
   switch (action.type) {
     case types.SELECT_VIDEO_SUCCEEDED:
+      //  console.log(action.payload);
       return action.payload;
     default:
       return state;
