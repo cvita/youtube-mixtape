@@ -3,9 +3,35 @@ import YouTube from 'react-youtube';
 
 
 class YouTubePlayer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { player: null };
+    this.handleOnReady = this.handleOnReady.bind(this);
+    this.handleControl = this.handleControl.bind(this);
+  }
+  handleOnReady(event) {
+    if (!this.state.player) {
+      this.setState({ player: event });
+    }
+  }
+  handleControl(control) {
+    const player = this.state.player.target;
+    const currentTime = player.getCurrentTime();
+    switch (control) {
+      case 'play':
+        return player.playVideo();
+      case 'pause':
+        return player.pauseVideo();
+      case 'fastForward':
+        return player.seekTo(currentTime + 5, true);
+      case 'fastRewind':
+        return player.seekTo(currentTime - 5, true);
+      default:
+        return;
+    }
+  }
   render() {
-    const { id } = this.props;
-
+    const { id, videoControl } = this.props;
     const videoWrapperStyle = {
       position: 'relative',
       padding: '25px 0 56.25% 0' /* 16:9 */
@@ -15,7 +41,6 @@ class YouTubePlayer extends Component {
       height: '100%',
       position: 'absolute',
     };
-
     const options = {
       height: '100%',
       width: '100%',
@@ -25,25 +50,30 @@ class YouTubePlayer extends Component {
       }
     };
 
+    if (videoControl) {
+      this.handleControl(videoControl);
+    }
     return (
-      <div style={{ minWidth: '250px' }}>
+      <div style={{ maxWidth: '75vh', minWidth: '250px', margin: '0 auto 2em auto' }}>
         <div style={videoWrapperStyle}>
           <div style={iframeStyle}>
             <YouTube
               videoId={id}
               opts={options}
-              onReady={this._onReady}
+              onReady={this.handleOnReady}
               onEnd={this.props.handleEnd}
+              onStateChange={(event) => (
+                this.props.handleStateChange({
+                  playerState: event.target.getPlayerState(),
+                  duration: event.target.getDuration(),
+                  elapsed: event.target.getCurrentTime()
+                })
+              )}
             />
           </div>
         </div>
       </div>
     );
-  }
-
-  _onReady(event) {
-    // access to player in all event handlers via event.target
-    // event.target.pauseVideo();
   }
 }
 
