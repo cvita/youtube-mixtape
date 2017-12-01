@@ -31,3 +31,15 @@
 .artistBg:hover > i {
   color: white;
 }
+
+.featuredIcon {
+  position: absolute;
+  margin: 0.25em 0.25em;
+  padding: 0.5em;
+  bottom: 4em;
+  right: 0em;
+  border-radius: 50%;
+  color: white;
+  background: rgba(128, 128, 128, 0.836);
+  transition: 0.3s;
+}

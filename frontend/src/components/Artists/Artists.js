@@ -12,17 +12,20 @@ const Artist = props => {
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
+  const icon = featured ?
+    <i className='fa fa-volume-up featuredIcon' aria-hidden='true' /> :
+    <i className='fa fa-play-circle playButton' style={{ fontSize: '2em' }} aria-hidden='true' />;
 
   return (
     <LazyFadeIn>
       <Card className='artist' onClick={handleClick}>
         <div className='artistBg' style={imageStyle} >
-          <i className='fa fa-play-circle playButton' style={{ fontSize: '2em' }} aria-hidden='true' />
+          {icon}
         </div>
         <CardBody>
           <CardText>
             <small className='text-muted'>
-              {featured && (<i className='fa fa-volume-up' aria-hidden='true' />)} {name}
+              {name}
             </small>
           </CardText>
         </CardBody>
@@ -51,7 +54,7 @@ class Artists extends Component {
           <Col lg='3' md='4' sm='6' xs='12' key={artist.name + i}>
             <Artist
               handleClick={() => this.handleClick(artist.name)}
-              featured={selectedArtist && selectedArtist.artist === artist.name}
+              featured={selectedArtist && selectedArtist.artist.name === artist.name}
               {...artist}
             />
           </Col>
