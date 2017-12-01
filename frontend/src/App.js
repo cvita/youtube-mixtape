@@ -18,7 +18,11 @@ const App = props => (
 
 const mapStateToProps = state => ({
   styleSheetLoaded: state.styleSheetLoaded,
-  videos: state.videos,
+  spotifyAccess: state.spotifyAccess,
+  artists: state.artists,
+  sortedArtists: state.sortedArtists,
+  selectedArtist: state.selectedArtist,
+  played: state.played,
   errors: state.errors,
   routing: state.routing
 });

@@ -11,14 +11,22 @@ class ArtistSearch extends Component {
   }
   handleChange(event) {
     const value = event.target.value;
+    const shouldRenewAccess = this.props.spotifyAccess &&
+      this.props.spotifyAccess.expiration &&
+      this.props.spotifyAccess.expiration < new Date().getTime();
+    if (value.length === 1) { // Avoid duplicate calls
+      if (!this.props.spotifyAccess || shouldRenewAccess) {
+        this.props.fetchSpotifyAccessToken();
+      }
+    }
+    // AutoSuggest feature here
     this.setState({ userInput: value });
-    // AutoSuggest here
   }
   handleSubmit(event) {
     event.preventDefault();
     const { userInput } = this.state;
     if (typeof userInput === 'string' && userInput !== '') {
-      this.props.fetchVideos(userInput);
+      this.props.determineSimilarArtists(userInput, this.props.spotifyAccess.access_token, true); // Todo: add toggle for last arg, `applyFilter`
       this.setState({ userInput: '' });
     }
   }

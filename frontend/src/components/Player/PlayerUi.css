@@ -1,0 +1,64 @@
+.playerUiTitle {
+  max-width: 20em;
+}
+
+@media (max-width: 483px) {
+  .playerUiTitle {
+    min-width: 200px;
+  }
+}
+
+.playerUiTitle h1 {
+  font-size: 1.5em;
+  color: white;
+}
+
+.playerUiTitle h2 {
+  font-size: 1em;
+  letter-spacing: 0.1em;
+  color: grey;
+}
+
+.playerUiButtons {
+  min-width: 270px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.playerUiButtons > button {
+  width: 2em;
+  height: 2em;
+  padding: 0.25em;
+  margin-right: 0.25em;
+  font-size: 1.15em;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  background: grey;
+  transition: 0.3s;
+}
+
+#playPause {
+  font-size: 1.5em;
+}
+
+.playerUiButtons > button:hover {
+  color: orange;
+}
+
+@media (min-width: 991px) {
+  .playerUiButtons {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .playerUiButtons {
+    margin-top: 1em;
+   padding: 0.5em;
+  background: rgba(128, 128, 128, 0.377);
+  }
+}

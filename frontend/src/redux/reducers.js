@@ -14,9 +14,63 @@ export const styleSheetLoaded = (state = initialState.styleSheetLoaded) => {
   }
 };
 
-export const videos = (state = initialState.videos, action) => {
+export const spotifyAccess = (state = initialState.spotifyAccess, action) => {
   switch (action.type) {
+    case types.FETCH_SPOTIFY_TOKEN_SUCCEEDED:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+export const artists = (state = initialState.artists, action) => {
+  switch (action.type) {
+    case types.FETCH_INITIAL_ARTIST_SUCCEEDED:
+      return { [action.payload.name]: action.payload };
+    case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
+      return action.payload;
     case types.FETCH_VIDEOS_SUCCEEDED:
+      const { artist, videos } = action.payload;
+      state[artist.name].videos = videos;
+      return state;
+    default:
+      return state;
+  }
+};
+
+export const sortedArtists = (state = initialState.sortedArtists, action) => {
+  switch (action.type) {
+    case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
+      const artists = action.payload;
+      const preSort = Object.keys(artists).map(artist => ({ ...artists[artist] }));
+      const sorted = preSort.sort((a, b) => b.relevance - a.relevance);
+      return sorted.map(artist => artist.name);
+    default:
+      return state;
+  }
+};
+
+export const played = (state = initialState.played, action) => {
+  switch (action.type) {
+    case types.FETCH_VIDEOS_REQUESTED:
+      const artistName = action.payload[0].name;
+      if (!state[artistName]) {
+        state[artistName] = [];
+      }
+      return state;
+    case types.SELECT_VIDEO_SUCCEEDED:
+      const { artist, video } = action.payload;
+      state[artist.name].push(video);
+      return state;
+    default:
+      return state;
+  }
+};
+
+export const selectedArtist = (state = initialState.selectedArtist, action) => {
+  switch (action.type) {
+    case types.SELECT_VIDEO_SUCCEEDED:
+      //  console.log(action.payload);
       return action.payload;
     default:
       return state;
@@ -34,7 +88,11 @@ export const errors = (state = initialState.errors, action) => {
 
 const rootReducer = combineReducers({
   styleSheetLoaded,
-  videos,
+  spotifyAccess,
+  artists,
+  sortedArtists,
+  selectedArtist,
+  played,
   errors,
   routing: routerReducer
 });

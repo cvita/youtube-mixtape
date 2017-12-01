@@ -8,3 +8,13 @@ body {
   padding: 0;
   background: white;
 }
+
+/* CSSTransitionGroup settings to compliment lazy loading */
+.fadeInOnLoad-appear {
+  opacity: 0.01;
+}
+
+.fadeInOnLoad-appear.fadeInOnLoad-appear-active {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}

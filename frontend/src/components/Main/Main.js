@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import Home from '../Home/Home';
+import Artists from '../Artists/Artists';
+import Player from '../Player/Player';
 
 import { Container } from 'reactstrap';
 import './Main.css';
@@ -26,6 +28,10 @@ class Main extends Component {
                 <Route path='/' exact={true} render={() => <Home {...this.props} />} />
               </Switch>
             </Container>
+
+            <Artists {...this.props} />
+
+            <Player {...this.props} />
           </main>
         </div>
 
