@@ -4,7 +4,7 @@ import { Row, Col } from 'reactstrap';
 
 const Home = props => {
   return (
-    <div>
+    <div style={{ marginBottom: '6em' }}>
       <Row>
         <Col>
           <ArtistSearch {...props} />
