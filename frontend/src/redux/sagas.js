@@ -16,7 +16,7 @@ export function* fetchSpotifyAccessToken(action) {
 
 export function* determineSimilarArtists(action) {
   try {
-    const initialArtistInfo = yield call(spotify.fetchInitialArtist, ...action.payload);
+    var initialArtistInfo = yield call(spotify.fetchInitialArtist, ...action.payload); // `var` to share scope with catch block
     yield put({ type: types.FETCH_INITIAL_ARTIST_SUCCEEDED, payload: initialArtistInfo });
 
     action.payload[0] = initialArtistInfo;
@@ -24,21 +24,29 @@ export function* determineSimilarArtists(action) {
     yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED, payload: similarArtists });
 
   } catch (e) {
-    yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_FAILED, message: e.message });
+    if (!initialArtistInfo) {
+      yield put({ type: types.FETCH_INITIAL_ARTIST_FAILED, message: e.message });
+    } else {
+      yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_FAILED, message: e.message });
+    }
   }
 }
 
 export function* fetchVideos(action) {
   try {
     const played = action.payload[1];
-    const result = yield call(youTube.fetchVideos, ...action.payload);
-    yield put({ type: types.FETCH_VIDEOS_SUCCEEDED, payload: result });
+    var videos = yield call(youTube.fetchVideos, ...action.payload); // `var` to share scope with catch block
+    yield put({ type: types.FETCH_VIDEOS_SUCCEEDED, payload: videos });
 
-    const selectedVideo = yield call(videoSelection.selectVideo, result, played);
+    const selectedVideo = yield call(videoSelection.selectVideo, videos, played);
     yield put({ type: types.SELECT_VIDEO_SUCCEEDED, payload: selectedVideo });
 
   } catch (e) {
-    yield put({ type: types.FETCH_VIDEOS_FAILED, message: e.message });
+    if (!videos) {
+      yield put({ type: types.FETCH_VIDEOS_FAILED, message: e.message });
+    } else {
+      yield put({ type: types.SELECT_VIDEO_FAILED, message: e.message });
+    }
   }
 }
 
