@@ -5,20 +5,21 @@ import { Input, InputGroup, InputGroupButton, Button } from 'reactstrap';
 class ArtistSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { userInput: '' };
+    this.state = { clicked: false, userInput: '' };
+    this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+  handleClick() {
+    const { spotifyAccess, fetchSpotifyAccessToken } = this.props;
+    const shouldRenew = !spotifyAccess ? true : spotifyAccess.expiration < new Date().getTime();
+    if (!this.state.clicked || shouldRenew) { // Avoid duplicate calls
+      fetchSpotifyAccessToken();
+    }
+    this.setState({ clicked: true });
+  }
   handleChange(event) {
     const value = event.target.value;
-    const shouldRenewAccess = this.props.spotifyAccess &&
-      this.props.spotifyAccess.expiration &&
-      this.props.spotifyAccess.expiration < new Date().getTime();
-    if (value.length === 1) { // Avoid duplicate calls
-      if (!this.props.spotifyAccess || shouldRenewAccess) {
-        this.props.fetchSpotifyAccessToken();
-      }
-    }
     // AutoSuggest feature here
     this.setState({ userInput: value });
   }
@@ -26,7 +27,7 @@ class ArtistSearch extends Component {
     event.preventDefault();
     const { userInput } = this.state;
     if (typeof userInput === 'string' && userInput !== '') {
-      this.props.determineSimilarArtists(userInput, this.props.spotifyAccess.access_token, true); // Todo: add toggle for last arg, `applyFilter`
+      this.props.determineSimilarArtists(userInput, this.props.spotifyAccess, true); // Todo: add toggle for last arg, `applyFilter`
       this.setState({ userInput: '' });
     }
   }
@@ -36,6 +37,7 @@ class ArtistSearch extends Component {
         <InputGroup>
           <Input
             className='titleSearchInput'
+            onClick={this.handleClick}
             onChange={this.handleChange}
             value={this.state.userInput}
             type='text'

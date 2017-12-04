@@ -7,7 +7,7 @@ import videoSelection from '../client/videoSelection';
 
 export function* fetchSpotifyAccessToken(action) {
   try {
-    const token = yield call(spotify.fetchSpotifyAccessToken, action.payload);
+    const token = yield call(spotify.fetchSpotifyAccessToken);
     yield put({ type: types.FETCH_SPOTIFY_TOKEN_SUCCEEDED, payload: token });
   } catch (e) {
     yield put({ type: types.FETCH_SPOTIFY_TOKEN_FAILED, message: e.message });
@@ -16,7 +16,14 @@ export function* fetchSpotifyAccessToken(action) {
 
 export function* determineSimilarArtists(action) {
   try {
-    var initialArtistInfo = yield call(spotify.fetchInitialArtist, ...action.payload); // `var` to share scope with catch block
+    var token = action.payload[1];
+    if (!token) { // Attempt to recover if `fetchSpotifyAccessToken` saga failed
+      token = yield call(spotify.fetchSpotifyAccessToken);
+      action.payload[1] = token;
+      yield put({ type: types.FETCH_SPOTIFY_TOKEN_SUCCEEDED, payload: token });
+    }
+
+    var initialArtistInfo = yield call(spotify.fetchInitialArtist, ...action.payload);
     yield put({ type: types.FETCH_INITIAL_ARTIST_SUCCEEDED, payload: initialArtistInfo });
 
     action.payload[0] = initialArtistInfo;
@@ -24,7 +31,9 @@ export function* determineSimilarArtists(action) {
     yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED, payload: similarArtists });
 
   } catch (e) {
-    if (!initialArtistInfo) {
+    if (!token) {
+      yield put({ type: types.FETCH_SPOTIFY_TOKEN_FAILED, message: e.message });
+    } else if (!initialArtistInfo) {
       yield put({ type: types.FETCH_INITIAL_ARTIST_FAILED, message: e.message });
     } else {
       yield put({ type: types.DETERMINE_SIMILAR_ARTISTS_FAILED, message: e.message });
