@@ -6,9 +6,11 @@ import './Artists.css';
 
 const Artist = props => {
   const { name, images, handleClick, featured } = props;
-  const size = window.innerWidth > 500 ? 1 : 2; // Request appropriate image size
+
+  const size = window.innerWidth > 400 ? 0 : 1; // Request appropriate image size
+  const background = images && images.length > 1 ? `url(${images[size].url})` : 'grey'; // Handle no image
   const imageStyle = {
-    background: `url(${images[size].url})`,
+    background: background,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
