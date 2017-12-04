@@ -1,5 +1,6 @@
 import React from 'react';
 import ArtistSearch from './ArtistSearch';
+import NoResults from './NoResults';
 import { Row, Col } from 'reactstrap';
 
 const Home = props => {
@@ -8,6 +9,11 @@ const Home = props => {
       <Row>
         <Col>
           <ArtistSearch {...props} />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <NoResults {...props} />
         </Col>
       </Row>
     </div>

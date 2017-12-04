@@ -80,9 +80,9 @@ export const selectedArtist = (state = initialState.selectedArtist, action) => {
 export const errors = (state = initialState.errors, action) => {
   if (action.type && action.type.indexOf('FAILED') !== -1) {
     console.error(action);
-    return [...state, action];
+    return { recent: action, all: [...state.all, action] };
   }
-  return state;
+  return { recent: null, all: [...state.all] };
 };
 
 
