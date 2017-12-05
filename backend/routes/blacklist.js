@@ -31,9 +31,6 @@ router.get('/:artist', (req, res) => {
     if (err) {
       return handleError(err, res);
     }
-    if (docs.length === 0) {
-      return res.status(404).send(`No results for ${artist}`);
-    }
     res.status(200).send(docs);
   });
 });
@@ -51,7 +48,7 @@ router.delete('/:id', (req, res) => {
 // helper functions
 const handleError = (error, res) => {
   console.error(error);
-  res.status(500).send(error.message);
+  res.status(500).send(JSON.stringify(error.message));
 };
 
 
