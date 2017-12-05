@@ -1,8 +1,12 @@
 import express from 'express';
+import db from './db/db';
 import spotify from './routes/spotify';
+import blacklist from './routes/blacklist';
 
 
 const app = express();
+app.use('/spotify', spotify);
+app.use('/blacklist', blacklist);
 
 app.use((req, res, next) => {
   const protocol = req.protocol;
@@ -19,9 +23,6 @@ app.use((req, res, next) => {
   console.log(`req.origin: ${req.origin}`);
   next();
 });
-
-app.use('/spotify', spotify);
-
 
 if (process.env.NODE_ENV === 'test') {
   app.all('/', (req, res, next) => {
