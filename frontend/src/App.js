@@ -23,6 +23,7 @@ const mapStateToProps = state => ({
   sortedArtists: state.sortedArtists,
   selectedArtist: state.selectedArtist,
   played: state.played,
+  player: state.player,
   errors: state.errors,
   routing: state.routing
 });
