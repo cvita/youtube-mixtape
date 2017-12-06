@@ -37,7 +37,9 @@ class Player extends Component {
     fetchVideos(artists[nextArtistName], played);
   }
   handleError() {
-    // Todo: Interface with blacklist
+    const { artist, video } = this.props.selectedArtist;
+    this.props.addToBlacklist(artist, video);
+    this.handlePlayerActionRequest('next');
   }
   render() {
     const { selectedArtist, player } = this.props;
