@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 
 const schema = new mongoose.Schema({
-  _id: String,
+  _id: { type: String, require: true, unique: true },
   channelId: String,
   artist: String,
   title: String,
