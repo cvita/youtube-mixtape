@@ -3,6 +3,7 @@ import * as types from './actionTypes';
 import spotify from '../client/spotify';
 import youTube from '../client/youTube';
 import videoSelection from '../client/videoSelection';
+import blacklist from '../client/blacklist';
 
 
 export function* fetchSpotifyAccessToken(action) {
@@ -59,12 +60,22 @@ export function* fetchVideos(action) {
   }
 }
 
+export function* addToBlacklist(action) {
+  try {
+    const doc = yield call(blacklist.addToBlacklist, ...action.payload);
+    yield put({ type: types.ADD_TO_BLACKLIST_SUCCEEDED, payload: doc });
+  } catch (e) {
+    yield put({ type: types.ADD_TO_BLACKLIST_FAILED, message: e.message });
+  }
+}
+
 
 function* sagas() {
   yield all([
     takeLatest(types.FETCH_SPOTIFY_TOKEN_REQUESTED, fetchSpotifyAccessToken),
     takeLatest(types.DETERMINE_SIMILAR_ARTISTS_REQUESTED, determineSimilarArtists),
-    takeLatest(types.FETCH_VIDEOS_REQUESTED, fetchVideos)
+    takeLatest(types.FETCH_VIDEOS_REQUESTED, fetchVideos),
+    takeLatest(types.ADD_TO_BLACKLIST_REQUESTED, addToBlacklist)
   ]);
 }
 

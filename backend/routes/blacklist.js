@@ -5,6 +5,7 @@ import blacklist from '../db/schemas/blacklist';
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
 router.post('/', (req, res) => {
   const { videoId, channelId, artistName, title } = req.body;
