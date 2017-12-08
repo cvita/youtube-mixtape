@@ -1,0 +1,65 @@
+.navigation {
+  min-height: 4.5em;
+  overflow: hidden;
+  background: #333333fa;
+}
+
+.searchView {
+  padding: 1em;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+}
+
+.navbarToggleText {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  overflow: hidden;
+  top: -10px;
+}
+
+.navBrand:hover {
+  text-decoration: none;
+}
+
+.navLink {
+  margin: 1em 1em 0 0;
+  padding-bottom: 1.21em;
+  border-bottom: 0.25em solid rgba(255, 162, 0, 0);
+  text-transform: capitalize;
+  text-decoration: none;
+  color: #6D7C8B;
+  transition: 0.2s;
+}
+
+@media (max-width: 575px) {
+  .navLink {
+    padding-bottom: 0;
+  }
+  .navItem {
+    margin-top: 1em;
+  }
+  .navArtistSearchContainer {
+    display: none;
+  }
+}
+
+.navLink:hover {
+  border-bottom: 0.25em solid orange;
+  text-decoration: none;
+  color: #2e3844;
+}
+
+.navArtistSearchContainer {
+  margin-right: 1em;
+}
+
+.cancelSearchButton {
+  margin-right: 1em;
+}
