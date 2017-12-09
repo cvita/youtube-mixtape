@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+import FadeIn from '../helper/FadeIn';
+import Navigation from './Navigation';
 import Home from '../Home/Home';
+import NoResults from '../Home/NoResults';
 import Artists from '../Artists/Artists';
 import Player from '../Player/Player';
 
@@ -17,25 +20,27 @@ class Main extends Component {
   render() {
     return (
       <div className='mainBody'>
+        <header className='mainHeader'>
+          {this.props.styleSheetLoaded && (
+            <FadeIn>
+              <Navigation {...this.props} />
+            </FadeIn>)}
+        </header>
 
-        <div className='mainContent'>
-          <header>
-            <h1 className='text-center'>YouTube Mixtape</h1>
-          </header>
-          <main>
-            <Container>
-              <Switch>
-                <Route path='/' exact={true} render={() => <Home {...this.props} />} />
-              </Switch>
-            </Container>
+        <main className='mainContent'>
+          <Switch>
+            <Route path='/' exact={true} render={() => <Home {...this.props} />} />
+            <Route path='/search:*' render={() => (
+              <div>
+                <NoResults {...this.props} />
+                <Artists {...this.props} />
+              </div>)} />
+          </Switch>
+        </main>
 
-            <Artists {...this.props} />
+        <Player {...this.props} />
 
-            <Player {...this.props} />
-          </main>
-        </div>
-
-        <footer className='mainFooter'>
+        <footer className='mainFooter' style={{ paddingTop: '2em', background: '#494949' }}>
           <p className='text-center'><a href='https://github.com/VitaC123/youtube-mixtape'>View source</a></p>
         </footer>
       </div>
