@@ -45,7 +45,7 @@ class Navigation extends Component {
         <div className='navigation'>
           <Navbar color='faded' expand='sm'>
             <Link className='navBrand' to='/'>
-              <img src={TapeLogo} alt='YouTube Mixtape' />
+              <img style={{ width: '3.5em' }} src={TapeLogo} alt='YouTube Mixtape' />
             </Link>
 
             <div className='navbar-toggler'>
