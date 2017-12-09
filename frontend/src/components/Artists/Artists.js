@@ -41,6 +41,15 @@ class Artists extends Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
   }
+  componentDidMount() {
+    const { routing, determineSimilarArtists, spotifyAccess } = this.props;
+    const pathnameWindow = decodeURIComponent(window.location.pathname);
+    const pathnameRouting = routing && routing.location ? routing.location.pathname : '';
+    if (pathnameWindow !== pathnameRouting) {
+      const search = pathnameWindow.slice(8);
+      determineSimilarArtists(search, spotifyAccess, true);
+    }
+  }
   handleClick(name) {
     const { artists, played } = this.props;
     this.props.fetchVideos(artists[name], played);

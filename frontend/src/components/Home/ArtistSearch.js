@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { push } from 'react-router-redux';
+import store from '../../redux/store';
 import { Input, InputGroup, InputGroupButton, Button } from 'reactstrap';
 
 
 class ArtistSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { clicked: false, userInput: '' };
     this.handleClick = this.handleClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = { clicked: false, userInput: '' };
   }
   handleClick() {
     const { spotifyAccess, fetchSpotifyAccessToken } = this.props;
@@ -28,6 +30,8 @@ class ArtistSearch extends Component {
     const { userInput } = this.state;
     if (typeof userInput === 'string' && userInput !== '') {
       this.props.determineSimilarArtists(userInput, this.props.spotifyAccess, true); // Todo: add toggle for last arg, `applyFilter`
+      this.props.onSubmit();
+      store.dispatch(push(`/search:${encodeURIComponent(userInput)}`))
       this.setState({ userInput: '' });
     }
   }
@@ -42,7 +46,7 @@ class ArtistSearch extends Component {
             value={this.state.userInput}
             type='text'
             autoComplete='off'
-            placeholder='Artist or band'
+            placeholder='Search artist'
           />
           <InputGroupButton>
             <Button
@@ -50,8 +54,9 @@ class ArtistSearch extends Component {
               disabled={this.state.userInput === ''}
               color='primary'
               type='submit'
+              style={{ cursor: 'pointer' }}
             >
-              <i className="fa fa-search" aria-hidden="true" /> Search
+              <i className='fa fa-search' aria-hidden='true' style={{ padding: '0 0.5em' }} />
             </Button>
           </InputGroupButton>
           {/* Todo: add autoSuggest */}
