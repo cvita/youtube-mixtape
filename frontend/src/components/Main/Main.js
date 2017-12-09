@@ -7,8 +7,6 @@ import Home from '../Home/Home';
 import NoResults from '../Home/NoResults';
 import Artists from '../Artists/Artists';
 import Player from '../Player/Player';
-
-import { Container } from 'reactstrap';
 import './Main.css';
 
 
