@@ -14,7 +14,7 @@ const Home = props => {
         <p className='text-muted'>Spotify artist and genre searches with YouTube video results</p>
 
         <div style={{ maxWidth: '35em', margin: '0 auto' }}>
-          <ArtistSearch onSubmit={() => console.log('searching')} {...props} />
+          <ArtistSearch {...props} />
         </div>
       </Jumbotron>
     </Container>

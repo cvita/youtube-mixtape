@@ -1,9 +1,4 @@
-.navigation {
-  min-height: 4.5em;
-  overflow: hidden;
-  background: #333333fa;
-}
-
+/* `searchView` layout */
 .searchView {
   padding: 1em;
   display: flex;
@@ -12,25 +7,32 @@
   justify-content: space-between;
 }
 
-.navbar-toggler:focus {
-  outline: none;
+.cancelSearchButton {
+  margin-right: 1em;
 }
 
-.navbarToggleText {
-  height: 1px;
-  width: 1px;
-  position: absolute;
+ /* `!searchView` layout */
+.navigation {
+  min-height: 4.5em;
   overflow: hidden;
-  top: -10px;
+  background: #333333fa;
 }
 
-.navBrand:hover {
-  text-decoration: none;
+.navBrand img {
+  width: 3.5em;
+}
+
+.searchViewButton {
+  margin-right: 1em;
+}
+
+.navigationItems {
+  align-items: center;
 }
 
 .navLink {
-  margin: 1em 1em 0 0;
-  padding-bottom: 1.21em;
+  margin: 1em 1em 0 1em;
+  padding-bottom: 1.41em;
   border-bottom: 0.25em solid rgba(255, 162, 0, 0);
   text-transform: capitalize;
   text-decoration: none;
@@ -39,27 +41,20 @@
 }
 
 @media (max-width: 575px) {
-  .navLink {
-    padding-bottom: 0;
+  .navigationItems {
+    align-items: flex-end;
   }
   .navItem {
     margin-top: 1em;
   }
-  .navArtistSearchContainer {
-    display: none;
+  .navLink {
+    padding-bottom: 0;
   }
 }
 
 .navLink:hover {
   border-bottom: 0.25em solid orange;
   text-decoration: none;
-  color: #2e3844;
+  color: rgb(168, 189, 209);
 }
 
-.navArtistSearchContainer {
-  margin-right: 1em;
-}
-
-.cancelSearchButton {
-  margin-right: 1em;
-}

@@ -30,7 +30,9 @@ class ArtistSearch extends Component {
     const { userInput } = this.state;
     if (typeof userInput === 'string' && userInput !== '') {
       this.props.determineSimilarArtists(userInput, this.props.spotifyAccess, true); // Todo: add toggle for last arg, `applyFilter`
-      this.props.onSubmit();
+      if (this.props.hasOwnProperty('onSubmit')) {
+        this.props.onSubmit();
+      }
       store.dispatch(push(`/search:${encodeURIComponent(userInput)}`))
       this.setState({ userInput: '' });
     }
