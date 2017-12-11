@@ -33,6 +33,7 @@ class Main extends Component {
                 <NoResults {...this.props} />
                 <Artists {...this.props} />
               </div>)} />
+            <Route path='/settings' render={() => <p className='text-center'>A 'Settings' page placeholder</p>} />
           </Switch>
         </main>
 
