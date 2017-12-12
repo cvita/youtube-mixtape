@@ -14,7 +14,7 @@
     "flow:deps": "flow-typed install",
     "flow:check": "npm run flow check ./backend/",
     "lint": "eslint ./backend/",
-    "test-dev": "jest --watch --config=jestconfig.json",
+    "test-dev": "jest --watch --config=jestconfig.json --runInBand",
     "test": "jest --config=jestconfig.json --runInBand --forceExit"
   },
   "repository": {
@@ -35,7 +35,8 @@
   },
   "homepage": "https://github.com/VitaC123/youtube-mixtape#readme",
   "dependencies": {
-    "express": "^4.15.4",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.6",
     "request": "^2.82.0",
     "request-promise": "^4.2.1"
   },

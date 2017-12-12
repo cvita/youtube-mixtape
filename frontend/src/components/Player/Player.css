@@ -5,38 +5,28 @@
   position: fixed;
   position: sticky;
   bottom: -1px;
-  z-index: 1;
+  z-index: 2;
   background: #333333;
-}
-
-.showHideAndCounter {
-  position: relative;
-  height: 2.5em;
-  float: right;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  z-index: 1;
 }
 
 .counter {
   min-width: 5.25em;
+  padding: 0.5em;
+  border-radius: 50%;
+  float: right;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   color: rgb(209, 209, 209);
+  background: #333333b7;
 }
 
 .counter span {
   display: block;
   min-width: 2.5em;
   font-size: 1em;
-}
-
-.showHideButton {
-  margin-left: 1em;
 }
 
 /* .tapeIcon {

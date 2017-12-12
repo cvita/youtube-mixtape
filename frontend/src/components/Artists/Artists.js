@@ -6,9 +6,11 @@ import './Artists.css';
 
 const Artist = props => {
   const { name, images, handleClick, featured } = props;
-  const size = window.innerWidth > 500 ? 1 : 2; // Request appropriate image size
+
+  const size = window.innerWidth > 400 ? 0 : 1; // Request appropriate image size
+  const background = images && images.length > 1 ? `url(${images[size].url})` : 'grey'; // Handle no image
   const imageStyle = {
-    background: `url(${images[size].url})`,
+    background: background,
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
@@ -38,6 +40,15 @@ class Artists extends Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+  }
+  componentDidMount() {
+    const { routing, determineSimilarArtists, spotifyAccess } = this.props;
+    const pathnameWindow = decodeURIComponent(window.location.pathname);
+    const pathnameRouting = routing && routing.location ? routing.location.pathname : '';
+    if (pathnameWindow !== pathnameRouting) {
+      const search = pathnameWindow.slice(8);
+      determineSimilarArtists(search, spotifyAccess, true);
+    }
   }
   handleClick(name) {
     const { artists, played } = this.props;

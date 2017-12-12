@@ -5,6 +5,15 @@
   flex-direction: column;
 }
 
+.mainHeader {
+  margin-bottom: 2em;
+  /* Next line as a fallback for sticky */
+  position: fixed;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .mainContent {
   flex: 1 0 auto;
 }

@@ -6,6 +6,11 @@ export const refreshStyleSheetStatus = () => ({
   payload: null
 });
 
+export const updatePlayer = player => ({
+  type: types.UPDATE_PLAYER,
+  payload: player
+});
+
 export const fetchSpotifyAccessToken = () => ({
   type: types.FETCH_SPOTIFY_TOKEN_REQUESTED,
   payload: null
@@ -24,4 +29,9 @@ export const fetchVideos = (artist, played, maxResults = 10) => ({
 export const selectVideo = artist => ({
   type: types.SELECT_VIDEO_REQUESTED,
   payload: artist
+});
+
+export const addToBlacklist = (artist, video) => ({
+  type: types.ADD_TO_BLACKLIST_REQUESTED,
+  payload: [artist, video]
 });

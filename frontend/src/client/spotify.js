@@ -8,10 +8,10 @@ const fetchSpotifyAccessToken = () => (
   })
 );
 
-const fetchInitialArtist = (artistName, token) => (
+const fetchInitialArtist = (artistName, spotifyAccess) => (
   new Promise((resolve, reject) => {
     const request = `https://api.spotify.com/v1/search?q='${artistName}&type=artist`;
-    const options = { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } };
+    const options = { method: 'GET', headers: { 'Authorization': `Bearer ${spotifyAccess.access_token}` } };
     fetch(request, options)
       .then(res => res.json())
       .then(results => resolve(validateInitialArtist(artistName, results.artists.items)))
@@ -19,13 +19,13 @@ const fetchInitialArtist = (artistName, token) => (
   })
 );
 
-const determineSimilarArtists = (initialArtist, token, applyFilter) => (
+const determineSimilarArtists = (initialArtist, spotifyAccess, applyFilter) => (
   new Promise((resolve, reject) => {
-    const similarArtists = [];
+    const similarArtists = [initialArtist]; // Ensure at least the initialArtist is returned, even if no similar artist results
     const fetchRequests = initialArtist.genres.map(genre => (
       new Promise(resolve => {
         const request = `https://api.spotify.com/v1/search?q=%20genre:%22${genre}%22&type=artist&limit=50`;
-        const options = { method: 'GET', headers: { 'Authorization': `Bearer ${token}` } };
+        const options = { method: 'GET', headers: { 'Authorization': `Bearer ${spotifyAccess.access_token}` } };
         fetch(request, options)
           .then(res => res.json())
           .then(genreResults => {
@@ -51,11 +51,11 @@ const addTokenExpirationTime = token => (
 
 const validateInitialArtist = (artistName, artists) => {
   // Todo: Further normalization of comparison (i.e., remove punctuation)
-  const validResult = artists.find(artist => artist.name.toLowerCase() === artistName.toLowerCase());
-  if (!validResult) {
+  const artist = artists.find(artist => artist.name.toLowerCase() === artistName.toLowerCase());
+  if (!artist) {
     throw new Error(`No results for ${artistName}`);
   }
-  return validResult;
+  return artist;
 };
 
 const filterByPrimaryGenres = (initialArtist, genreResults, applyFilter) => {
