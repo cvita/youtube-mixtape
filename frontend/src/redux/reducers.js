@@ -77,7 +77,7 @@ export const played = (state = initialState.played, action) => {
 export const selectedArtist = (state = initialState.selectedArtist, action) => {
   switch (action.type) {
     case types.SELECT_VIDEO_SUCCEEDED:
-      //  console.log(action.payload);
+    case types.RESELECT_VIDEO:
       return action.payload;
     default:
       return state;
