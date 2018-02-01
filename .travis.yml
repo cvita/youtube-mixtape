@@ -9,12 +9,14 @@ script:
   - npm run test-ci
   - npm run build-client
   - cd ..
+after_success:
+  - node node_modules/lighthouse-ci/runlighthouse.js https://youtube-mixtape-v2-staging.herokuapp.com
 deploy:
   provider: heroku
   skip_cleanup: true
   api_key: $heroku_api_key
-  on:
-    all_branches: true
-  app: youtube-mixtape-v2
+  app:
+    master: youtube-mixtape-v2
+    v2-development-03: youtube-mixtape-v2-staging
   run:
     - restart
