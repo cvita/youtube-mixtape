@@ -55,7 +55,7 @@ export const sortedArtists = (state = initialState.sortedArtists, action) => {
   switch (action.type) {
     case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
       const artists = action.payload;
-      const preSort = Object.keys(artists).map(artist => ({ ...artists[artist] }));
+      const preSort = Object.keys(artists).map(key => ({ ...artists[key] }));
       const sorted = preSort.sort((a, b) => b.relevance - a.relevance);
       return sorted.map(artist => artist.name);
     default:
