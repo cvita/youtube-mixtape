@@ -1,0 +1,526 @@
+{
+  "artist": {
+    "external_urls": {
+      "spotify": "https://open.spotify.com/artist/03YhcM6fxypfwckPCQV8pQ"
+    },
+    "followers": {
+      "href": null,
+      "total": 68291
+    },
+    "genres": [
+      "bebop",
+      "bossa nova",
+      "contemporary post-bop",
+      "cool jazz",
+      "gypsy jazz",
+      "hard bop",
+      "jazz",
+      "jazz blues",
+      "jazz funk",
+      "jazz fusion",
+      "soul jazz",
+      "vocal jazz"
+    ],
+    "href": "https://api.spotify.com/v1/artists/03YhcM6fxypfwckPCQV8pQ",
+    "id": "03YhcM6fxypfwckPCQV8pQ",
+    "images": [
+      {
+        "height": 713,
+        "url": "https://i.scdn.co/image/e0fcfb2e4dbb9cb9c408ba7fad9bdd3526ef6ed8",
+        "width": 1000
+      },
+      {
+        "height": 456,
+        "url": "https://i.scdn.co/image/556fb015a5411afb24f3d6691ac4f12847e08a14",
+        "width": 639
+      },
+      {
+        "height": 143,
+        "url": "https://i.scdn.co/image/47b8c42a958dded335d85abe840b66581131be86",
+        "width": 200
+      },
+      {
+        "height": 46,
+        "url": "https://i.scdn.co/image/5968a38e6973e52175187ce21d7bc9bbb940e9e2",
+        "width": 64
+      }
+    ],
+    "name": "Wes Montgomery",
+    "popularity": 56,
+    "type": "artist",
+    "uri": "spotify:artist:03YhcM6fxypfwckPCQV8pQ",
+    "relevance": 11,
+    "videos": [
+      {
+        "id": "VBGZgyl72_g",
+        "publishedAt": "2008-05-15T02:56:12.000Z",
+        "channelId": "UCt4QbslUdMklG_sp2EInn0w",
+        "title": "Wes Montgomery - Windy",
+        "description": "THP December 12, 1967.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/VBGZgyl72_g/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/VBGZgyl72_g/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/VBGZgyl72_g/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "thecatkeaton",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "dQi48T4YWh4",
+        "publishedAt": "2013-04-03T07:33:58.000Z",
+        "channelId": "UCYM3sGnvWeMRt5NI2XDtktw",
+        "title": "Wes Montgomery  - Impressions (1965)",
+        "description": "",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/dQi48T4YWh4/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/dQi48T4YWh4/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/dQi48T4YWh4/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "Martín Herrera",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "NkfiQsq8cwE",
+        "publishedAt": "2011-12-29T18:54:10.000Z",
+        "channelId": "UC6KDNFE58dHI6mABjtmmtwQ",
+        "title": "Wes Montgomery - Caravan",
+        "description": "Wes Montgomery - Caravan 1964 from the album Movin' Wes, Verve Records. Wes Montgomery was one of the greatest Jazz Guitarist of the 20th Century. On Caravan he is backed by a energetic Big Band.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "JazzBreakTV",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "J3EP6O5YMsU",
+        "publishedAt": "2011-11-19T12:20:55.000Z",
+        "channelId": "UCv8pZoAc82MKlqqRxWoPG7w",
+        "title": "Wes Montgomery / California Dreaming",
+        "description": "1966 album California Dreaming.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "jazzysclassicjazz2",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "hekA9Ast7Fs",
+        "publishedAt": "2011-06-27T14:37:33.000Z",
+        "channelId": "UCbxNzgRfK1MmdJ5LvAg_jOw",
+        "title": "Tequila - Wes Montgomery",
+        "description": "Groovy Version of the classic \"Tequila\" Feat. Ray Barretto, Grady Tate & Ron Carter.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "Eric Cajundelyon",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "JadIhIihTFw",
+        "publishedAt": "2012-04-22T15:06:17.000Z",
+        "channelId": "UClnUZmjARnHBybrMLvcBKmA",
+        "title": "Wes Montgomery Trio - Days of Wine and Roses",
+        "description": "Wes Montgomery Trio - Days of Wine and Roses (1963) Personnel: Wes Montgomery (guitar), Mel Rhyne (organ), Jimmy Cobb (drums) from the album 'BOSS GUITAR' (Riverside Records)",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/JadIhIihTFw/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/JadIhIihTFw/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/JadIhIihTFw/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "60otaku4",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "jdO6wP3CqqQ",
+        "publishedAt": "2010-01-27T06:53:07.000Z",
+        "channelId": "UCl8LszORtGMgtltT_ikprPA",
+        "title": "Wes Montgomery - how insensitive (insensatez)",
+        "description": "One of the classics of jazz-bossa songs, composed by Antônio Carlos Jobim. This is an instrumental version by Wes Montgomery.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "TheAthensBluesman",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "LJOYCC5VgpM",
+        "publishedAt": "2009-12-28T21:11:41.000Z",
+        "channelId": "UCiReSwhx7y_LpNFNg4GCuCQ",
+        "title": "How to Play Guitar Like Wes Montgomery - Chord Melody Example - Jazz Guitar Lessons",
+        "description": "FULL COURSE, TAB, JAM TRACKS: http://bit.ly/fsGjVj More Free Guitar Lessons: http://bit.ly/TrueFire In this vein, video 1 harmonizes Am chord tones (A, C, and E) with appropriate Am7 and...",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "TrueFire",
+        "liveBroadcastContent": "none"
+      },
+      {
+        "id": "zxTD1XQTcyk",
+        "publishedAt": "2010-08-29T10:41:20.000Z",
+        "channelId": "UCErA0VNzar8Ndr7Vrm9kAFA",
+        "title": "Wes Montgomery-Four On Six (1965)-Guitarra de Jazz.",
+        "description": "Gracias a las televisiones públicas europeas, existen testimonios históricos como esta interpretación del genial guitarrista Wes Montgomery, en su país, no tuvieron esa \"deferencia\" con...",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "Enkigamesh",
+        "liveBroadcastContent": "none"
+      }
+    ]
+  },
+  "videos": [
+    {
+      "id": "VBGZgyl72_g",
+      "publishedAt": "2008-05-15T02:56:12.000Z",
+      "channelId": "UCt4QbslUdMklG_sp2EInn0w",
+      "title": "Wes Montgomery - Windy",
+      "description": "THP December 12, 1967.",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/VBGZgyl72_g/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/VBGZgyl72_g/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/VBGZgyl72_g/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "thecatkeaton",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "dQi48T4YWh4",
+      "publishedAt": "2013-04-03T07:33:58.000Z",
+      "channelId": "UCYM3sGnvWeMRt5NI2XDtktw",
+      "title": "Wes Montgomery  - Impressions (1965)",
+      "description": "",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/dQi48T4YWh4/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/dQi48T4YWh4/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/dQi48T4YWh4/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "Martín Herrera",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "NkfiQsq8cwE",
+      "publishedAt": "2011-12-29T18:54:10.000Z",
+      "channelId": "UC6KDNFE58dHI6mABjtmmtwQ",
+      "title": "Wes Montgomery - Caravan",
+      "description": "Wes Montgomery - Caravan 1964 from the album Movin' Wes, Verve Records. Wes Montgomery was one of the greatest Jazz Guitarist of the 20th Century. On Caravan he is backed by a energetic Big Band.",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "JazzBreakTV",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "J3EP6O5YMsU",
+      "publishedAt": "2011-11-19T12:20:55.000Z",
+      "channelId": "UCv8pZoAc82MKlqqRxWoPG7w",
+      "title": "Wes Montgomery / California Dreaming",
+      "description": "1966 album California Dreaming.",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "jazzysclassicjazz2",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "hekA9Ast7Fs",
+      "publishedAt": "2011-06-27T14:37:33.000Z",
+      "channelId": "UCbxNzgRfK1MmdJ5LvAg_jOw",
+      "title": "Tequila - Wes Montgomery",
+      "description": "Groovy Version of the classic \"Tequila\" Feat. Ray Barretto, Grady Tate & Ron Carter.",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/hekA9Ast7Fs/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "Eric Cajundelyon",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "JadIhIihTFw",
+      "publishedAt": "2012-04-22T15:06:17.000Z",
+      "channelId": "UClnUZmjARnHBybrMLvcBKmA",
+      "title": "Wes Montgomery Trio - Days of Wine and Roses",
+      "description": "Wes Montgomery Trio - Days of Wine and Roses (1963) Personnel: Wes Montgomery (guitar), Mel Rhyne (organ), Jimmy Cobb (drums) from the album 'BOSS GUITAR' (Riverside Records)",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/JadIhIihTFw/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/JadIhIihTFw/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/JadIhIihTFw/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "60otaku4",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "jdO6wP3CqqQ",
+      "publishedAt": "2010-01-27T06:53:07.000Z",
+      "channelId": "UCl8LszORtGMgtltT_ikprPA",
+      "title": "Wes Montgomery - how insensitive (insensatez)",
+      "description": "One of the classics of jazz-bossa songs, composed by Antônio Carlos Jobim. This is an instrumental version by Wes Montgomery.",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/jdO6wP3CqqQ/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "TheAthensBluesman",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "LJOYCC5VgpM",
+      "publishedAt": "2009-12-28T21:11:41.000Z",
+      "channelId": "UCiReSwhx7y_LpNFNg4GCuCQ",
+      "title": "How to Play Guitar Like Wes Montgomery - Chord Melody Example - Jazz Guitar Lessons",
+      "description": "FULL COURSE, TAB, JAM TRACKS: http://bit.ly/fsGjVj More Free Guitar Lessons: http://bit.ly/TrueFire In this vein, video 1 harmonizes Am chord tones (A, C, and E) with appropriate Am7 and...",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/LJOYCC5VgpM/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "TrueFire",
+      "liveBroadcastContent": "none"
+    },
+    {
+      "id": "zxTD1XQTcyk",
+      "publishedAt": "2010-08-29T10:41:20.000Z",
+      "channelId": "UCErA0VNzar8Ndr7Vrm9kAFA",
+      "title": "Wes Montgomery-Four On Six (1965)-Guitarra de Jazz.",
+      "description": "Gracias a las televisiones públicas europeas, existen testimonios históricos como esta interpretación del genial guitarrista Wes Montgomery, en su país, no tuvieron esa \"deferencia\" con...",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/zxTD1XQTcyk/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      },
+      "channelTitle": "Enkigamesh",
+      "liveBroadcastContent": "none"
+    }
+  ]
+}

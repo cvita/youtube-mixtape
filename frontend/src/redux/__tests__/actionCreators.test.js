@@ -34,4 +34,12 @@ describe('action creators', () => {
     };
     expect(actions.fetchVideos({ 'name': 'myArtist' }, { 'name': 'myArtist' })).toEqual(expectedAction);
   });
+
+  it('should create an action to reselect a video from the `played` prop', () => {
+    const expectedAction = {
+      type: types.RESELECT_VIDEO,
+      payload: { artist: {}, video: {} }
+    };
+    expect(actions.reselectVideo({}, {})).toEqual(expectedAction);
+  });
 });

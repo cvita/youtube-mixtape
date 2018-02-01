@@ -55,7 +55,7 @@ export const sortedArtists = (state = initialState.sortedArtists, action) => {
   switch (action.type) {
     case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
       const artists = action.payload;
-      const preSort = Object.keys(artists).map(artist => ({ ...artists[artist] }));
+      const preSort = Object.keys(artists).map(key => ({ ...artists[key] }));
       const sorted = preSort.sort((a, b) => b.relevance - a.relevance);
       return sorted.map(artist => artist.name);
     default:
@@ -65,15 +65,9 @@ export const sortedArtists = (state = initialState.sortedArtists, action) => {
 
 export const played = (state = initialState.played, action) => {
   switch (action.type) {
-    case types.FETCH_VIDEOS_REQUESTED:
-      const artistName = action.payload[0].name;
-      if (!state[artistName]) {
-        state[artistName] = [];
-      }
-      return state;
     case types.SELECT_VIDEO_SUCCEEDED:
       const { artist, video } = action.payload;
-      state[artist.name].push(video);
+      state.push({ artist: artist.name, ...video });
       return state;
     default:
       return state;
@@ -83,7 +77,7 @@ export const played = (state = initialState.played, action) => {
 export const selectedArtist = (state = initialState.selectedArtist, action) => {
   switch (action.type) {
     case types.SELECT_VIDEO_SUCCEEDED:
-      //  console.log(action.payload);
+    case types.RESELECT_VIDEO:
       return action.payload;
     default:
       return state;

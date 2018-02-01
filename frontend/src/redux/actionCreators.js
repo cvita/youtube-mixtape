@@ -31,6 +31,11 @@ export const selectVideo = artist => ({
   payload: artist
 });
 
+export const reselectVideo = (artist, video) => ({
+  type: types.RESELECT_VIDEO,
+  payload: { artist, video }
+});
+
 export const addToBlacklist = (artist, video) => ({
   type: types.ADD_TO_BLACKLIST_REQUESTED,
   payload: [artist, video]

@@ -4,7 +4,7 @@ const initialState = {
   artists: {},
   sortedArtists: [],
   selectedArtist: null,
-  played: {},
+  played: [],
   player: { playerState: null, duration: 0, elapsed: 0 },
   errors: { recent: null, all: [] }
 };

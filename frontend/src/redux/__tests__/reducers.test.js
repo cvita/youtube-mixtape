@@ -1,6 +1,7 @@
 import initialState from '../initialState';
 import * as reducers from '../reducers';
 import * as types from '../actionTypes';
+import { selectedArtist } from '../reducers';
 
 
 describe('reducers: `styleSheeLoaded`', () => {
@@ -34,6 +35,16 @@ describe('reducers: `artists`', () => {
     const stubData = { 'myArtist': { videos: [] }, 'myOtherArtist': {} };
     expect(reducers.artists(stubData, types.FETCH_VIDEOS_SUCCEEDED)).toEqual(stubData);
   });
+});
+
+describe('reducers: `selectedArtist`', () => {
+  it('should return the initial state', () => {
+    expect(reducers.selectedArtist(undefined, {})).toEqual(initialState.selectedArtist)
+  });
+
+  const stubData = { artist: {}, videos: {} };
+  expect(reducers.selectedArtist(stubData, types.SELECT_VIDEO_SUCCEEDED)).toEqual(stubData);
+  expect(reducers.selectedArtist(stubData, types.RESELECT_VIDEO)).toEqual(stubData);
 });
 
 
