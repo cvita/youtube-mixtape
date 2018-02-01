@@ -65,15 +65,9 @@ export const sortedArtists = (state = initialState.sortedArtists, action) => {
 
 export const played = (state = initialState.played, action) => {
   switch (action.type) {
-    case types.FETCH_VIDEOS_REQUESTED:
-      const artistName = action.payload[0].name;
-      if (!state[artistName]) {
-        state[artistName] = [];
-      }
-      return state;
     case types.SELECT_VIDEO_SUCCEEDED:
       const { artist, video } = action.payload;
-      state[artist.name].push(video);
+      state.push({ artist: artist.name, ...video });
       return state;
     default:
       return state;

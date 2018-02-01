@@ -3,7 +3,11 @@
 const selectVideo = (youTubeSearchResult, played) => (
   new Promise((resolve, reject) => {
     const { artist, videos } = youTubeSearchResult;
-    const alreadyPlayed = played[artist.name].map(video => video.id);
+    const alreadyPlayed = played.filter(video => {
+      if (video.artist === artist.name) {
+        return video.id;
+      }
+    });
     const unplayed = videos.filter(video => !alreadyPlayed.includes(video.id));
     const selectedVideo = unplayed.length > 0 ?
       unplayed[generateRandomIndex(unplayed)] :
