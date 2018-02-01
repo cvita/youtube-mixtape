@@ -19,11 +19,23 @@ class Player extends Component {
     this.setState({ collapsed: !this.state.collapsed });
   }
   handlePlayerActionRequest(action) {
-    const { selectedArtist, played } = this.props;
+    const { selectedArtist, played, artists } = this.props;
+    const currentIndex = played.length > 0 ? played.findIndex(video => video.id === selectedArtist.video.id) : 0;
     if (action === 'next') {
-      this.props.fetchVideos(selectedArtist.artist, played);
+      if (currentIndex === played.length - 1) {
+        // Select and play a new video
+        this.props.fetchVideos(selectedArtist.artist, played);
+      } else {
+        // Play next video in `played` queue
+        const nextVideo = played[currentIndex + 1];
+        const nextArtist = artists[nextVideo.artist];
+        this.props.reselectVideo(nextArtist, nextVideo);
+      }
     } else if (action === 'previous') {
-      console.log(`${action.toUpperCase()} feature not yet developed`); // Todo: create easy method for replaying last video
+      // Play previous video in `played` queue
+      const previousVideo = currentIndex > 0 ? played[currentIndex - 1] : played[0];
+      const previousArtist = artists[previousVideo.artist];
+      this.props.reselectVideo(previousArtist, previousVideo);
     } else {
       this.setState({
         playerActionRequest: { action, timestamp: new Date().getTime() }
