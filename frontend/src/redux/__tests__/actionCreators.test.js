@@ -30,16 +30,16 @@ describe('action creators', () => {
   it('should create an action to fetch videos', () => {
     const expectedAction = {
       type: types.FETCH_VIDEOS_REQUESTED,
-      payload: [{ name: 'myArtist' }, { name: 'myArtist' }, 10]
+      payload: { artist: { name: 'myArtist' }, played: [], maxResults: 10 }
     };
-    expect(actions.fetchVideos({ 'name': 'myArtist' }, { 'name': 'myArtist' })).toEqual(expectedAction);
+    expect(actions.fetchVideos({ 'name': 'myArtist' }, [])).toEqual(expectedAction);
   });
 
   it('should create an action to reselect a video from the `played` prop', () => {
     const expectedAction = {
       type: types.RESELECT_VIDEO,
-      payload: { artist: {}, video: {} }
+      payload: { id: '1234' }
     };
-    expect(actions.reselectVideo({}, {})).toEqual(expectedAction);
+    expect(actions.reselectVideo({ id: '1234' })).toEqual(expectedAction);
   });
 });

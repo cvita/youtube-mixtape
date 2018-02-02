@@ -38,8 +38,8 @@ export const artists = (state = initialState.artists, action) => {
     case types.DETERMINE_SIMILAR_ARTISTS_SUCCEEDED:
       return action.payload;
     case types.FETCH_VIDEOS_SUCCEEDED:
-      const { artist, videos } = action.payload;
-      state[artist.name].videos = videos;
+      const { name } = action.payload;
+      state[name] = action.payload;
       return state;
     case types.ADD_TO_BLACKLIST_SUCCEEDED:
       // Todo: remove blacklisted video from artist results.
@@ -66,8 +66,8 @@ export const sortedArtists = (state = initialState.sortedArtists, action) => {
 export const played = (state = initialState.played, action) => {
   switch (action.type) {
     case types.SELECT_VIDEO_SUCCEEDED:
-      const { artist, video } = action.payload;
-      state.push({ artist: artist.name, ...video });
+      const { name, video } = action.payload;
+      state.push({ artistName: name, ...video });
       return state;
     default:
       return state;
@@ -77,8 +77,9 @@ export const played = (state = initialState.played, action) => {
 export const selectedArtist = (state = initialState.selectedArtist, action) => {
   switch (action.type) {
     case types.SELECT_VIDEO_SUCCEEDED:
-    case types.RESELECT_VIDEO:
       return action.payload;
+    case types.RESELECT_VIDEO:
+      return { name: action.payload.artistName, video: action.payload };
     default:
       return state;
   }

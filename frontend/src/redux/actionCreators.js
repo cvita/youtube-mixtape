@@ -23,7 +23,7 @@ export const determineSimilarArtists = (initialArtistName, accessToken, applyFil
 
 export const fetchVideos = (artist, played, maxResults = 10) => ({
   type: types.FETCH_VIDEOS_REQUESTED,
-  payload: [artist, played, maxResults]
+  payload: { artist, played, maxResults }
 });
 
 export const selectVideo = artist => ({
@@ -31,9 +31,9 @@ export const selectVideo = artist => ({
   payload: artist
 });
 
-export const reselectVideo = (artist, video) => ({
+export const reselectVideo = video => ({
   type: types.RESELECT_VIDEO,
-  payload: { artist, video }
+  payload: video
 });
 
 export const addToBlacklist = (artist, video) => ({
