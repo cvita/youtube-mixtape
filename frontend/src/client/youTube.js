@@ -1,4 +1,5 @@
 import stringSimilarity from 'string-similarity';
+import blacklist from './blacklist';
 
 
 const fetchVideos = (artist, played, maxResults) => (
@@ -8,7 +9,7 @@ const fetchVideos = (artist, played, maxResults) => (
     }
     Promise.all([
       fetchYouTube(artist, played, maxResults),
-      fetchBlacklistedVideos(artist)
+      blacklist.fetchBlacklistedVideos(artist)
     ])
       .then(results => {
         const videos = removeBlacklistedAndDuplicates(artist.name, results[0], results[1]);
@@ -24,16 +25,6 @@ const fetchYouTube = (artist, played, maxResults) => (
     fetch(request, { method: 'GET' })
       .then(res => res.json())
       .then(res => resolve(res.items)) // res.items === array of video objects
-      .catch(e => reject(e));
-  })
-);
-
-const fetchBlacklistedVideos = artist => (
-  new Promise((resolve, reject) => {
-    const request = `/blacklist/${encodeURIComponent(artist.name)}`;
-    fetch(request, { method: 'GET' })
-      .then(res => res.json())
-      .then(res => resolve(res))
       .catch(e => reject(e));
   })
 );

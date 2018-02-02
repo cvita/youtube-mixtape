@@ -18,7 +18,18 @@ const addToBlacklist = (artist, video) => (
   })
 );
 
+const fetchBlacklistedVideos = artist => (
+  new Promise((resolve, reject) => {
+    const request = `/blacklist/${encodeURIComponent(artist.name)}`;
+    fetch(request, { method: 'GET' })
+      .then(res => res.json())
+      .then(res => resolve(res))
+      .catch(e => reject(e));
+  })
+);
+
 
 export default {
-  addToBlacklist
+  addToBlacklist,
+  fetchBlacklistedVideos
 };
