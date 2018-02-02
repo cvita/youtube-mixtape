@@ -1,11 +1,11 @@
-const addToBlacklist = (artist, video) => (
+const addToBlacklist = (artistName, video) => (
   new Promise((resolve, reject) => {
     const request = '/blacklist';
     const init = {
       method: 'POST',
       headers: new Headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
-        artistName: artist.name,
+        artistName,
         videoId: video.id,
         channelId: video.channelId,
         title: video.title

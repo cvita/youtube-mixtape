@@ -65,7 +65,7 @@ class Artists extends Component {
           <Col lg='3' md='4' sm='6' xs='12' key={artist.name + i}>
             <Artist
               handleClick={() => this.handleClick(artist.name)}
-              featured={selectedArtist && selectedArtist.artist.name === artist.name}
+              featured={selectedArtist && selectedArtist.name === artist.name}
               {...artist}
             />
           </Col>
