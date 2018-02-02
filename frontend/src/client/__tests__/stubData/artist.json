@@ -1,0 +1,52 @@
+{
+  "external_urls": {
+    "spotify": "https://open.spotify.com/artist/03YhcM6fxypfwckPCQV8pQ"
+  },
+  "followers": {
+    "href": null,
+    "total": 68424
+  },
+  "genres": [
+    "bebop",
+    "bossa nova",
+    "contemporary post-bop",
+    "cool jazz",
+    "gypsy jazz",
+    "hard bop",
+    "jazz",
+    "jazz blues",
+    "jazz funk",
+    "jazz fusion",
+    "soul jazz",
+    "vocal jazz"
+  ],
+  "href": "https://api.spotify.com/v1/artists/03YhcM6fxypfwckPCQV8pQ",
+  "id": "03YhcM6fxypfwckPCQV8pQ",
+  "images": [
+    {
+      "height": 713,
+      "url": "https://i.scdn.co/image/e0fcfb2e4dbb9cb9c408ba7fad9bdd3526ef6ed8",
+      "width": 1000
+    },
+    {
+      "height": 456,
+      "url": "https://i.scdn.co/image/556fb015a5411afb24f3d6691ac4f12847e08a14",
+      "width": 639
+    },
+    {
+      "height": 143,
+      "url": "https://i.scdn.co/image/47b8c42a958dded335d85abe840b66581131be86",
+      "width": 200
+    },
+    {
+      "height": 46,
+      "url": "https://i.scdn.co/image/5968a38e6973e52175187ce21d7bc9bbb940e9e2",
+      "width": 64
+    }
+  ],
+  "name": "Wes Montgomery",
+  "popularity": 56,
+  "type": "artist",
+  "uri": "spotify:artist:03YhcM6fxypfwckPCQV8pQ",
+  "relevance": 11
+}
