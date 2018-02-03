@@ -1,33 +1,33 @@
 [
   {
-    "artist": "Wes Montgomery",
-    "id": "J3EP6O5YMsU",
-    "publishedAt": "2011-11-19T12:20:55.000Z",
-    "channelId": "UCv8pZoAc82MKlqqRxWoPG7w",
-    "title": "Wes Montgomery / California Dreaming",
-    "description": "1966 album California Dreaming.",
+    "artistName": "Wes Montgomery",
+    "id": "NkfiQsq8cwE",
+    "publishedAt": "2011-12-29T18:54:10.000Z",
+    "channelId": "UC6KDNFE58dHI6mABjtmmtwQ",
+    "title": "Wes Montgomery - Caravan",
+    "description": "Wes Montgomery - Caravan 1964 from the album Movin' Wes, Verve Records. Wes Montgomery was one of the greatest Jazz Guitarist of the 20th Century. On Caravan he is backed by a energetic Big Band.",
     "thumbnails": {
       "default": {
-        "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/default.jpg",
+        "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/default.jpg",
         "width": 120,
         "height": 90
       },
       "medium": {
-        "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/mqdefault.jpg",
+        "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/mqdefault.jpg",
         "width": 320,
         "height": 180
       },
       "high": {
-        "url": "https://i.ytimg.com/vi/J3EP6O5YMsU/hqdefault.jpg",
+        "url": "https://i.ytimg.com/vi/NkfiQsq8cwE/hqdefault.jpg",
         "width": 480,
         "height": 360
       }
     },
-    "channelTitle": "jazzysclassicjazz2",
+    "channelTitle": "JazzBreakTV",
     "liveBroadcastContent": "none"
   },
   {
-    "artist": "Wes Montgomery",
+    "artistName": "Wes Montgomery",
     "id": "jdO6wP3CqqQ",
     "publishedAt": "2010-01-27T06:53:07.000Z",
     "channelId": "UCl8LszORtGMgtltT_ikprPA",
@@ -54,30 +54,57 @@
     "liveBroadcastContent": "none"
   },
   {
-    "artist": "Wes Montgomery",
-    "id": "VBGZgyl72_g",
-    "publishedAt": "2008-05-15T02:56:12.000Z",
-    "channelId": "UCt4QbslUdMklG_sp2EInn0w",
-    "title": "Wes Montgomery - Windy",
-    "description": "THP December 12, 1967.",
+    "artistName": "Wes Montgomery",
+    "id": "V72IDq8xwIs",
+    "publishedAt": "2013-02-19T05:59:26.000Z",
+    "channelId": "UCoznLYdD-LLlHyLcOPhOrBA",
+    "title": "The Guitar Gods - Wes Montgomery - \"The Girl Next Door\"",
+    "description": "",
     "thumbnails": {
       "default": {
-        "url": "https://i.ytimg.com/vi/VBGZgyl72_g/default.jpg",
+        "url": "https://i.ytimg.com/vi/V72IDq8xwIs/default.jpg",
         "width": 120,
         "height": 90
       },
       "medium": {
-        "url": "https://i.ytimg.com/vi/VBGZgyl72_g/mqdefault.jpg",
+        "url": "https://i.ytimg.com/vi/V72IDq8xwIs/mqdefault.jpg",
         "width": 320,
         "height": 180
       },
       "high": {
-        "url": "https://i.ytimg.com/vi/VBGZgyl72_g/hqdefault.jpg",
+        "url": "https://i.ytimg.com/vi/V72IDq8xwIs/hqdefault.jpg",
         "width": 480,
         "height": 360
       }
     },
-    "channelTitle": "thecatkeaton",
+    "channelTitle": "asat96",
+    "liveBroadcastContent": "none"
+  },
+  {
+    "artistName": "Wes Montgomery",
+    "id": "ZwvdaZ72V04",
+    "publishedAt": "2012-06-02T10:43:25.000Z",
+    "channelId": "UCBIm4B1wNca8e6VrPaz9taA",
+    "title": "Wes Montgomery - Eleanor Rigby",
+    "description": "Wes Montgomery - Greatest Hits.",
+    "thumbnails": {
+      "default": {
+        "url": "https://i.ytimg.com/vi/ZwvdaZ72V04/default.jpg",
+        "width": 120,
+        "height": 90
+      },
+      "medium": {
+        "url": "https://i.ytimg.com/vi/ZwvdaZ72V04/mqdefault.jpg",
+        "width": 320,
+        "height": 180
+      },
+      "high": {
+        "url": "https://i.ytimg.com/vi/ZwvdaZ72V04/hqdefault.jpg",
+        "width": 480,
+        "height": 360
+      }
+    },
+    "channelTitle": "yogadoors",
     "liveBroadcastContent": "none"
   }
 ]

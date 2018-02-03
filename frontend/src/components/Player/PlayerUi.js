@@ -5,27 +5,24 @@ import './PlayerUi.css';
 
 const PlayerUi = props => {
   const { playerCollapsed, playerState, onClick } = props;
-  const { artist, video } = props.selectedArtist;
+  const { name, video } = props.selectedArtist;
 
   const playPauseAction = playerState === 1 ? 'pause' : 'play';
   const playPauseIcon = playerState === 1 || playerState === 2 ? playPauseAction : 'cog fa-spin';
 
-  const title = video.title
-    .replace(artist.name, '')
-    .replace('-', '')
-    .trim();
+  const title = video.title.replace(name, '').replace('-', '').trim();
 
   return (
     <Container>
       <Row>
         <Col lg='2' md='3' sm='4' xs='12'>
           {playerCollapsed && (
-            <img className='playerUiThumbnail' src={video.thumbnails.default.url} alt={artist.name} />)}
+            <img className='playerUiThumbnail' src={video.thumbnails.default.url} alt={name} />)}
         </Col>
 
         <Col lg='4' md='3' sm='8' xs='12'>
           <div className='playerUiTitle'>
-            <h1>{artist.name}</h1>
+            <h1>{name}</h1>
             <h2>{title}</h2>
           </div>
         </Col>

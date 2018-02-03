@@ -1,36 +1,29 @@
 import stringSimilarity from 'string-similarity';
+import blacklist from './blacklist';
 
 
 const fetchVideos = (artist, played, maxResults) => (
   new Promise((resolve, reject) => {
     if (artist.videos) {
-      return handleDuplicateSearches(artist, resolve);
+      console.log(`Returning previously fetched video results for ${artist.name}`);
+      return resolve({ videos: artist.videos, youTubeNextPageToken: artist.youTubeNextPageToken });
     }
     Promise.all([
       fetchYouTube(artist, played, maxResults),
-      fetchBlacklistedVideos(artist)
+      blacklist.fetchBlacklistedVideos(artist)
     ])
       .then(results => {
         const videos = removeBlacklistedAndDuplicates(artist.name, results[0], results[1]);
-        resolve({ artist, videos });
+        resolve({ videos, youTubeNextPageToken: results[0].nextPageToken });
       });
   })
 );
 
-const fetchYouTube = (artist, played, maxResults) => (
+const fetchYouTube = (artist, played, maxResults) => ( // turn multiple parameters into an object
   new Promise((resolve, reject) => {
     const key = 'AIzaSyAxXnGEhkkZmEh7zfugJpAsJ7kpSU4GbDc'; // Restricted usage
-    const request = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${artist.name}&regionCode=US&type=video&videoCategoryId=10&videoDuration=short&videoEmbedable=true&key=${key}`;
-    fetch(request, { method: 'GET' })
-      .then(res => res.json())
-      .then(res => resolve(res.items)) // res.items === array of video objects
-      .catch(e => reject(e));
-  })
-);
-
-const fetchBlacklistedVideos = artist => (
-  new Promise((resolve, reject) => {
-    const request = `/blacklist/${encodeURIComponent(artist.name)}`;
+    let request = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${encodeURIComponent(artist.name)}&regionCode=US&type=video&videoCategoryId=10&videoDuration=short&videoEmbedable=true&key=${key}`;
+    if (artist.youTubeNextPageToken) request += `&pageToken=${artist.youTubeNextPageToken}`;
     fetch(request, { method: 'GET' })
       .then(res => res.json())
       .then(res => resolve(res))
@@ -39,15 +32,11 @@ const fetchBlacklistedVideos = artist => (
 );
 
 // helper functions
-const handleDuplicateSearches = (artist, resolve) => {
-  console.log(`Returning previously fetched video results for ${artist.name}`);
-  resolve({ artist, videos: artist.videos });
-};
-
-const removeBlacklistedAndDuplicates = (artistName, videos, blacklist, downvotesThreshold = 2, similarityThreshold = 0.32) => {
+const removeBlacklistedAndDuplicates = (artistName, youTubeResponse, blacklist, downvotesThreshold = 2, similarityThreshold = 0.32) => {
+  const videos = youTubeResponse.items;
+  const titles = videos.map(video => normalizeTitle(artistName, video.snippet.title));
   const uniqueVideos = [];
   const duplicates = [];
-  const titles = videos.map(video => normalizeTitle(artistName, video.snippet.title));
 
   for (let i = 0; i < videos.length; i++) {
     // Remove any blacklisted videos from results

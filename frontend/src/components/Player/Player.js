@@ -19,28 +19,22 @@ class Player extends Component {
     this.setState({ collapsed: !this.state.collapsed });
   }
   handlePlayerActionRequest(action) {
-    const { selectedArtist, played, artists } = this.props;
-    const currentIndex = played.length > 0 ? played.findIndex(video => video.id === selectedArtist.video.id) : 0;
+    const { selectedArtist, played, artists, fetchVideos, reselectVideo } = this.props;
+    const currentPosition = played.findIndex(playedVideo => playedVideo.id === selectedArtist.video.id);
     if (action === 'next') {
-      if (currentIndex === played.length - 1) {
-        // Select and play a new video
-        this.props.fetchVideos(selectedArtist.artist, played);
-      } else {
-        // Play next video in `played` queue
-        const nextVideo = played[currentIndex + 1];
-        const nextArtist = artists[nextVideo.artist];
-        this.props.reselectVideo(nextArtist, nextVideo);
+      if (currentPosition === played.length - 1) {
+        return fetchVideos(artists[selectedArtist.name], played);
       }
-    } else if (action === 'previous') {
-      // Play previous video in `played` queue
-      const previousVideo = currentIndex > 0 ? played[currentIndex - 1] : played[0];
-      const previousArtist = artists[previousVideo.artist];
-      this.props.reselectVideo(previousArtist, previousVideo);
-    } else {
-      this.setState({
-        playerActionRequest: { action, timestamp: new Date().getTime() }
-      });
+      const nextVideoInQueue = played[currentPosition + 1];
+      return reselectVideo(nextVideoInQueue);
     }
+    if (action === 'previous') {
+      const previousVideoInQueue = currentPosition === 0 ? played[0] : played[currentPosition - 1];
+      return reselectVideo(previousVideoInQueue);
+    }
+    this.setState({
+      playerActionRequest: { action, timestamp: new Date().getTime() }
+    });
   }
   handleEnd() {
     const { artists, sortedArtists, selectedArtist, played, fetchVideos } = this.props;
@@ -49,8 +43,8 @@ class Player extends Component {
     fetchVideos(artists[nextArtistName], played);
   }
   handleError() {
-    const { artist, video } = this.props.selectedArtist;
-    this.props.addToBlacklist(artist, video);
+    const { name, video } = this.props.selectedArtist;
+    this.props.addToBlacklist(name, video);
     this.handlePlayerActionRequest('next');
   }
   render() {

@@ -44,12 +44,12 @@ export function* determineSimilarArtists(action) {
 
 export function* fetchVideos(action) {
   try {
-    const played = action.payload[1];
-    var videos = yield call(youTube.fetchVideos, ...action.payload); // `var` to share scope with catch block
-    yield put({ type: types.FETCH_VIDEOS_SUCCEEDED, payload: videos });
+    const { artist, played, maxResults } = action.payload;
+    var { videos, youTubeNextPageToken } = yield call(youTube.fetchVideos, artist, played, maxResults); // `var` to share scope with catch block
+    yield put({ type: types.FETCH_VIDEOS_SUCCEEDED, payload: { ...artist, videos, youTubeNextPageToken } });
 
-    const selectedVideo = yield call(videoSelection.selectVideo, videos, played);
-    yield put({ type: types.SELECT_VIDEO_SUCCEEDED, payload: selectedVideo });
+    const selectedVideo = yield call(videoSelection.selectVideo, artist, videos, played);
+    yield put({ type: types.SELECT_VIDEO_SUCCEEDED, payload: { name: artist.name, video: selectedVideo } });
 
   } catch (e) {
     if (!videos) {
