@@ -17,6 +17,6 @@ deploy:
   api_key: $heroku_api_key
   app:
     master: youtube-mixtape-v2
-    v2-development-03: youtube-mixtape-v2-staging
+    development: youtube-mixtape-v2-staging
   run:
     - restart
